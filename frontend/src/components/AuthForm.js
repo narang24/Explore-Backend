@@ -1,73 +1,111 @@
 'use client';
 import { useState } from 'react';
-import Button from './Button';
-import InputField from './InputField';
-import { X } from 'lucide-react';
+import { X, Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '../contexts/authContext';
+import { useRouter } from 'next/navigation';
+import Toast from './Toast';
 
-export default function AuthForm({ onClose }) {
+const AuthForm = ({ onClose }) => {
   const [userType, setUserType] = useState('student');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState(null);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
     rollNumber: '',
     password: '',
-    confirmPassword: '',
-    clubName: '',
-    rememberMe: false,
-    agreeTerms: false
+    clubName: ''
   });
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const { login } = useAuth();
+  const router = useRouter();
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', { userType, formData });
-    // Handle authentication logic here
+    setLoading(true);
+
+    try {
+      let credentials = {};
+      
+      if (userType === 'student') {
+        credentials = {
+          rollNumber: formData.rollNumber,
+          password: formData.password
+        };
+      } else {
+        credentials = {
+          clubName: formData.clubName,
+          password: formData.password
+        };
+      }
+
+      const result = await login(credentials);
+
+      if (result.success) {
+        setToast({
+          message: `Welcome ${result.user.name || result.user.clubName}! Login successful.`,
+          type: 'success'
+        });
+        
+        setTimeout(() => {
+          onClose();
+          router.push('/dashboard');
+        }, 1500);
+      } else {
+        setToast({
+          message: result.message || 'Login failed. Please check your credentials.',
+          type: 'error'
+        });
+      }
+    } catch (error) {
+      setToast({
+        message: 'Network error. Please try again.',
+        type: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 text-[var(--galaxy)]">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-[17px] font-semibold">
-              Welcome back to <span className='text-xl font-bold'>Xplore</span> !
-            </h2>
-            <button
-              onClick={onClose}
-              className="hover:bg-[var(--galaxy)]/10 p-1.5 rounded-lg cursor-pointer"
-            >
-              <X size={20}/>
-            </button>
-          </div>
+    <>
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 p-4">
+        <div className="bg-white rounded-2xl p-6 w-full max-w-md relative">
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <X size={20} />
+          </button>
 
-          {/* User Type Toggle (only for login) */}
-          <div className="flex bg-[var(--galaxy)]/10 text-[15px] rounded-2xl p-0.5 mb-6">
+          <h2 className="text-2xl font-semibold text-[var(--galaxy)] mb-6">Login to Xplore</h2>
+
+          {/* User Type Toggle */}
+          <div className="flex bg-gray-100 rounded-lg p-1 mb-6">
             <button
               type="button"
               onClick={() => setUserType('student')}
-              className={`flex-1 p-2 rounded-2xl font-medium transition-all cursor-pointer ${
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                 userType === 'student'
-                  ? 'bg-white font-semibold shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-[var(--planetary)] text-white'
+                  : 'text-gray-600 hover:text-gray-800'
               }`}
             >
               Student
             </button>
             <button
               type="button"
-              onClick={() => setUserType('clubAdmin')}
-              className={`flex-1 p-2 rounded-2xl font-medium transition-all cursor-pointer ${
-                userType === 'clubAdmin'
-                  ? 'bg-white font-semibold shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
+              onClick={() => setUserType('club')}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                userType === 'club'
+                  ? 'bg-[var(--planetary)] text-white'
+                  : 'text-gray-600 hover:text-gray-800'
               }`}
             >
               Club Admin
@@ -75,79 +113,91 @@ export default function AuthForm({ onClose }) {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-
-            {userType === 'clubAdmin' && (
+            {userType === 'student' ? (
               <div>
-                <label className="block text-sm font-medium text-[var(--galaxy)] mb-1 px-1">
+                <label htmlFor="rollNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                  Roll Number
+                </label>
+                <input
+                  type="text"
+                  id="rollNumber"
+                  name="rollNumber"
+                  value={formData.rollNumber}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent"
+                  placeholder="Enter your roll number"
+                  required
+                />
+              </div>
+            ) : (
+              <div>
+                <label htmlFor="clubName" className="block text-sm font-medium text-gray-700 mb-1">
                   Club Name
                 </label>
-                <InputField
+                <input
                   type="text"
+                  id="clubName"
+                  name="clubName"
                   value={formData.clubName}
-                  onChange={(e) => handleInputChange('clubName', e.target.value)}
-                  placeholder="Enter your club name"
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent"
+                  placeholder="Enter club name"
                   required
                 />
               </div>
             )}
 
-            <div>
-              <label className="block text-sm font-medium text-[var(--galaxy)] mb-1 px-1">
-                  Roll Number
+            <div className="relative">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Password
               </label>
-                <InputField
-                  type="text"
-                  value={formData.rollNumber}
-                  onChange={(e) => handleInputChange('rollNumber', e.target.value)}
-                  placeholder="Roll Number"
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent"
+                  placeholder="Enter your password"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
-
-            {/* Password field */}
-            <div>
-              <label className="block text-sm font-medium text-[var(--galaxy)] mb-1 px-1">
-                  Password
-              </label>
-              <InputField
-                type="password"
-                value={formData.password}
-                onChange={(e) => handleInputChange('password', e.target.value)}
-                placeholder='Password'
-                required
-              />
             </div>
 
-            {/* Remember Me */}
-            <div className="flex items-center justify-between px-1">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={formData.rememberMe}
-                      onChange={(e) => handleInputChange('rememberMe', e.target.checked)}
-                      className="w-4 h-4 accent-[var(--planetary)] text-[var(--planetary)] border-gray-300 cursor-pointer"
-                    />
-                    <span className="ml-2 text-sm text-[var(--galaxy)]">Remember me</span>
-                  </label>
-                  <button
-                    type="button"
-                    className="text-sm text-[var(--galaxy)] cursor-pointer"
-                  >
-                    Forgot Password?
-                  </button>
-            </div>
-
-            {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-[var(--galaxy)]/90 text-[15px] text-white py-3 cursor-pointer mt-4 md:mt-6 rounded-xl tracking-wide"
+              disabled={loading}
+              className="w-full bg-[var(--planetary)] text-white py-2 px-4 rounded-lg hover:bg-[var(--sapphire)] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Login
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
-
           </form>
+
+          <div className="mt-4 text-center text-xs text-gray-500">
+            <p>Test Credentials:</p>
+            <p>Student: CS21001 / student123</p>
+            <p>Club Admin: Tech Club / admin123</p>
+          </div>
         </div>
       </div>
-    </div>
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+    </>
   );
-}
+};
+
+export default AuthForm;
