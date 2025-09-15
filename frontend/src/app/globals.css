@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --planetary: #334EAC;
+  --venus: #BAD6EB;
+  --meteor: #F7F2EB;
+  --universe: #7096D1;
+  --galaxy: #081F5C;
+  --milky-way: #FFF9F0;
+  --sky: #D0E3FF;
+  --midnight: #0b1957;
+  --sapphire: #426bc2;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-urbanist);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-urbanist), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  overflow-x: hidden;
+}
+html { overflow-x: hidden; }
+
+/* Stories carousel */
+.stories-carousel { width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; }
+.stories-carousel::-webkit-scrollbar { display: none; height: 0; width: 0; }
+.stories-carousel.no-snap { scroll-snap-type: none; }
+
+/* Dots pagination */
+.stories-dots { display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+.stories-dot { width: 8px; height: 8px; border-radius: 9999px; background: var(--venus); opacity: 0.9; transition: all 200ms ease; cursor: pointer; }
+.stories-dot:hover { background: var(--sapphire); opacity: 1; }
+.stories-dot.is-active { width: 22px; height: 9px; background: var(--planetary); box-shadow: 0 0 0 2px rgba(0,0,0,0.04) inset; }
+.stories-track { display: flex; gap: 1.5rem; min-width: max-content; }
+.stories-carousel:hover .stories-track { }
+.stories-fade { mask-image: none; }
+
+@keyframes stories-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
