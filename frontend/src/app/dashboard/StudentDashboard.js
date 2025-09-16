@@ -25,7 +25,9 @@ import {
   CreditCard,
   FileText,
   HelpCircle,
-  MessageSquare
+  MessageSquare,
+  Award,
+  GraduationCap
 } from 'lucide-react';
 
 export default function StudentDashboard() {
@@ -97,7 +99,7 @@ export default function StudentDashboard() {
   return (
     <div className="h-screen bg-gray-100 flex p-5 pr-0">
       {/* Sidebar */}
-      <div className="fixed w-[238px] bg-white rounded-3xl flex flex-col">
+      <div className="h-[95%] fixed w-[238px] bg-white rounded-3xl flex flex-col">
         {/* Logo */}
         <div className="flex items-center px-4 py-2">
           <img src="/favicon.png" alt="Xplore Logo" className="h-16 w-16 rounded-full object-cover" />
@@ -120,12 +122,6 @@ export default function StudentDashboard() {
             </li>
             <li>
               <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 rounded-lg">
-                <BarChart3 size={18} />
-                Report
-              </a>
-            </li>
-            <li>
-              <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 rounded-lg">
                 <Users size={18} />
                 Clubs
               </a>
@@ -134,6 +130,12 @@ export default function StudentDashboard() {
               <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 rounded-lg">
                 <Calendar size={18} />
                 Events
+              </a>
+            </li>
+            <li>
+              <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 rounded-lg">
+                <BarChart3 size={18} />
+                Report
               </a>
             </li>
           </ul>
@@ -171,7 +173,7 @@ export default function StudentDashboard() {
             <li>
               <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 rounded-lg">
                 <Settings size={18} />
-                Settings
+                Profile
               </a>
             </li>
             <li>
@@ -180,17 +182,11 @@ export default function StudentDashboard() {
                 Feedback
               </a>
             </li>
-            <li>
-              <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 rounded-lg">
-                <HelpCircle size={18} />
-                Help
-              </a>
-            </li>
           </ul>
         </nav>
 
         {/* Upgrade Pro Card */}
-        <div className="mx-6 my-2 p-4 bg-gray-900 rounded-2xl text-white">
+        <div className="mx-6 my-2 mb-4 p-4 bg-gray-900 rounded-2xl text-white">
           <img src="/favicon.png" alt="Xplore Logo" className="h-7 w-7 scale-120 rounded-lg object-cover bg-white mb-3" />
           <div className="">
             <h3 className="font-semibold text-sm mb-1">Upgrade Pro</h3>
@@ -256,68 +252,72 @@ export default function StudentDashboard() {
           {/* Stats Cards Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {/* Joined Clubs Card */}
-            <div className="bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-2xl p-6 text-white relative overflow-hidden">
-              <div className="flex items-center justify-between">
-                <div>
+            <div className="bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-2xl p-6 text-white relative overflow-hidden shadow-sm hover:shadow-md">
+              <div className="flex flex-col">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
                       <Users className="text-white" size={18} />
                     </div>
-                    <span className="bg-green-400 text-green-800 px-2 py-1 rounded-md text-xs font-medium">
+                    {/* <span className="bg-green-400 text-green-800 px-2 py-1 rounded-md text-xs font-medium">
                       +2.05%
-                    </span>
+                    </span> */}
                   </div>
-                  <p className="text-white/80 text-sm mb-1">Joined Clubs</p>
+                  <p className="text-white/80 text-sm mb-1">Enrolled Clubs</p>
                   <p className="text-3xl font-bold">{dashboardData?.student?.joinedClubsCount || 0}</p>
-                  <p className="text-white/70 text-xs mt-1">Clubs vs last month</p>
-                </div>
+                  {/* <p className="text-white/70 text-xs mt-1"></p> */}
+                  {/* <div className='flex'>
+                    {[1,2,3].map(() => (
+                    <div className='p-1.5 bg-[var(--galaxy)] rounded-full flex items-center justify-center -ml-2'>C</div>
+                    ))}
+                  </div> */}
               </div>
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full"></div>
             </div>
 
             {/* Activities Card */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md">
               <div className="flex items-center justify-between mb-4">
                 <div className="w-8 h-8 bg-[var(--sky)] rounded-lg flex items-center justify-center">
                   <Activity className="text-[var(--planetary)]" size={18} />
                 </div>
-                <span className="bg-green-100 text-green-600 px-2 py-1 rounded-md text-xs font-medium">
+                {/* <span className="bg-green-100 text-green-600 px-2 py-1 rounded-md text-xs font-medium">
                   +5.25%
-                </span>
+                </span> */}
               </div>
               <p className="text-gray-600 text-sm mb-1">Total Activities</p>
               <p className="text-2xl font-bold text-gray-900 mb-1">{dashboardData?.student?.activitiesCount || 0}</p>
-              <p className="text-gray-500 text-xs">Activities vs last month</p>
+              {/* <p className="text-gray-500 text-xs">Activities vs last month</p> */}
             </div>
 
-            {/* Department Card */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+            {/* Achievements Card */}
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md">
               <div className="flex items-center justify-between mb-4">
                 <div className="w-8 h-8 bg-[var(--sky)] rounded-lg flex items-center justify-center">
-                  <BookOpen className="text-[var(--planetary)]" size={18} />
+                  <Award className="text-[var(--planetary)]" size={18} />
                 </div>
-                <span className="bg-red-100 text-red-600 px-2 py-1 rounded-md text-xs font-medium">
+                {/* <span className="bg-red-100 text-red-600 px-2 py-1 rounded-md text-xs font-medium">
                   -1.05%
-                </span>
+                </span> */}
               </div>
-              <p className="text-gray-600 text-sm mb-1">Department</p>
-              <p className="text-lg font-semibold text-gray-900 mb-1">Computer Science</p>
-              <p className="text-gray-500 text-xs">Current semester</p>
+              <p className="text-gray-600 text-sm mb-1">Total Achievements</p>
+              <p className="text-2xl font-bold text-gray-900 mb-1">2</p>
+              {/* <p className="text-gray-500 text-xs">Current semester</p> */}
             </div>
 
             {/* Year Card */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md">
+              <div className="flex flex-1 justify-between mb-4">
                 <div className="w-8 h-8 bg-[var(--sky)] rounded-lg flex items-center justify-center">
-                  <CalendarDays className="text-[var(--planetary)]" size={18} />
+                  <GraduationCap className="text-[var(--planetary)]" size={18} />
                 </div>
-                <span className="bg-green-100 text-green-600 px-2 py-1 rounded-md text-xs font-medium">
-                  +5.34%
-                </span>
+                <div className='text-right'>
+                    <p className="text-gray-600 text-sm mb-1">Current Academic Year</p>
+                    <p className="text-xl font-bold text-gray-900 mb-1">3rd</p> 
+                    <p className="text-gray-600 text-sm mb-1">Branch</p>
+                    <p className="text-base font-bold text-gray-900 mb-1">Computer Science & Engineering</p>  
+                </div>
               </div>
-              <p className="text-gray-600 text-sm mb-1">Current Year</p>
-              <p className="text-2xl font-bold text-gray-900 mb-1">3rd</p>
-              <p className="text-gray-500 text-xs">Academic year</p>
+              
             </div>
           </div>
 
@@ -328,7 +328,7 @@ export default function StudentDashboard() {
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
                 <div className="p-6 border-b border-gray-100">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-gray-900">Activity Timeline</h2>
+                    <h2 className="text-lg font-semibold text-gray-900">Registered Events</h2>
                     <div className="flex items-center gap-3">
                       <select className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm bg-white">
                         <option>This year</option>
@@ -374,7 +374,7 @@ export default function StudentDashboard() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Club Statistics */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              {/* <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
                 <div className="p-6 border-b border-gray-100">
                   <div className="flex items-center justify-between">
                     <h2 className="text-lg font-semibold text-gray-900">Club Statistics</h2>
@@ -428,10 +428,10 @@ export default function StudentDashboard() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* Campus Growth */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              {/* <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
                 <div className="p-6 border-b border-gray-100">
                   <div className="flex items-center justify-between">
                     <h2 className="text-lg font-semibold text-gray-900">Campus Growth</h2>
@@ -487,7 +487,7 @@ export default function StudentDashboard() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
