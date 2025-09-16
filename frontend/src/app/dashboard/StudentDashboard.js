@@ -252,7 +252,7 @@ export default function StudentDashboard() {
           {/* Stats Cards Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {/* Joined Clubs Card */}
-            <div className="bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-2xl p-6 text-white relative overflow-hidden shadow-sm hover:shadow-md">
+            <div className="bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-3xl p-6 text-white relative overflow-hidden shadow-sm hover:shadow-md">
               <div className="flex flex-col">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
@@ -275,7 +275,7 @@ export default function StudentDashboard() {
             </div>
 
             {/* Activities Card */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md">
+            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md">
               <div className="flex items-center justify-between mb-4">
                 <div className="w-8 h-8 bg-[var(--sky)] rounded-lg flex items-center justify-center">
                   <Activity className="text-[var(--planetary)]" size={18} />
@@ -290,7 +290,7 @@ export default function StudentDashboard() {
             </div>
 
             {/* Achievements Card */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md">
+            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md">
               <div className="flex items-center justify-between mb-4">
                 <div className="w-8 h-8 bg-[var(--sky)] rounded-lg flex items-center justify-center">
                   <Award className="text-[var(--planetary)]" size={18} />
@@ -305,7 +305,7 @@ export default function StudentDashboard() {
             </div>
 
             {/* Year Card */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md">
+            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md">
               <div className="flex flex-1 justify-between mb-4">
                 <div className="w-8 h-8 bg-[var(--sky)] rounded-lg flex items-center justify-center">
                   <GraduationCap className="text-[var(--planetary)]" size={18} />
@@ -321,11 +321,58 @@ export default function StudentDashboard() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Main Content */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="space-y-6">
               {/* Recent Activities */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
+                <div className="p-6 border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-semibold text-gray-900">Registered Events</h2>
+                    <div className="flex items-center gap-3">
+                      <select className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm bg-white">
+                        <option>This year</option>
+                        <option>Last year</option>
+                      </select>
+                      <button className="p-1.5 hover:bg-gray-100 rounded-lg">
+                        <MoreVertical size={16} className="text-gray-400" />
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-gray-600 text-sm mt-1">Track your activity habits</p>
+                </div>
+                
+                <div className="p-6">
+                  <div className="space-y-4">
+                    {dashboardData?.recentActivities?.map((activity, idx) => (
+                      <div key={idx} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                        <div className="w-12 h-12 bg-[var(--sky)] rounded-xl flex items-center justify-center">
+                          <Activity size={20} className="text-[var(--planetary)]" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900 text-sm">{activity.title}</h3>
+                          <p className="text-gray-600 text-sm">{activity.clubId?.clubName}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm text-gray-500">
+                            {new Date(activity.eventDate).toLocaleDateString()}
+                          </p>
+                          <div className="flex items-center gap-1 mt-1">
+                            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                            <span className="text-xs text-gray-500">Completed</span>
+                          </div>
+                        </div>
+                      </div>
+                    )) || (
+                      <p className="text-gray-500 text-center py-8">No recent activities</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-6">
+              {/* Recent Activities */}
+              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
                 <div className="p-6 border-b border-gray-100">
                   <div className="flex items-center justify-between">
                     <h2 className="text-lg font-semibold text-gray-900">Registered Events</h2>
