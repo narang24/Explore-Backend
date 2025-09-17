@@ -100,28 +100,26 @@ export default function ClubsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Enrolled Clubs Section */}
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
-            <div className="p-6 border-b border-gray-100">
+            <div className="p-4 border-b border-gray-100">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-[var(--galaxy)]">My Enrolled Clubs</h2>
-                <span className="text-sm text-[var(--planetary)]">{enrolledClubs.length} clubs</span>
+                <h2 className="text-base font-semibold text-[var(--galaxy)]">My Enrolled Clubs</h2>
+                <span className="text-xs text-[var(--planetary)]">{enrolledClubs.length} clubs</span>
               </div>
-              <p className="text-[var(--planetary)] text-sm mt-1">Clubs you're currently part of</p>
             </div>
             
-            <div className="p-6">
-              <div className="space-y-4">
+            <div className="p-4">
+              <div className="space-y-3">
                 {enrolledClubs.map((club) => (
-                  <div key={club.id} className="bg-gray-50 rounded-2xl p-4 hover:bg-gray-100 transition-colors">
+                  <div key={club.id} className="bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className={`w-12 h-12 bg-gradient-to-r ${club.color} rounded-xl flex items-center justify-center text-white text-lg shadow-sm`}>
+                      <div className={`w-10 h-10 bg-gradient-to-r ${club.color} rounded-lg flex items-center justify-center text-white text-sm shadow-sm`}>
                         {club.icon}
                       </div>
                       <div className="flex-1">
                         <h3 className="font-semibold text-[var(--galaxy)] text-sm">{club.name}</h3>
-                        <p className="text-xs text-[var(--planetary)] mt-1">{club.category}</p>
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center gap-2 mt-1">
                           <span className="text-xs text-[var(--planetary)]">{club.membersCount} members</span>
-                          <span className="text-xs text-green-600">• {club.eventsThisMonth} events this month</span>
+                          <span className="text-xs text-green-600">• {club.eventsThisMonth} events</span>
                         </div>
                       </div>
                     </div>
@@ -131,54 +129,36 @@ export default function ClubsPage() {
             </div>
           </div>
 
-          {/* Trending Clubs Section - Compact Sports-style Layout */}
+          {/* Trending Clubs Section - Compact Layout */}
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
-            <div className="p-6 border-b border-gray-100">
+            <div className="p-4 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-semibold text-[var(--galaxy)]">Trending Clubs</h2>
-                  <TrendingUp className="text-[var(--planetary)]" size={18} />
+                  <h2 className="text-base font-semibold text-[var(--galaxy)]">Trending Clubs</h2>
+                  <TrendingUp className="text-[var(--planetary)]" size={16} />
                 </div>
-                <span className="text-xs text-[var(--planetary)] bg-[var(--sky)] px-2 py-1 rounded-lg">This Month</span>
+                <span className="text-xs text-[var(--planetary)] bg-[var(--sky)] px-2 py-1 rounded-lg">Active</span>
               </div>
-              <p className="text-[var(--planetary)] text-sm mt-1">Most active clubs with upcoming events</p>
             </div>
             
-            <div className="p-6">
+            <div className="p-4">
               <div className="space-y-3">
-                {trendingClubs.slice(0, 4).map((club, index) => (
+                {trendingClubs.slice(0, 3).map((club, index) => (
                   <div key={club.id} className="bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 bg-gradient-to-r ${club.color} rounded-lg flex items-center justify-center text-white text-sm shadow-sm`}>
-                          {club.icon}
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-[var(--galaxy)] text-sm">{club.name}</h3>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs text-[var(--planetary)]">vs</span>
-                            <div className="w-2 h-2 bg-[var(--planetary)] rounded-full animate-pulse"></div>
-                            <span className="text-xs text-[var(--planetary)]">{club.eventsThisMonth} events</span>
-                          </div>
-                        </div>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 bg-gradient-to-r ${club.color} rounded-lg flex items-center justify-center text-white text-sm shadow-sm`}>
+                        {club.icon}
                       </div>
-                      <div className="text-right">
-                        <div className="text-xl font-bold text-[var(--galaxy)]">{club.eventsThisMonth}</div>
-                        <div className="flex items-center gap-1 mt-1">
-                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                          <span className="text-xs font-medium text-green-600">{club.trendPercentage}</span>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-[var(--galaxy)] text-sm">{club.name}</h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="w-2 h-2 bg-[var(--planetary)] rounded-full"></div>
+                          <span className="text-xs text-[var(--planetary)]">{club.eventsThisMonth} events this month</span>
                         </div>
                       </div>
                     </div>
                   </div>
                 ))}
-              </div>
-              
-              {/* See All Trending */}
-              <div className="mt-4 text-center">
-                <button className="text-[var(--planetary)] text-sm font-medium hover:text-[var(--sapphire)] transition-colors">
-                  View All Trending →
-                </button>
               </div>
             </div>
           </div>
