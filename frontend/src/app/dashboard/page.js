@@ -14,6 +14,12 @@ export default function Dashboard() {
       router.push('/');
       return;
     }
+    
+    // Redirect student users to the overview page
+    if (!loading && user && user.type === 'student') {
+      router.push('/dashboard/student/overview');
+      return;
+    }
   }, [user, loading, router]);
 
   if (loading) {
@@ -31,6 +37,7 @@ export default function Dashboard() {
 
   // Render appropriate dashboard based on user type
   if (user.type === 'student') {
+    // This will be handled by the redirect above, but keep as fallback
     return <StudentDashboard />;
   } else if (user.type === 'club') {
     return <ClubAdminDashboard />;
