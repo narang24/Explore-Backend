@@ -1,5 +1,5 @@
 'use client';
-import ClubAdminLayout from '../components/ClubAdminLayout';
+import ClubAdminLayout from '../../components-club-admin/ClubAdminLayout';
 
 export default function MembersPage() {
   return (

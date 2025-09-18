@@ -11,10 +11,11 @@ import {
   LogOut,
   Settings,
   FileText,
-  Home
+  Home,
+  MessageSquare
 } from 'lucide-react';
 
-export default function StudentLayout({ children }) {
+export default function ClubAdminLayout({ children }) {
   const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -120,7 +121,7 @@ export default function StudentLayout({ children }) {
               return (
                 <li key={item.name}>
                   <button
-                    onClick={() => router.push(item.href)}
+                    onClick={() => handleNavigation(item.href)}
                     className={`w-full flex items-center gap-3 px-3 py-3.5 rounded-xl text-[13px] font-medium cursor-pointer transition-all duration-200 ${
                       item.active
                         ? 'shadow-lg shadow-gray-300/80 text-white bg-[var(--planetary)]'
@@ -156,7 +157,7 @@ export default function StudentLayout({ children }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-[var(--galaxy)]">Good Evening, John! 👋</h1>
+                <h1 className="text-2xl font-bold text-[var(--galaxy)]">Good Evening, {user?.name || 'Admin'}! 👋</h1>
                 <p className="text-[var(--planetary)] text-sm tracking-wide">Tuesday, September 16th 2025</p>
               </div>
             </div>
@@ -174,8 +175,8 @@ export default function StudentLayout({ children }) {
 
               <div className="flex items-center gap-3">
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-gray-900">John Doe</p>
-                  <p className="text-xs text-gray-500">Student</p>
+                  <p className="text-sm font-semibold text-gray-900">{user?.name || 'Club Admin'}</p>
+                  <p className="text-xs text-gray-500">Club Admin</p>
                 </div>
                 <div className="w-8 h-8 bg-[var(--sky)] rounded-full flex items-center justify-center">
                   <User size={16} className="text-[var(--planetary)]" />

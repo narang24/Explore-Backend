@@ -14,12 +14,6 @@ export default function Dashboard() {
       router.push('/');
       return;
     }
-    
-    // Redirect student users to the overview page
-    if (!loading && user && user.type === 'student') {
-      router.push('/dashboard/student/overview');
-      return;
-    }
   }, [user, loading, router]);
 
   if (loading) {
@@ -35,11 +29,10 @@ export default function Dashboard() {
 
   if (!user) return null;
 
-  // Render appropriate dashboard based on user type
-  if (user.type === 'student') {
-    // This will be handled by the redirect above, but keep as fallback
+  // Route based on user type or role
+  if (user.type === 'student' || user.role === 'student') {
     return <StudentDashboard />;
-  } else if (user.type === 'club') {
+  } else if (user.type === 'club' || user.role === 'club_admin') {
     return <ClubAdminDashboard />;
   }
 
@@ -49,6 +42,12 @@ export default function Dashboard() {
       <div className="text-center">
         <h2 className="text-xl font-semibold text-gray-900 mb-2">Unknown User Type</h2>
         <p className="text-gray-600">Please contact support for assistance.</p>
+        <button 
+          onClick={() => router.push('/')} 
+          className="mt-4 px-4 py-2 bg-[var(--planetary)] text-white rounded hover:opacity-90"
+        >
+          Go to Home
+        </button>
       </div>
     </div>
   );

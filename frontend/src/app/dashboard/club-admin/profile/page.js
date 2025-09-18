@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import StudentLayout from '../../components-student/StudentLayout';
 import { 
   User, 
   Mail, 
@@ -33,6 +32,7 @@ import {
   Award,
   Target
 } from 'lucide-react';
+import ClubAdminLayout from '../../components-club-admin/ClubAdminLayout';
 
 // Mock student data - this would come from backend
 const studentData = {
@@ -143,7 +143,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <StudentLayout>
+    <ClubAdminLayout>
       <div className="space-y-6">
         {/* Header Section */}
         <div className="flex items-center justify-between">
@@ -475,6 +475,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-    </StudentLayout>
+    </ClubAdminLayout>
   );
 }

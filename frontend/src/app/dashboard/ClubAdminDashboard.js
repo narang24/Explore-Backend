@@ -2,6 +2,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
+import ClubAdminLayout from './components-club-admin/ClubAdminLayout';
+import DashboardContent from './components-club-admin/DashboardContent';
 
 export default function ClubAdminDashboard() {
   const { user, loading } = useAuth();
@@ -14,7 +16,7 @@ export default function ClubAdminDashboard() {
     }
 
     // Check if user has club admin permissions
-    if (!loading && user && user.role !== 'club_admin') {
+    if (!loading && user && user.role !== 'club_admin' && user.type !== 'club') {
       router.push('/dashboard'); // Redirect to regular dashboard
       return;
     }
@@ -31,11 +33,11 @@ export default function ClubAdminDashboard() {
     );
   }
 
-  if (!user || user.role !== 'club_admin') return null;
+  if (!user || (user.role !== 'club_admin' && user.type !== 'club')) return null;
 
   return (
     <ClubAdminLayout>
-      <ClubAdminDashboardContent />
+      <DashboardContent />
     </ClubAdminLayout>
   );
 }
