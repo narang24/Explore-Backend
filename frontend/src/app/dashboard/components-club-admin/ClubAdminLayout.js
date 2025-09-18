@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '../../../contexts/AuthContext';
 import { 
@@ -20,6 +20,40 @@ export default function ClubAdminLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState(pathname);
+  const [currentDate, setCurrentDate] = useState('');
+  const [greeting, setGreeting] = useState('');
+
+  // Update greeting and date based on current time
+  useEffect(() => {
+    const updateGreetingAndDate = () => {
+      const now = new Date();
+      const hour = now.getHours();
+      const date = now.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      
+      let greetingText;
+      if (hour < 12) {
+        greetingText = 'Good Morning';
+      } else if (hour < 17) {
+        greetingText = 'Good Afternoon';
+      } else {
+        greetingText = 'Good Evening';
+      }
+      
+      setGreeting(greetingText);
+      setCurrentDate(date);
+    };
+
+    updateGreetingAndDate();
+    // Update every minute
+    const interval = setInterval(updateGreetingAndDate, 60000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -27,8 +61,51 @@ export default function ClubAdminLayout({ children }) {
   };
 
   const handleNavigation = (href) => {
-    setActiveTab(href); // Immediately update active state
+    setActiveTab(href);
     router.push(href);
+  };
+
+  // Get header content based on current route
+  const getHeaderContent = () => {
+    const tabHeaders = {
+      '/dashboard/club-admin/overview': {
+        title: `${greeting}, ${user?.name || 'Admin'}! 👋`,
+        subtitle: currentDate,
+        isMainDashboard: true
+      },
+      '/dashboard': {
+        title: `${greeting}, ${user?.name || 'Admin'}! 👋`,
+        subtitle: currentDate,
+        isMainDashboard: true
+      },
+      '/dashboard/club-admin/events': {
+        title: `Events Hub 🎯`,
+        subtitle: 'Create amazing experiences and manage your club events',
+        isMainDashboard: false
+      },
+      '/dashboard/club-admin/record': {
+        title: `Records & Analytics 📊`,
+        subtitle: 'Track attendance, analyze data and monitor club performance',
+        isMainDashboard: false
+      },
+      '/dashboard/club-admin/members': {
+        title: `Member Central 👥`,
+        subtitle: 'Connect with your community and manage member relationships',
+        isMainDashboard: false
+      },
+      '/dashboard/club-admin/profile': {
+        title: `Your Profile ✨`,
+        subtitle: 'Personalize your space and manage account settings',
+        isMainDashboard: false
+      },
+      '/dashboard/club-admin/feedback': {
+        title: `Feedback Corner 💬`,
+        subtitle: 'Share your thoughts and help us improve the experience',
+        isMainDashboard: false
+      }
+    };
+
+    return tabHeaders[pathname] || tabHeaders['/dashboard/club-admin/overview'];
   };
 
   const navigationItems = [
@@ -69,6 +146,8 @@ export default function ClubAdminLayout({ children }) {
       active: activeTab === '/dashboard/club-admin/feedback'
     }
   ];
+
+  const headerContent = getHeaderContent();
 
   return (
     <div className="h-screen bg-gray-100 flex p-5 pr-0">
@@ -157,8 +236,8 @@ export default function ClubAdminLayout({ children }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-[var(--galaxy)]">Good Evening, {user?.name || 'Admin'}! 👋</h1>
-                <p className="text-[var(--planetary)] text-sm tracking-wide">Tuesday, September 16th 2025</p>
+                <h1 className="text-2xl font-bold text-[var(--galaxy)]">{headerContent.title}</h1>
+                <p className="text-[var(--planetary)] text-sm tracking-wide">{headerContent.subtitle}</p>
               </div>
             </div>
 

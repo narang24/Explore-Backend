@@ -145,22 +145,6 @@ export default function ProfilePage() {
   return (
     <ClubAdminLayout>
       <div className="space-y-6">
-        {/* Header Section */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-[var(--galaxy)]">My Profile</h1>
-            <p className="text-[var(--planetary)] text-sm mt-1">Manage your personal information and settings</p>
-          </div>
-          
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-medium transition-colors"
-          >
-            <LogOut size={16} />
-            Logout
-          </button>
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Compact Profile Card */}
           <div className="lg:col-span-1">
