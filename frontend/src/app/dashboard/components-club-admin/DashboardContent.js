@@ -4,7 +4,6 @@ import {
   Users, 
   UserCheck, 
   Plus,
-  Activity,
   Clock,
   Send,
   X,
@@ -132,7 +131,7 @@ export default function DashboardContent() {
 
   return (
     <div className="space-y-6">
-      {/* Stats Cards */}
+      {/* Stats Cards with Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Active Registrations */}
         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
@@ -168,69 +167,36 @@ export default function DashboardContent() {
           <p className="text-xs text-gray-500 mt-2 tracking-wide">Events in next 30 days</p>
         </div>
 
-        {/* Active Members */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-              <Users className="text-blue-600" size={24} />
-            </div>
-            <span className="text-green-500 text-sm font-medium tracking-wide bg-green-50 px-2 py-1 rounded-full">
-              {dashboardStats.activeMembersChange}
-            </span>
+        {/* Quick Actions Card */}
+        <div className="bg-gradient-to-br from-[var(--planetary)] to-[var(--sapphire)] rounded-2xl p-6 text-white shadow-sm">
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold mb-1">Quick Actions</h3>
+            <p className="text-white/70 text-sm">Manage efficiently</p>
           </div>
-          <h3 className="text-2xl font-bold text-[var(--galaxy)] mb-1 tracking-wide">
-            {dashboardStats.activeMembers}
-          </h3>
-          <p className="text-[var(--planetary)] text-sm tracking-wide">Active Members</p>
-          <p className="text-xs text-gray-500 mt-2 tracking-wide">Members vs last month</p>
-        </div>
-      </div>
-
-      {/* Quick Actions Section */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-        <div className="p-6 border-b border-gray-100">
-          <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Quick Actions</h3>
-          <p className="text-[var(--planetary)] text-sm tracking-wide mt-1">Manage your club efficiently</p>
-        </div>
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <button className="flex items-center gap-3 p-4 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl transition-colors cursor-pointer group">
-              <div className="w-12 h-12 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center transition-colors">
-                <Plus size={20} />
+          
+          <div className="grid grid-cols-1 gap-3">
+            {/* Create Event */}
+            <button className="w-full flex items-center gap-3 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all cursor-pointer group">
+              <div className="w-8 h-8 bg-white/20 group-hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors">
+                <Plus size={16} />
               </div>
-              <div className="text-left">
-                <span className="text-sm font-semibold tracking-wide block">Create Event</span>
-                <span className="text-xs text-blue-500 tracking-wide">New event setup</span>
+              <div className="text-left flex-1">
+                <span className="text-sm font-medium block">Create Event</span>
+                <span className="text-xs text-white/70">New event setup</span>
               </div>
             </button>
+
+            {/* Make Announcement */}
             <button 
               onClick={() => setShowAnnouncementModal(true)}
-              className="flex items-center gap-3 p-4 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl transition-colors cursor-pointer group"
+              className="w-full flex items-center gap-3 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all cursor-pointer group"
             >
-              <div className="w-12 h-12 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center transition-colors">
-                <Megaphone size={20} />
+              <div className="w-8 h-8 bg-white/20 group-hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors">
+                <Megaphone size={16} />
               </div>
-              <div className="text-left">
-                <span className="text-sm font-semibold tracking-wide block">Make Announcement</span>
-                <span className="text-xs text-blue-500 tracking-wide">Notify students</span>
-              </div>
-            </button>
-            <button className="flex items-center gap-3 p-4 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl transition-colors cursor-pointer group">
-              <div className="w-12 h-12 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center transition-colors">
-                <Users size={20} />
-              </div>
-              <div className="text-left">
-                <span className="text-sm font-semibold tracking-wide block">View Members</span>
-                <span className="text-xs text-blue-500 tracking-wide">Manage club members</span>
-              </div>
-            </button>
-            <button className="flex items-center gap-3 p-4 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl transition-colors cursor-pointer group">
-              <div className="w-12 h-12 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center transition-colors">
-                <Activity size={20} />
-              </div>
-              <div className="text-left">
-                <span className="text-sm font-semibold tracking-wide block">View Reports</span>
-                <span className="text-xs text-blue-500 tracking-wide">Analytics & insights</span>
+              <div className="text-left flex-1">
+                <span className="text-sm font-medium block">Announce</span>
+                <span className="text-xs text-white/70">Notify students</span>
               </div>
             </button>
           </div>
@@ -295,7 +261,7 @@ export default function DashboardContent() {
                 New Announcement
               </button>
             </div>
-          </div></div>
+          </div>
 
           <div className="p-4">
             {announcements.length > 0 ? (
@@ -361,6 +327,7 @@ export default function DashboardContent() {
               </button>
             )}
           </div>
+        </div>
       </div>
 
       {/* Create Announcement Modal */}
