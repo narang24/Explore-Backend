@@ -1,11 +1,9 @@
 'use client';
 import { useState } from 'react';
 import { 
-  Calendar, 
   Users, 
   UserCheck, 
   Plus,
-  TrendingUp,
   Activity,
   Clock,
   Send,
@@ -21,8 +19,6 @@ import {
 
 // Mock data - replace with actual API calls
 const dashboardStats = {
-  totalEvents: 24,
-  totalEventsChange: '+12%',
   activeRegistrations: 156,
   activeRegistrationsChange: '+8%',
   upcomingEvents: 8,
@@ -39,16 +35,16 @@ const recentActivities = [
     user: 'John Doe',
     time: '2 hours ago',
     icon: UserCheck,
-    color: 'text-green-500'
+    isLive: true
   },
   {
     id: 2,
-    type: 'event',
-    title: 'AI Workshop Event Created',
+    type: 'member',
+    title: 'New Member Joined the Club',
     user: 'Admin Team',
     time: '4 hours ago',
-    icon: Calendar,
-    color: 'text-blue-500'
+    icon: Users,
+    isLive: false
   },
   {
     id: 3,
@@ -57,7 +53,16 @@ const recentActivities = [
     user: 'Jane Smith',
     time: '6 hours ago',
     icon: UserCheck,
-    color: 'text-green-500'
+    isLive: false
+  },
+  {
+    id: 4,
+    type: 'member',
+    title: 'Member Profile Updated',
+    user: 'Alex Johnson',
+    time: '8 hours ago',
+    icon: Users,
+    isLive: false
   }
 ];
 
@@ -128,29 +133,12 @@ export default function DashboardContent() {
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Total Events */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-              <Calendar className="text-blue-600" size={24} />
-            </div>
-            <span className="text-green-500 text-sm font-medium tracking-wide bg-green-50 px-2 py-1 rounded-full">
-              {dashboardStats.totalEventsChange}
-            </span>
-          </div>
-          <h3 className="text-2xl font-bold text-[var(--galaxy)] mb-1 tracking-wide">
-            {dashboardStats.totalEvents}
-          </h3>
-          <p className="text-[var(--planetary)] text-sm tracking-wide">Total Events</p>
-          <p className="text-xs text-gray-500 mt-2 tracking-wide">Events vs last month</p>
-        </div>
-
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Active Registrations */}
         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-              <UserCheck className="text-green-600" size={24} />
+            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+              <UserCheck className="text-blue-600" size={24} />
             </div>
             <span className="text-green-500 text-sm font-medium tracking-wide bg-green-50 px-2 py-1 rounded-full">
               {dashboardStats.activeRegistrationsChange}
@@ -166,8 +154,8 @@ export default function DashboardContent() {
         {/* Upcoming Events */}
         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
-              <Clock className="text-orange-600" size={24} />
+            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+              <Clock className="text-blue-600" size={24} />
             </div>
             <span className="text-green-500 text-sm font-medium tracking-wide bg-green-50 px-2 py-1 rounded-full">
               {dashboardStats.upcomingEventsChange}
@@ -183,8 +171,8 @@ export default function DashboardContent() {
         {/* Active Members */}
         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-              <Users className="text-purple-600" size={24} />
+            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+              <Users className="text-blue-600" size={24} />
             </div>
             <span className="text-green-500 text-sm font-medium tracking-wide bg-green-50 px-2 py-1 rounded-full">
               {dashboardStats.activeMembersChange}
@@ -198,148 +186,181 @@ export default function DashboardContent() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Activity */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm">
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Recent Activity</h3>
-              <div className="flex items-center gap-2">
-                <Activity className="text-[var(--planetary)]" size={16} />
-                <span className="text-sm text-[var(--planetary)] tracking-wide">Live Updates</span>
-              </div>
-            </div>
-          </div>
-          <div className="p-6">
-            <div className="space-y-4">
-              {recentActivities.map((activity) => {
-                const Icon = activity.icon;
-                return (
-                  <div key={activity.id} className="flex items-start gap-4">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gray-50`}>
-                      <Icon className={activity.color} size={18} />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-medium text-[var(--galaxy)] text-sm tracking-wide">
-                        {activity.title}
-                      </h4>
-                      <p className="text-[var(--planetary)] text-sm tracking-wide">
-                        by {activity.user}
-                      </p>
-                      <p className="text-gray-500 text-xs mt-1 tracking-wide">
-                        {activity.time}
-                      </p>
-                    </div>
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+      {/* Quick Actions Section */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+        <div className="p-6 border-b border-gray-100">
+          <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Quick Actions</h3>
+          <p className="text-[var(--planetary)] text-sm tracking-wide mt-1">Manage your club efficiently</p>
         </div>
-
-        {/* Quick Actions */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-          <div className="p-6 border-b border-gray-100">
-            <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Quick Actions</h3>
-          </div>
-          <div className="p-6 space-y-3">
-            <button className="w-full flex items-center gap-3 p-4 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl transition-colors">
-              <Calendar size={18} />
-              <span className="font-medium text-sm tracking-wide">Create New Event</span>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <button className="flex items-center gap-3 p-4 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl transition-colors cursor-pointer group">
+              <div className="w-12 h-12 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center transition-colors">
+                <Plus size={20} />
+              </div>
+              <div className="text-left">
+                <span className="text-sm font-semibold tracking-wide block">Create Event</span>
+                <span className="text-xs text-blue-500 tracking-wide">New event setup</span>
+              </div>
             </button>
             <button 
               onClick={() => setShowAnnouncementModal(true)}
-              className="w-full flex items-center gap-3 p-4 bg-green-500 hover:bg-green-600 text-white rounded-xl transition-colors"
+              className="flex items-center gap-3 p-4 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl transition-colors cursor-pointer group"
             >
-              <Megaphone size={18} />
-              <span className="font-medium text-sm tracking-wide">Make Announcement</span>
+              <div className="w-12 h-12 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center transition-colors">
+                <Megaphone size={20} />
+              </div>
+              <div className="text-left">
+                <span className="text-sm font-semibold tracking-wide block">Make Announcement</span>
+                <span className="text-xs text-blue-500 tracking-wide">Notify students</span>
+              </div>
             </button>
-            <button className="w-full flex items-center gap-3 p-4 bg-gray-100 hover:bg-gray-200 text-[var(--galaxy)] rounded-xl transition-colors">
-              <Users size={18} />
-              <span className="font-medium text-sm tracking-wide">View All Members</span>
+            <button className="flex items-center gap-3 p-4 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl transition-colors cursor-pointer group">
+              <div className="w-12 h-12 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center transition-colors">
+                <Users size={20} />
+              </div>
+              <div className="text-left">
+                <span className="text-sm font-semibold tracking-wide block">View Members</span>
+                <span className="text-xs text-blue-500 tracking-wide">Manage club members</span>
+              </div>
             </button>
-            <button className="w-full flex items-center gap-3 p-4 bg-gray-100 hover:bg-gray-200 text-[var(--galaxy)] rounded-xl transition-colors">
-              <TrendingUp size={18} />
-              <span className="font-medium text-sm tracking-wide">View Analytics</span>
+            <button className="flex items-center gap-3 p-4 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl transition-colors cursor-pointer group">
+              <div className="w-12 h-12 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center transition-colors">
+                <Activity size={20} />
+              </div>
+              <div className="text-left">
+                <span className="text-sm font-semibold tracking-wide block">View Reports</span>
+                <span className="text-xs text-blue-500 tracking-wide">Analytics & insights</span>
+              </div>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Recent Announcements */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-        <div className="p-6 border-b border-gray-100">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Recent Announcements</h3>
-            <button 
-              onClick={() => setShowAnnouncementModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl text-sm font-medium tracking-wide transition-colors"
-            >
-              <Plus size={16} />
-              New Announcement
-            </button>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Activity */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+          <div className="p-6 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Recent Activity</h3>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm text-green-500 font-medium tracking-wide">Live</span>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="p-6">
-          {announcements.length > 0 ? (
+          <div className="p-6">
             <div className="space-y-4">
-              {announcements.map((announcement) => {
-                const Icon = getAnnouncementIcon(announcement.type);
-                const colorClasses = getAnnouncementColor(announcement.type);
+              {recentActivities.slice(0, 4).map((activity) => {
+                const Icon = activity.icon;
                 return (
-                  <div key={announcement.id} className={`p-4 rounded-xl border ${colorClasses}`}>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-3 flex-1">
-                        <Icon size={20} />
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-[var(--galaxy)] mb-1 tracking-wide">
-                            {announcement.title}
-                          </h4>
-                          <p className="text-[var(--planetary)] text-sm tracking-wide mb-2">
-                            {announcement.message}
-                          </p>
-                          <div className="flex items-center gap-4 text-xs text-gray-500 tracking-wide">
-                            <span>{announcement.createdAt}</span>
-                            <div className="flex items-center gap-1">
-                              <Eye size={12} />
-                              <span>{announcement.views} views</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 ml-4">
-                        <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                          <Edit size={14} className="text-gray-500" />
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteAnnouncement(announcement.id)}
-                          className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                        >
-                          <Trash2 size={14} className="text-red-500" />
-                        </button>
-                      </div>
+                  <div key={activity.id} className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-50">
+                      <Icon className="text-blue-600" size={18} />
                     </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-[var(--galaxy)] text-sm tracking-wide">
+                        {activity.title}
+                      </h4>
+                      <p className="text-[var(--planetary)] text-sm tracking-wide">
+                        by {activity.user}
+                      </p>
+                      <p className="text-gray-500 text-xs tracking-wide mt-1">
+                        {activity.time}
+                      </p>
+                    </div>
+                    {activity.isLive && (
+                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 animate-pulse"></div>
+                    )}
                   </div>
                 );
               })}
             </div>
-          ) : (
-            <div className="text-center py-8">
-              <Megaphone className="text-gray-400 mx-auto mb-4" size={48} />
-              <h4 className="text-lg font-medium text-[var(--galaxy)] mb-2 tracking-wide">No Announcements Yet</h4>
-              <p className="text-[var(--planetary)] text-sm tracking-wide mb-4">
-                Create your first announcement to notify students
-              </p>
+            <button className="w-full mt-6 text-center text-sm text-[var(--planetary)] hover:text-[var(--sapphire)] font-medium tracking-wide cursor-pointer transition-colors">
+              View All Activity
+            </button>
+          </div>
+        </div>
+
+        {/* Recent Announcements */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+          <div className="p-6 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Recent Announcements</h3>
               <button 
                 onClick={() => setShowAnnouncementModal(true)}
-                className="px-6 py-3 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl font-medium tracking-wide transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl text-sm font-medium tracking-wide transition-colors cursor-pointer"
               >
-                Create Announcement
+                <Plus size={16} />
+                New Announcement
               </button>
             </div>
-          )}
-        </div>
+          </div></div>
+
+          <div className="p-4">
+            {announcements.length > 0 ? (
+              <div className="space-y-3">
+                {announcements.slice(0, 3).map((announcement) => {
+                  const Icon = getAnnouncementIcon(announcement.type);
+                  const colorClasses = getAnnouncementColor(announcement.type);
+                  return (
+                    <div key={announcement.id} className={`p-3 rounded-lg border ${colorClasses}`}>
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start gap-2 flex-1 min-w-0">
+                          <Icon size={16} className="mt-0.5 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-[var(--galaxy)] text-sm tracking-wide truncate">
+                              {announcement.title}
+                            </h4>
+                            <p className="text-[var(--planetary)] text-xs tracking-wide line-clamp-2 mt-1">
+                              {announcement.message}
+                            </p>
+                            <div className="flex items-center gap-3 text-xs text-gray-500 tracking-wide mt-2">
+                              <span>{announcement.createdAt}</span>
+                              <div className="flex items-center gap-1">
+                                <Eye size={10} />
+                                <span>{announcement.views}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+                          <button className="p-1 hover:bg-gray-100 rounded transition-colors cursor-pointer">
+                            <Edit size={12} className="text-gray-500" />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteAnnouncement(announcement.id)}
+                            className="p-1 hover:bg-red-50 rounded transition-colors cursor-pointer"
+                          >
+                            <Trash2 size={12} className="text-red-500" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-6">
+                <Megaphone className="text-gray-400 mx-auto mb-3" size={32} />
+                <h4 className="text-sm font-medium text-[var(--galaxy)] mb-1 tracking-wide">No Announcements Yet</h4>
+                <p className="text-[var(--planetary)] text-xs tracking-wide mb-3">
+                  Create your first announcement
+                </p>
+                <button 
+                  onClick={() => setShowAnnouncementModal(true)}
+                  className="px-4 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl text-xs font-medium tracking-wide transition-colors cursor-pointer"
+                >
+                  Create Announcement
+                </button>
+              </div>
+            )}
+            {announcements.length > 3 && (
+              <button className="w-full mt-3 text-center text-sm text-[var(--planetary)] hover:text-[var(--sapphire)] font-medium tracking-wide cursor-pointer transition-colors">
+                View All Announcements
+              </button>
+            )}
+          </div>
       </div>
 
       {/* Create Announcement Modal */}
@@ -350,7 +371,7 @@ export default function DashboardContent() {
               <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Create Announcement</h3>
               <button 
                 onClick={() => setShowAnnouncementModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -363,7 +384,7 @@ export default function DashboardContent() {
                   type="text"
                   value={newAnnouncement.title}
                   onChange={(e) => setNewAnnouncement(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent tracking-wide"
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent tracking-wide text-sm"
                   placeholder="Enter announcement title"
                 />
               </div>
@@ -373,8 +394,8 @@ export default function DashboardContent() {
                 <textarea
                   value={newAnnouncement.message}
                   onChange={(e) => setNewAnnouncement(prev => ({ ...prev, message: e.target.value }))}
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent resize-none tracking-wide"
+                  rows={3}
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent resize-none tracking-wide text-sm"
                   placeholder="Enter announcement message"
                 />
               </div>
@@ -384,7 +405,7 @@ export default function DashboardContent() {
                 <select
                   value={newAnnouncement.type}
                   onChange={(e) => setNewAnnouncement(prev => ({ ...prev, type: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent tracking-wide"
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent tracking-wide text-sm"
                 >
                   <option value="info">Information</option>
                   <option value="warning">Warning</option>
@@ -392,18 +413,18 @@ export default function DashboardContent() {
                 </select>
               </div>
               
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-2">
                 <button
                   onClick={handleCreateAnnouncement}
                   disabled={!newAnnouncement.title.trim() || !newAnnouncement.message.trim()}
-                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-[var(--planetary)] hover:bg-[var(--sapphire)] disabled:bg-gray-300 text-white rounded-xl font-medium tracking-wide transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--planetary)] hover:bg-[var(--sapphire)] disabled:bg-gray-300 text-white rounded-xl text-sm font-medium tracking-wide transition-colors cursor-pointer"
                 >
-                  <Send size={16} />
-                  Create Announcement
+                  <Send size={14} />
+                  Create
                 </button>
                 <button
                   onClick={() => setShowAnnouncementModal(false)}
-                  className="px-6 py-3 border border-gray-200 hover:bg-gray-50 text-[var(--galaxy)] rounded-xl font-medium tracking-wide transition-colors"
+                  className="px-4 py-2.5 border border-gray-200 hover:bg-gray-50 text-[var(--galaxy)] rounded-xl text-sm font-medium tracking-wide transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
