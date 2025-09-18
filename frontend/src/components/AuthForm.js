@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Button from './Button';
 import InputField from './InputField';
 import { X, Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '../contexts/authContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
 export default function AuthForm({ onClose }) {

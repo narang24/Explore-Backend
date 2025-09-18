@@ -1,6 +1,6 @@
 'use client';
-import StudentLayout from '../../components/StudentLayout';
-import DashboardContent from '../../components/DashboardContent';
+import StudentLayout from '../../components-student/StudentLayout';
+import DashboardContent from '../../components-student/DashboardContent';
 
 export default function OverviewPage() {
   return (

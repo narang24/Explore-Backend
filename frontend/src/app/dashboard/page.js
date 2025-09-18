@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../contexts/authContext';
+import { useAuth } from '../../contexts/AuthContext';
 import StudentDashboard from './StudentDashboard';
 import ClubAdminDashboard from './ClubAdminDashboard';
 

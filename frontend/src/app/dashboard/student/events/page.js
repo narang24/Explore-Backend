@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import StudentLayout from '../../components/StudentLayout';
+import StudentLayout from '../../components-student/StudentLayout';
 import { 
   Search, 
   Filter, 
