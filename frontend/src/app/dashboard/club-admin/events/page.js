@@ -22,9 +22,14 @@ import {
   Award,
   Target,
   Zap,
-  Gift
+  Gift,
+  Search,
+  Filter,
+  SortDesc,
+  ChevronDown
 } from 'lucide-react';
 import ClubAdminLayout from '../../components-club-admin/ClubAdminLayout';
+import EventModal from './EventModal';
 
 // Mock data for events
 const mockEvents = {
@@ -162,6 +167,10 @@ export default function EventsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
   const [events, setEvents] = useState(mockEvents);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('date');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [showFilters, setShowFilters] = useState(false);
 
   const [newEvent, setNewEvent] = useState({
     name: '',
@@ -176,6 +185,37 @@ export default function EventsPage() {
     awards: [''],
     schedule: [{ time: '', activity: '' }]
   });
+
+  // Get all events for the "All Events" section
+  const getAllEvents = () => {
+    const allEvents = [...events.live, ...events.active, ...events.upcoming];
+    
+    // Filter by search term
+    let filteredEvents = allEvents.filter(event =>
+      event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.club.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Filter by status
+    if (filterStatus !== 'all') {
+      filteredEvents = filteredEvents.filter(event => event.status === filterStatus);
+    }
+
+    // Sort events
+    filteredEvents.sort((a, b) => {
+      if (sortBy === 'date') {
+        return new Date(a.date) - new Date(b.date);
+      } else if (sortBy === 'name') {
+        return a.name.localeCompare(b.name);
+      } else if (sortBy === 'registrations') {
+        return (b.registrations || 0) - (a.registrations || 0);
+      }
+      return 0;
+    });
+
+    return filteredEvents;
+  };
 
   const handleCreateEvent = () => {
     const event = {
@@ -306,26 +346,88 @@ export default function EventsPage() {
     </div>
   );
 
+  // Event Row Component for All Events Section
+  const EventRow = ({ event }) => {
+    const getStatusColor = (status) => {
+      switch (status) {
+        case 'live': return 'bg-green-100 text-green-700 border-green-200';
+        case 'active': return 'bg-blue-100 text-blue-700 border-blue-200';
+        case 'upcoming': return 'bg-orange-100 text-orange-700 border-orange-200';
+        default: return 'bg-gray-100 text-gray-700 border-gray-200';
+      }
+    };
+
+    const getStatusDot = (status) => {
+      switch (status) {
+        case 'live': return 'bg-green-500';
+        case 'active': return 'bg-blue-500';
+        case 'upcoming': return 'bg-orange-500';
+        default: return 'bg-gray-500';
+      }
+    };
+
+    return (
+      <div 
+        onClick={() => handleViewEvent(event)}
+        className="bg-white border border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition-colors cursor-pointer group"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4 flex-1">
+            <div className="w-12 h-12 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-xl flex items-center justify-center text-white text-lg">
+              {event.clubLogo}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="font-semibold text-[var(--galaxy)] text-sm group-hover:text-[var(--planetary)] transition-colors truncate">
+                  {event.name}
+                </h3>
+                <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(event.status)}`}>
+                  <div className={`w-1.5 h-1.5 rounded-full ${getStatusDot(event.status)}`}></div>
+                  {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+                </span>
+              </div>
+              <div className="flex items-center gap-4 text-xs text-[var(--planetary)]">
+                <span className="flex items-center gap-1">
+                  <Calendar size={10} />
+                  {new Date(event.date).toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Clock size={10} />
+                  {event.time}
+                </span>
+                <span className="flex items-center gap-1">
+                  <MapPin size={10} />
+                  {event.location}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Star size={10} />
+                  {event.category}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <div className="text-sm font-semibold text-[var(--galaxy)]">
+                {event.registrations || 0}/{event.totalSeats}
+              </div>
+              <div className="text-xs text-[var(--planetary)]">registered</div>
+            </div>
+            <ChevronRight size={16} className="text-gray-400 group-hover:text-[var(--planetary)] transition-colors" />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <ClubAdminLayout>
       <div className="space-y-6">
-        {/* Header with Create Button */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-[var(--galaxy)]">Events Management</h1>
-            <p className="text-[var(--planetary)] text-sm mt-1">Create and manage your club events</p>
-          </div>
-          
-          <button 
-            onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl font-medium transition-colors"
-          >
-            <Plus size={16} />
-            Create New Event
-          </button>
-        </div>
-
-        {/* Events Grid */}
+        {/* Events Status Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Live Events */}
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
@@ -405,6 +507,151 @@ export default function EventsPage() {
             </div>
           </div>
         </div>
+
+        {/* All Events Section */}
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
+          {/* Header with Search and Filters */}
+          <div className="p-6 border-b border-gray-100">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-bold text-[var(--galaxy)]">All Events</h2>
+                <p className="text-[var(--planetary)] text-sm mt-1">Comprehensive event management and overview</p>
+              </div>
+              
+              <button 
+                onClick={() => setShowCreateModal(true)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl font-medium transition-colors"
+              >
+                <Plus size={16} />
+                Create New Event
+              </button>
+            </div>
+
+            {/* Search and Filter Controls */}
+            <div className="flex items-center gap-4">
+              {/* Search Bar */}
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search events, clubs, or categories..."
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
+                />
+              </div>
+
+              {/* Sort Dropdown */}
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-[var(--galaxy)] focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent cursor-pointer"
+                >
+                  <option value="date">Sort by Date</option>
+                  <option value="name">Sort by Name</option>
+                  <option value="registrations">Sort by Registrations</option>
+                </select>
+                <SortDesc className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+              </div>
+
+              {/* Filter Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-[var(--galaxy)] hover:bg-gray-50 transition-colors"
+                >
+                  <Filter size={16} />
+                  Filter
+                  <ChevronDown size={14} className={`transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+                </button>
+
+                {showFilters && (
+                  <div className="absolute right-0 top-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-10 min-w-[180px]">
+                    <div className="p-3">
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Filter by Status</p>
+                      <div className="space-y-1">
+                        {[
+                          { value: 'all', label: 'All Events', count: getAllEvents().length },
+                          { value: 'live', label: 'Live Events', count: events.live.length },
+                          { value: 'active', label: 'Active Events', count: events.active.length },
+                          { value: 'upcoming', label: 'Upcoming Events', count: events.upcoming.length }
+                        ].map((filter) => (
+                          <button
+                            key={filter.value}
+                            onClick={() => {
+                              setFilterStatus(filter.value);
+                              setShowFilters(false);
+                            }}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
+                              filterStatus === filter.value
+                                ? 'bg-[var(--planetary)] text-white'
+                                : 'hover:bg-gray-100 text-[var(--galaxy)]'
+                            }`}
+                          >
+                            <span>{filter.label}</span>
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              filterStatus === filter.value
+                                ? 'bg-white/20 text-white'
+                                : 'bg-gray-200 text-gray-600'
+                            }`}>
+                              {filter.count}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Events List */}
+          <div className="p-6">
+            <div className="space-y-3">
+              {getAllEvents().map((event) => (
+                <EventRow key={event.id} event={event} />
+              ))}
+              
+              {getAllEvents().length === 0 && (
+                <div className="text-center py-12">
+                  <Calendar className="text-gray-400 mx-auto mb-4" size={32} />
+                  <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-2">No events found</h3>
+                  <p className="text-[var(--planetary)] text-sm mb-4">
+                    {searchTerm || filterStatus !== 'all' 
+                      ? 'Try adjusting your search or filter criteria' 
+                      : 'Create your first event to get started'
+                    }
+                  </p>
+                  {(!searchTerm && filterStatus === 'all') && (
+                    <button 
+                      onClick={() => setShowCreateModal(true)}
+                      className="px-4 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl text-sm font-medium transition-colors"
+                    >
+                      Create First Event
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Event Details Modal */}
+        <EventModal
+          event={selectedEvent}
+          isOpen={showEventModal}
+          onClose={() => {
+            setShowEventModal(false);
+            setSelectedEvent(null);
+          }}
+          onDelete={handleDeleteEvent}
+          onEdit={(event) => {
+            // Handle edit functionality
+            console.log('Edit event:', event);
+          }}
+        />
 
         {/* Create Event Modal */}
         {showCreateModal && (
@@ -624,241 +871,6 @@ export default function EventsPage() {
                   >
                     Cancel
                   </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Event Details Modal - Compact and Improved */}
-        {showEventModal && selectedEvent && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto">
-              {/* Header */}
-              <div className="p-5 border-b border-gray-100 sticky top-0 bg-white rounded-t-2xl z-10">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-2xl flex items-center justify-center text-white text-xl shadow-lg">
-                      {selectedEvent.clubLogo}
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-bold text-[var(--galaxy)]">{selectedEvent.name}</h2>
-                      <p className="text-[var(--planetary)]">{selectedEvent.club}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                          selectedEvent.status === 'live' ? 'bg-green-100 text-green-700' :
-                          selectedEvent.status === 'active' ? 'bg-blue-100 text-blue-700' :
-                          'bg-orange-100 text-orange-700'
-                        }`}>
-                          <div className={`w-1.5 h-1.5 rounded-full ${
-                            selectedEvent.status === 'live' ? 'bg-green-500' :
-                            selectedEvent.status === 'active' ? 'bg-blue-500' :
-                            'bg-orange-500'
-                          }`}></div>
-                          {selectedEvent.status.charAt(0).toUpperCase() + selectedEvent.status.slice(1)}
-                        </span>
-                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-[var(--sky)] text-[var(--planetary)] rounded-full text-xs font-medium">
-                          <Star size={12} />
-                          {selectedEvent.category}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-3 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-lg text-sm font-medium transition-colors">
-                      <Edit3 size={14} />
-                      Edit
-                    </button>
-                    <button 
-                      onClick={() => handleDeleteEvent(selectedEvent.id)}
-                      className="flex items-center gap-2 px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors"
-                    >
-                      <Trash2 size={14} />
-                      Delete
-                    </button>
-                    <button 
-                      onClick={() => setShowEventModal(false)}
-                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors ml-2"
-                    >
-                      <X size={20} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Content */}
-              <div className="p-6">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Left Column - Event Info */}
-                  <div className="lg:col-span-2 space-y-6">
-                    {/* Event Details */}
-                    <div className="bg-gray-50 rounded-2xl p-5">
-                      <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-4 flex items-center gap-2">
-                        <Calendar size={18} />
-                        Event Details
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                            <Calendar size={16} className="text-blue-600" />
-                          </div>
-                          <div>
-                            <p className="text-xs text-[var(--planetary)] font-medium">Date</p>
-                            <p className="text-sm font-semibold text-[var(--galaxy)]">
-                              {new Date(selectedEvent.date).toLocaleDateString('en-US', { 
-                                weekday: 'long',
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric' 
-                              })}
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                            <Clock size={16} className="text-purple-600" />
-                          </div>
-                          <div>
-                            <p className="text-xs text-[var(--planetary)] font-medium">Time</p>
-                            <p className="text-sm font-semibold text-[var(--galaxy)]">{selectedEvent.time}</p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                            <MapPin size={16} className="text-green-600" />
-                          </div>
-                          <div>
-                            <p className="text-xs text-[var(--planetary)] font-medium">Location</p>
-                            <p className="text-sm font-semibold text-[var(--galaxy)]">{selectedEvent.location}</p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-                            <Users size={16} className="text-orange-600" />
-                          </div>
-                          <div>
-                            <p className="text-xs text-[var(--planetary)] font-medium">Capacity</p>
-                            <p className="text-sm font-semibold text-[var(--galaxy)]">{selectedEvent.totalSeats} seats</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* About Event */}
-                    <div className="bg-gray-50 rounded-2xl p-5">
-                      <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-3">About the Event</h3>
-                      <p className="text-[var(--planetary)] leading-relaxed">{selectedEvent.about}</p>
-                    </div>
-
-                    {/* Schedule and Awards - Left and Right */}
-                    <div className="grid grid-cols-2 gap-6">
-                      {/* Schedule - LEFT */}
-                      <div className="bg-gray-50 rounded-2xl p-5">
-                        <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-4 flex items-center gap-2">
-                          <Clock size={18} />
-                          Event Schedule
-                        </h3>
-                        <div className="space-y-3">
-                          {selectedEvent.schedule && selectedEvent.schedule.length > 0 ? (
-                            selectedEvent.schedule.map((item, index) => (
-                              <div key={index} className="flex items-center gap-4 p-3 bg-white rounded-xl">
-                                <div className="w-16 h-12 bg-[var(--planetary)] text-white rounded-lg flex items-center justify-center">
-                                  <span className="text-xs font-semibold">{item.time}</span>
-                                </div>
-                                <div className="flex-1">
-                                  <p className="text-sm font-medium text-[var(--galaxy)]">{item.activity}</p>
-                                </div>
-                              </div>
-                            ))
-                          ) : (
-                            <p className="text-sm text-[var(--planetary)]">No schedule available</p>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Awards & Prizes - RIGHT */}
-                      <div className="bg-gray-50 rounded-2xl p-5">
-                        <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-4 flex items-center gap-2">
-                          <Trophy size={18} />
-                          Awards & Prizes
-                        </h3>
-                        <div className="space-y-3">
-                          {selectedEvent.awards && selectedEvent.awards.length > 0 ? (
-                            selectedEvent.awards.map((award, index) => (
-                              <div key={index} className="flex items-center gap-3 p-3 bg-white rounded-xl">
-                                <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
-                                  <Award size={14} className="text-white" />
-                                </div>
-                                <span className="text-sm font-medium text-[var(--galaxy)] flex-1">{award}</span>
-                              </div>
-                            ))
-                          ) : (
-                            <p className="text-sm text-[var(--planetary)]">No awards specified</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Past Year Pictures */}
-                    {selectedEvent.pastImages && selectedEvent.pastImages.length > 0 && (
-                      <div className="bg-gray-50 rounded-2xl p-5">
-                        <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-4 flex items-center gap-2">
-                          <ImageIcon size={18} />
-                          Past Year Highlights
-                        </h3>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                          {selectedEvent.pastImages.map((image, index) => (
-                            <div key={index} className="aspect-video bg-gray-200 rounded-xl overflow-hidden group cursor-pointer">
-                              <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center group-hover:from-gray-300 group-hover:to-gray-400 transition-colors">
-                                <ImageIcon size={24} className="text-gray-500" />
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Right Column - Stats & Actions */}
-                  <div className="space-y-6">
-                    {/* Registration Stats */}
-                    <div className="bg-gradient-to-br from-[var(--planetary)] to-[var(--sapphire)] rounded-2xl p-5 text-white">
-                      <h3 className="text-lg font-semibold mb-4">Registration Status</h3>
-                      
-                      {/* Stats Cards */}
-                      <div className="space-y-3 mb-4">
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">Registered</span>
-                            <span className="text-xl font-bold">{selectedEvent.registrations}</span>
-                          </div>
-                        </div>
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">Seats Left</span>
-                            <span className="text-xl font-bold">{selectedEvent.totalSeats - selectedEvent.registrations}</span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Progress Bar */}
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Progress</span>
-                          <span>{Math.round((selectedEvent.registrations / selectedEvent.totalSeats) * 100)}%</span>
-                        </div>
-                        <div className="w-full bg-white/20 rounded-full h-3">
-                          <div 
-                            className="bg-white rounded-full h-3 transition-all duration-300"
-                            style={{ width: `${(selectedEvent.registrations / selectedEvent.totalSeats) * 100}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
