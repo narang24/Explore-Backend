@@ -6,8 +6,7 @@ import {
   Phone, 
   MapPin, 
   Calendar, 
-  BookOpen, 
-  GraduationCap,
+  Users, 
   Edit3, 
   Save, 
   X, 
@@ -22,41 +21,42 @@ import {
   Instagram,
   Facebook,
   Youtube,
-  Settings,
-  Shield,
-  Bell,
+  Crown,
+  Building,
+  Link,
   Eye,
-  Lock,
-  Smartphone,
-  UserCheck,
   Award,
-  Target
+  Target,
+  Activity
 } from 'lucide-react';
 import ClubAdminLayout from '../../components-club-admin/ClubAdminLayout';
 
-// Mock student data - this would come from backend
-const studentData = {
+// Mock club admin data - this would come from backend
+const clubAdminData = {
   id: 1,
   profilePicture: null, // URL to profile picture or null
-  name: 'John Doe',
-  rollNumber: '22CS001',
-  email: 'john.doe.22cs001@college.edu.in', // Non-editable
-  course: 'Bachelor of Technology',
-  branch: 'Computer Science & Engineering',
-  batch: '2022-2026',
-  institute: 'XYZ Institute of Technology',
-  phoneNumber: '+91 98765 43210',
-  dateOfBirth: '2004-05-15',
-  address: 'Ludhiana, Punjab, India',
-  admissionDate: '2022-08-15',
-  currentSemester: 5,
-  cgpa: 8.7,
+  name: 'Aanya Verma',
+  role: 'President', // President, Vice President, Secretary, etc.
+  clubName: 'Tech Club',
+  clubEmail: 'techclub@college.edu', // Optional
+  personalEmail: 'aanya.verma@gmail.com', // Editable
+  phoneNumber: '+91 98765 43210', // Editable
+  address: 'Ludhiana, Punjab, India', // Editable
+  
+  // Club Statistics (Non-editable)
+  eventsOrganised: 24,
+  activeMembers: 156,
+  clubEstablished: '2021',
+  
   // Editable fields
-  aboutMe: 'Passionate computer science student with interests in AI/ML, web development, and open source contributions. Always eager to learn new technologies and solve challenging problems.',
+  portfolioWebsite: 'https://aanyaverma.dev', // Editable
+  aboutClub: 'Tech Club is a vibrant community of technology enthusiasts at our college. We organize workshops, hackathons, and tech talks to help students explore cutting-edge technologies and build innovative projects. Our mission is to create a collaborative environment where students can learn, share ideas, and grow together in the field of technology.',
+  
+  // Social Links (Editable)
   socialLinks: [
-    { id: 1, platform: 'GitHub', url: 'https://github.com/johndoe', icon: 'Github' },
-    { id: 2, platform: 'LinkedIn', url: 'https://linkedin.com/in/johndoe', icon: 'Linkedin' },
-    { id: 3, platform: 'Twitter', url: 'https://twitter.com/johndoe', icon: 'Twitter' }
+    { id: 1, platform: 'GitHub', url: 'https://github.com/aanyaverma', icon: 'Github' },
+    { id: 2, platform: 'LinkedIn', url: 'https://linkedin.com/in/aanyaverma', icon: 'Linkedin' },
+    { id: 3, platform: 'Twitter', url: 'https://twitter.com/aanyaverma', icon: 'Twitter' }
   ]
 };
 
@@ -71,33 +71,63 @@ const socialPlatforms = [
 ];
 
 export default function ProfilePage() {
-  const [student, setStudent] = useState(studentData);
-  const [isEditingAbout, setIsEditingAbout] = useState(false);
+  const [admin, setAdmin] = useState(clubAdminData);
+  const [isEditingContact, setIsEditingContact] = useState(false);
   const [isEditingSocial, setIsEditingSocial] = useState(false);
-  const [tempAboutMe, setTempAboutMe] = useState(student.aboutMe);
-  const [tempSocialLinks, setTempSocialLinks] = useState([...student.socialLinks]);
+  const [isEditingPortfolio, setIsEditingPortfolio] = useState(false);
+  
+  // Temp states for editing
+  const [tempContactDetails, setTempContactDetails] = useState({
+    personalEmail: admin.personalEmail,
+    phoneNumber: admin.phoneNumber,
+    address: admin.address
+  });
+  const [tempSocialLinks, setTempSocialLinks] = useState([...admin.socialLinks]);
+  const [tempPortfolioWebsite, setTempPortfolioWebsite] = useState(admin.portfolioWebsite);
   const [showAddSocial, setShowAddSocial] = useState(false);
   const [newSocialPlatform, setNewSocialPlatform] = useState('');
   const [newSocialUrl, setNewSocialUrl] = useState('');
 
-  const handleSaveAbout = () => {
-    setStudent(prev => ({ ...prev, aboutMe: tempAboutMe }));
-    setIsEditingAbout(false);
+  // Contact details handlers
+  const handleSaveContact = () => {
+    setAdmin(prev => ({ 
+      ...prev, 
+      personalEmail: tempContactDetails.personalEmail,
+      phoneNumber: tempContactDetails.phoneNumber,
+      address: tempContactDetails.address
+    }));
+    setIsEditingContact(false);
   };
 
-  const handleCancelAbout = () => {
-    setTempAboutMe(student.aboutMe);
-    setIsEditingAbout(false);
+  const handleCancelContact = () => {
+    setTempContactDetails({
+      personalEmail: admin.personalEmail,
+      phoneNumber: admin.phoneNumber,
+      address: admin.address
+    });
+    setIsEditingContact(false);
   };
 
+  // Portfolio website handlers
+  const handleSavePortfolio = () => {
+    setAdmin(prev => ({ ...prev, portfolioWebsite: tempPortfolioWebsite }));
+    setIsEditingPortfolio(false);
+  };
+
+  const handleCancelPortfolio = () => {
+    setTempPortfolioWebsite(admin.portfolioWebsite);
+    setIsEditingPortfolio(false);
+  };
+
+  // Social links handlers
   const handleSaveSocial = () => {
-    setStudent(prev => ({ ...prev, socialLinks: [...tempSocialLinks] }));
+    setAdmin(prev => ({ ...prev, socialLinks: [...tempSocialLinks] }));
     setIsEditingSocial(false);
     setShowAddSocial(false);
   };
 
   const handleCancelSocial = () => {
-    setTempSocialLinks([...student.socialLinks]);
+    setTempSocialLinks([...admin.socialLinks]);
     setIsEditingSocial(false);
     setShowAddSocial(false);
     setNewSocialPlatform('');
@@ -138,24 +168,28 @@ export default function ProfilePage() {
   };
 
   const handleLogout = () => {
-    // Implement logout functionality
-    console.log('Logging out...');
+    if (window.confirm('Are you sure you want to logout?')) {
+      // Implement logout functionality
+      console.log('Logging out...');
+      // Redirect to login page
+      // window.location.href = '/login';
+    }
   };
 
   return (
     <ClubAdminLayout>
       <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Compact Profile Card */}
+          {/* Club Admin Profile Card */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               {/* Profile Picture and Basic Info */}
               <div className="text-center mb-6">
                 <div className="relative inline-block mb-4">
                   <div className="w-20 h-20 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-full flex items-center justify-center">
-                    {student.profilePicture ? (
+                    {admin.profilePicture ? (
                       <img 
-                        src={student.profilePicture} 
+                        src={admin.profilePicture} 
                         alt="Profile" 
                         className="w-full h-full rounded-full object-cover"
                       />
@@ -166,100 +200,65 @@ export default function ProfilePage() {
                   <button className="absolute -bottom-1 -right-1 w-6 h-6 bg-[var(--planetary)] hover:bg-[var(--sapphire)] rounded-full flex items-center justify-center text-white transition-colors">
                     <Camera size={12} />
                   </button>
+                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <Crown size={14} className="text-white" />
+                  </div>
                 </div>
-                <h2 className="text-lg font-bold text-[var(--galaxy)]">{student.name}</h2>
-                <p className="text-[var(--planetary)] text-sm">{student.rollNumber}</p>
+                <h2 className="text-lg font-bold text-[var(--galaxy)]">{admin.name}</h2>
+                <p className="text-[var(--planetary)] font-medium text-sm">{admin.role}@{admin.clubName}</p>
+                {admin.clubEmail && (
+                  <p className="text-gray-500 text-xs mt-1">{admin.clubEmail}</p>
+                )}
               </div>
 
-              {/* Compact Info */}
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center gap-2 text-xs">
-                  <Mail className="text-[var(--planetary)]" size={12} />
-                  <span className="text-[var(--galaxy)] truncate">{student.email}</span>
-                  <Lock className="text-gray-400 ml-auto" size={10} />
+              {/* Club Statistics */}
+              <div className="space-y-3 pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Activity className="text-[var(--planetary)]" size={12} />
+                    <span className="text-xs text-[var(--galaxy)]">Events Organised</span>
+                  </div>
+                  <span className="font-bold text-[var(--galaxy)] text-sm">{admin.eventsOrganised}</span>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs">
-                  <BookOpen className="text-[var(--planetary)]" size={12} />
-                  <span className="text-[var(--galaxy)]">{student.course}</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Users className="text-[var(--planetary)]" size={12} />
+                    <span className="text-xs text-[var(--galaxy)]">Active Members</span>
+                  </div>
+                  <span className="font-bold text-[var(--galaxy)] text-sm">{admin.activeMembers}</span>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs">
-                  <GraduationCap className="text-[var(--planetary)]" size={12} />
-                  <span className="text-[var(--galaxy)]">{student.branch}</span>
-                </div>
-
-                <div className="flex items-center gap-2 text-xs">
-                  <Calendar className="text-[var(--planetary)]" size={12} />
-                  <span className="text-[var(--galaxy)]">{student.batch}</span>
-                </div>
-
-                <div className="flex items-center gap-2 text-xs">
-                  <MapPin className="text-[var(--planetary)]" size={12} />
-                  <span className="text-[var(--galaxy)]">{student.address}</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Building className="text-[var(--planetary)]" size={12} />
+                    <span className="text-xs text-[var(--galaxy)]">Established</span>
+                  </div>
+                  <span className="font-bold text-[var(--galaxy)] text-sm">{admin.clubEstablished}</span>
                 </div>
               </div>
 
-              {/* Compact Stats */}
-              <div className="grid grid-cols-2 gap-3 pt-4 border-t border-gray-100">
-                <div className="text-center">
-                  <div className="text-lg font-bold text-[var(--galaxy)]">{student.cgpa}</div>
-                  <div className="text-xs text-[var(--planetary)]">CGPA</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-lg font-bold text-[var(--galaxy)]">{student.currentSemester}</div>
-                  <div className="text-xs text-[var(--planetary)]">Semester</div>
-                </div>
-              </div>
+              {/* Logout Button */}
+              <button
+                onClick={handleLogout}
+                className="w-full mt-6 flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl font-medium transition-colors"
+              >
+                <LogOut size={16} />
+                Logout
+              </button>
             </div>
           </div>
 
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-4">
-            {/* Personal Details - Compact */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <div className="p-4 border-b border-gray-100">
-                <h3 className="text-base font-semibold text-[var(--galaxy)]">Personal Details</h3>
-              </div>
-              
-              <div className="p-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="text-xs font-medium text-[var(--planetary)] mb-1 block">Phone Number</label>
-                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                      <Phone className="text-[var(--planetary)]" size={14} />
-                      <span className="text-[var(--galaxy)] text-sm">{student.phoneNumber}</span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-medium text-[var(--planetary)] mb-1 block">Date of Birth</label>
-                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                      <Calendar className="text-[var(--planetary)]" size={14} />
-                      <span className="text-[var(--galaxy)] text-sm">{new Date(student.dateOfBirth).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-medium text-[var(--planetary)] mb-1 block">Institute</label>
-                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                      <Shield className="text-[var(--planetary)]" size={14} />
-                      <span className="text-[var(--galaxy)] text-sm truncate">{student.institute}</span>
-                      <Lock className="text-gray-400 ml-auto" size={12} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* About Me Section - Compact */}
+            {/* Contact Details Section */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
               <div className="p-4 border-b border-gray-100">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-base font-semibold text-[var(--galaxy)]">About Me</h3>
-                  {!isEditingAbout && (
+                  <h3 className="text-base font-semibold text-[var(--galaxy)]">Contact Details</h3>
+                  {!isEditingContact && (
                     <button
-                      onClick={() => setIsEditingAbout(true)}
+                      onClick={() => setIsEditingContact(true)}
                       className="flex items-center gap-1 px-2 py-1 text-[var(--planetary)] hover:text-[var(--sapphire)] transition-colors"
                     >
                       <Edit3 size={14} />
@@ -270,25 +269,60 @@ export default function ProfilePage() {
               </div>
               
               <div className="p-4">
-                {isEditingAbout ? (
-                  <div className="space-y-3">
-                    <textarea
-                      value={tempAboutMe}
-                      onChange={(e) => setTempAboutMe(e.target.value)}
-                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent resize-none text-sm"
-                      rows={4}
-                      placeholder="Tell us about yourself, your interests, goals, and what makes you unique..."
-                    />
+                {isEditingContact ? (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-xs font-medium text-[var(--planetary)] mb-1 block">Personal Email</label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
+                        <input
+                          type="email"
+                          value={tempContactDetails.personalEmail}
+                          onChange={(e) => setTempContactDetails(prev => ({ ...prev, personalEmail: e.target.value }))}
+                          className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
+                          placeholder="your.email@gmail.com"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-medium text-[var(--planetary)] mb-1 block">Phone Number</label>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
+                        <input
+                          type="tel"
+                          value={tempContactDetails.phoneNumber}
+                          onChange={(e) => setTempContactDetails(prev => ({ ...prev, phoneNumber: e.target.value }))}
+                          className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
+                          placeholder="+91 98765 43210"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-medium text-[var(--planetary)] mb-1 block">Address</label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-3 text-gray-400" size={14} />
+                        <textarea
+                          value={tempContactDetails.address}
+                          onChange={(e) => setTempContactDetails(prev => ({ ...prev, address: e.target.value }))}
+                          className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm resize-none"
+                          rows={2}
+                          placeholder="Your address"
+                        />
+                      </div>
+                    </div>
+
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={handleSaveAbout}
+                        onClick={handleSaveContact}
                         className="flex items-center gap-1 px-3 py-1.5 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-lg text-xs font-medium transition-colors"
                       >
                         <Save size={12} />
                         Save
                       </button>
                       <button
-                        onClick={handleCancelAbout}
+                        onClick={handleCancelContact}
                         className="flex items-center gap-1 px-3 py-1.5 text-gray-600 hover:text-gray-800 transition-colors text-xs"
                       >
                         <X size={12} />
@@ -297,16 +331,110 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <p className="text-[var(--galaxy)] text-sm leading-relaxed">
-                      {student.aboutMe || "No description added yet. Click edit to add information about yourself."}
-                    </p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Mail className="text-[var(--planetary)]" size={16} />
+                      <div>
+                        <p className="text-xs font-medium text-[var(--planetary)]">Personal Email</p>
+                        <p className="text-sm font-semibold text-[var(--galaxy)] truncate">{admin.personalEmail}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Phone className="text-[var(--planetary)]" size={16} />
+                      <div>
+                        <p className="text-xs font-medium text-[var(--planetary)]">Phone</p>
+                        <p className="text-sm font-semibold text-[var(--galaxy)]">{admin.phoneNumber}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <MapPin className="text-[var(--planetary)]" size={16} />
+                      <div>
+                        <p className="text-xs font-medium text-[var(--planetary)]">Location</p>
+                        <p className="text-sm font-semibold text-[var(--galaxy)] truncate">{admin.address}</p>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Social Links Section - Compact */}
+            {/* Portfolio Website Section */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="p-4 border-b border-gray-100">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-semibold text-[var(--galaxy)]">Portfolio Website</h3>
+                  {!isEditingPortfolio && (
+                    <button
+                      onClick={() => setIsEditingPortfolio(true)}
+                      className="flex items-center gap-1 px-2 py-1 text-[var(--planetary)] hover:text-[var(--sapphire)] transition-colors"
+                    >
+                      <Edit3 size={14} />
+                      <span className="text-xs font-medium">Edit</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+              
+              <div className="p-4">
+                {isEditingPortfolio ? (
+                  <div className="space-y-3">
+                    <div className="relative">
+                      <Link className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
+                      <input
+                        type="url"
+                        value={tempPortfolioWebsite}
+                        onChange={(e) => setTempPortfolioWebsite(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
+                        placeholder="https://yourportfolio.com"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={handleSavePortfolio}
+                        className="flex items-center gap-1 px-3 py-1.5 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-lg text-xs font-medium transition-colors"
+                      >
+                        <Save size={12} />
+                        Save
+                      </button>
+                      <button
+                        onClick={handleCancelPortfolio}
+                        className="flex items-center gap-1 px-3 py-1.5 text-gray-600 hover:text-gray-800 transition-colors text-xs"
+                      >
+                        <X size={12} />
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    {admin.portfolioWebsite ? (
+                      <a
+                        href={admin.portfolioWebsite}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors group"
+                      >
+                        <Globe className="text-[var(--planetary)] group-hover:scale-110 transition-transform" size={16} />
+                        <div className="flex-1">
+                          <p className="font-medium text-[var(--galaxy)] text-sm">Personal Portfolio</p>
+                          <p className="text-xs text-[var(--planetary)] truncate">{admin.portfolioWebsite}</p>
+                        </div>
+                        <Eye className="text-gray-400 group-hover:text-[var(--planetary)] transition-colors" size={12} />
+                      </a>
+                    ) : (
+                      <div className="text-center py-6">
+                        <Globe className="text-gray-400 mx-auto mb-2" size={20} />
+                        <p className="text-[var(--planetary)] text-sm">No portfolio website added</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Social Links Section */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
               <div className="p-4 border-b border-gray-100">
                 <div className="flex items-center justify-between">
@@ -424,9 +552,9 @@ export default function ProfilePage() {
                   </div>
                 ) : (
                   <div>
-                    {student.socialLinks.length > 0 ? (
+                    {admin.socialLinks.length > 0 ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {student.socialLinks.map((link) => {
+                        {admin.socialLinks.map((link) => {
                           const IconComponent = getIconComponent(link.icon);
                           return (
                             <a
@@ -454,6 +582,24 @@ export default function ProfilePage() {
                     )}
                   </div>
                 )}
+              </div>
+            </div>
+
+            {/* About Our Club Section - Non-editable */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="p-4 border-b border-gray-100">
+                <div className="flex items-center gap-2">
+                  <Target className="text-[var(--planetary)]" size={18} />
+                  <h3 className="text-base font-semibold text-[var(--galaxy)]">About Our Club</h3>
+                </div>
+              </div>
+              
+              <div className="p-4">
+                <div className="bg-gradient-to-r from-[var(--sky)] to-[var(--sky)]/50 rounded-lg p-4">
+                  <p className="text-[var(--galaxy)] text-sm leading-relaxed">
+                    {admin.aboutClub}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
