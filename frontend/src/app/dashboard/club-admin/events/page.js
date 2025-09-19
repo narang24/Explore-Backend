@@ -270,7 +270,7 @@ export default function EventsPage() {
     }
   };
 
-  // Ultra Simple Event Card Component
+  // Enhanced Event Card Component with highlighted registration numbers
   const EventCard = ({ event }) => (
     <div 
       onClick={() => handleViewEvent(event)}
@@ -294,10 +294,13 @@ export default function EventsPage() {
       
       <div className="flex items-center justify-between text-xs">
         <span className="text-[var(--planetary)]">
-          <span className="font-medium text-[var(--galaxy)]">{event.registrations}</span> registered
+          <span className="px-2 py-1 bg-[var(--planetary)] text-white rounded-full font-medium">
+            {event.registrations}/{event.totalSeats}
+          </span>
+          <span className="ml-2">registered</span>
         </span>
-        <span className="text-[var(--planetary)]">
-          <span className="font-medium text-[var(--galaxy)]">{event.totalSeats - event.registrations}</span> left
+        <span className="px-2 py-1 bg-orange-100 text-orange-600 rounded-full font-medium">
+          {event.totalSeats - event.registrations} left
         </span>
       </div>
     </div>
@@ -627,52 +630,57 @@ export default function EventsPage() {
           </div>
         )}
 
-        {/* Event Details Modal */}
+        {/* Event Details Modal - Compact and Improved */}
         {showEventModal && selectedEvent && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto">
               {/* Header */}
-              <div className="p-6 border-b border-gray-100 sticky top-0 bg-white rounded-t-2xl z-10">
+              <div className="p-5 border-b border-gray-100 sticky top-0 bg-white rounded-t-2xl z-10">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
+                    <div className="w-14 h-14 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-2xl flex items-center justify-center text-white text-xl shadow-lg">
                       {selectedEvent.clubLogo}
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold text-[var(--galaxy)]">{selectedEvent.name}</h2>
-                      <p className="text-[var(--planetary)] mt-1">{selectedEvent.club}</p>
-                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium mt-2 ${
-                        selectedEvent.status === 'live' ? 'bg-green-100 text-green-700' :
-                        selectedEvent.status === 'active' ? 'bg-blue-100 text-blue-700' :
-                        'bg-orange-100 text-orange-700'
-                      }`}>
-                        <div className={`w-1.5 h-1.5 rounded-full ${
-                          selectedEvent.status === 'live' ? 'bg-green-500' :
-                          selectedEvent.status === 'active' ? 'bg-blue-500' :
-                          'bg-orange-500'
-                        }`}></div>
-                        {selectedEvent.status.charAt(0).toUpperCase() + selectedEvent.status.slice(1)}
-                      </span>
+                      <h2 className="text-lg font-bold text-[var(--galaxy)]">{selectedEvent.name}</h2>
+                      <p className="text-[var(--planetary)]">{selectedEvent.club}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                          selectedEvent.status === 'live' ? 'bg-green-100 text-green-700' :
+                          selectedEvent.status === 'active' ? 'bg-blue-100 text-blue-700' :
+                          'bg-orange-100 text-orange-700'
+                        }`}>
+                          <div className={`w-1.5 h-1.5 rounded-full ${
+                            selectedEvent.status === 'live' ? 'bg-green-500' :
+                            selectedEvent.status === 'active' ? 'bg-blue-500' :
+                            'bg-orange-500'
+                          }`}></div>
+                          {selectedEvent.status.charAt(0).toUpperCase() + selectedEvent.status.slice(1)}
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-[var(--sky)] text-[var(--planetary)] rounded-full text-xs font-medium">
+                          <Star size={12} />
+                          {selectedEvent.category}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button 
-                      className="flex items-center gap-2 px-3 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-lg text-sm font-medium transition-colors"
-                    >
+                  <div className="flex items-center gap-3">
+                    <button className="flex items-center gap-2 px-3 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-lg text-sm font-medium transition-colors">
                       <Edit3 size={14} />
                       Edit
                     </button>
                     <button 
                       onClick={() => handleDeleteEvent(selectedEvent.id)}
+                      className="flex items-center gap-2 px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors"
                     >
                       <Trash2 size={14} />
                       Delete
                     </button>
                     <button 
                       onClick={() => setShowEventModal(false)}
-                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors ml-2"
                     >
-                      <X size={18} />
+                      <X size={20} />
                     </button>
                   </div>
                 </div>
@@ -745,27 +753,54 @@ export default function EventsPage() {
                       <p className="text-[var(--planetary)] leading-relaxed">{selectedEvent.about}</p>
                     </div>
 
-                    {/* Schedule */}
-                    {selectedEvent.schedule && selectedEvent.schedule.length > 0 && (
+                    {/* Schedule and Awards - Left and Right */}
+                    <div className="grid grid-cols-2 gap-6">
+                      {/* Schedule - LEFT */}
                       <div className="bg-gray-50 rounded-2xl p-5">
                         <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-4 flex items-center gap-2">
                           <Clock size={18} />
                           Event Schedule
                         </h3>
                         <div className="space-y-3">
-                          {selectedEvent.schedule.map((item, index) => (
-                            <div key={index} className="flex items-center gap-4 p-3 bg-white rounded-xl">
-                              <div className="w-16 h-12 bg-[var(--planetary)] text-white rounded-lg flex items-center justify-center">
-                                <span className="text-xs font-semibold">{item.time}</span>
+                          {selectedEvent.schedule && selectedEvent.schedule.length > 0 ? (
+                            selectedEvent.schedule.map((item, index) => (
+                              <div key={index} className="flex items-center gap-4 p-3 bg-white rounded-xl">
+                                <div className="w-16 h-12 bg-[var(--planetary)] text-white rounded-lg flex items-center justify-center">
+                                  <span className="text-xs font-semibold">{item.time}</span>
+                                </div>
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-[var(--galaxy)]">{item.activity}</p>
+                                </div>
                               </div>
-                              <div className="flex-1">
-                                <p className="text-sm font-medium text-[var(--galaxy)]">{item.activity}</p>
-                              </div>
-                            </div>
-                          ))}
+                            ))
+                          ) : (
+                            <p className="text-sm text-[var(--planetary)]">No schedule available</p>
+                          )}
                         </div>
                       </div>
-                    )}
+
+                      {/* Awards & Prizes - RIGHT */}
+                      <div className="bg-gray-50 rounded-2xl p-5">
+                        <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-4 flex items-center gap-2">
+                          <Trophy size={18} />
+                          Awards & Prizes
+                        </h3>
+                        <div className="space-y-3">
+                          {selectedEvent.awards && selectedEvent.awards.length > 0 ? (
+                            selectedEvent.awards.map((award, index) => (
+                              <div key={index} className="flex items-center gap-3 p-3 bg-white rounded-xl">
+                                <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
+                                  <Award size={14} className="text-white" />
+                                </div>
+                                <span className="text-sm font-medium text-[var(--galaxy)] flex-1">{award}</span>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-sm text-[var(--planetary)]">No awards specified</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
 
                     {/* Past Year Pictures */}
                     {selectedEvent.pastImages && selectedEvent.pastImages.length > 0 && (
@@ -822,54 +857,6 @@ export default function EventsPage() {
                           ></div>
                         </div>
                       </div>
-                    </div>
-
-                    {/* Awards & Prizes */}
-                    {selectedEvent.awards && selectedEvent.awards.length > 0 && (
-                      <div className="bg-gray-50 rounded-2xl p-5">
-                        <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-4 flex items-center gap-2">
-                          <Trophy size={18} />
-                          Awards & Prizes
-                        </h3>
-                        <div className="space-y-3">
-                          {selectedEvent.awards.map((award, index) => (
-                            <div key={index} className="flex items-center gap-3 p-3 bg-white rounded-xl">
-                              <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
-                                <Award size={14} className="text-white" />
-                              </div>
-                              <span className="text-sm font-medium text-[var(--galaxy)] flex-1">{award}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Quick Actions */}
-                    <div className="bg-gray-50 rounded-2xl p-5">
-                      <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-4">Quick Actions</h3>
-                      <div className="space-y-3">
-                        <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl font-medium transition-colors">
-                          <Eye size={16} />
-                          View Participants
-                        </button>
-                        <button className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-[var(--planetary)] text-[var(--planetary)] hover:bg-[var(--planetary)] hover:text-white rounded-xl font-medium transition-colors">
-                          <Users size={16} />
-                          Export List
-                        </button>
-                        <button className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 text-[var(--galaxy)] hover:bg-gray-50 rounded-xl font-medium transition-colors">
-                          <Settings size={16} />
-                          Event Settings
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Event Category */}
-                    <div className="bg-gray-50 rounded-2xl p-5">
-                      <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-3">Category</h3>
-                      <span className="inline-flex items-center gap-2 px-3 py-2 bg-[var(--sky)] text-[var(--planetary)] rounded-xl font-medium">
-                        <Star size={14} />
-                        {selectedEvent.category}
-                      </span>
                     </div>
                   </div>
                 </div>
