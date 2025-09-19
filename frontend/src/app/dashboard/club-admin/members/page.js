@@ -797,7 +797,7 @@ export default function MembersPage() {
         {/* Member Details Modal */}
         {showMemberDetailsModal && selectedMember && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full">
+            <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6 border-b border-gray-100">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-[var(--galaxy)]">Member Details</h3>
