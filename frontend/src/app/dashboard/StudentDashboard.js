@@ -2,6 +2,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
+import StudentLayout from './components-student/StudentLayout';
+import DashboardContent from './components-student/DashboardContent';
 
 export default function StudentDashboard() {
   const { user, loading } = useAuth();

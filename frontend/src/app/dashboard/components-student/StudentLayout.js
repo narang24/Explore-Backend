@@ -10,9 +10,11 @@ import {
   User,
   LogOut,
   Settings,
-  BarChart3,
+  Award,
   MessageSquare,
-  Home
+  Home,
+  Zap,
+  Briefcase
 } from 'lucide-react';
 
 export default function StudentLayout({ children }) {
@@ -31,6 +33,49 @@ export default function StudentLayout({ children }) {
     router.push(href);
   };
 
+  // Get header content based on current route
+  const getHeaderContent = () => {
+    const tabHeaders = {
+      '/dashboard/student/overview': {
+        title: `Good Evening, John! 👋`,
+        subtitle: 'Tuesday, September 16th 2025',
+        isMainDashboard: true
+      },
+      '/dashboard': {
+        title: `Good Evening, John! 👋`,
+        subtitle: 'Tuesday, September 16th 2025',
+        isMainDashboard: true
+      },
+      '/dashboard/student/achievements': {
+        title: `Achievements Hub 🏆`,
+        subtitle: 'Track your accomplishments and celebrate your success',
+        isMainDashboard: false
+      },
+      '/dashboard/student/activities': {
+        title: `Activities Center ⚡`,
+        subtitle: 'Discover and participate in exciting campus activities',
+        isMainDashboard: false
+      },
+      '/dashboard/student/portfolio': {
+        title: `Your Portfolio 📂`,
+        subtitle: 'Showcase your projects and build your professional presence',
+        isMainDashboard: false
+      },
+      '/dashboard/student/profile': {
+        title: `Your Profile ✨`,
+        subtitle: 'Personalize your space and manage account settings',
+        isMainDashboard: false
+      },
+      '/dashboard/student/feedback': {
+        title: `Feedback Corner 💬`,
+        subtitle: 'Share your thoughts and help us improve the experience',
+        isMainDashboard: false
+      }
+    };
+
+    return tabHeaders[pathname] || tabHeaders['/dashboard/student/overview'];
+  };
+
   const navigationItems = [
     { 
       name: 'Dashboard', 
@@ -39,22 +84,22 @@ export default function StudentLayout({ children }) {
       active: activeTab === '/dashboard/student/overview' || activeTab === '/dashboard'
     },
     { 
-      name: 'Clubs', 
-      href: '/dashboard/student/clubs', 
-      icon: Users,
-      active: activeTab === '/dashboard/student/clubs'
+      name: 'Achievements', 
+      href: '/dashboard/student/achievements', 
+      icon: Award,
+      active: activeTab === '/dashboard/student/achievements'
     },
     { 
-      name: 'Events', 
-      href: '/dashboard/student/events', 
-      icon: Calendar,
-      active: activeTab === '/dashboard/student/events'
+      name: 'Activities', 
+      href: '/dashboard/student/activities', 
+      icon: Zap,
+      active: activeTab === '/dashboard/student/activities'
     },
     { 
-      name: 'Report', 
-      href: '/dashboard/student/report', 
-      icon: BarChart3,
-      active: activeTab === '/dashboard/student/report'
+      name: 'Portfolio', 
+      href: '/dashboard/student/portfolio', 
+      icon: Briefcase,
+      active: activeTab === '/dashboard/student/portfolio'
     },
     { 
       name: 'Profile', 
@@ -69,6 +114,8 @@ export default function StudentLayout({ children }) {
       active: activeTab === '/dashboard/student/feedback'
     }
   ];
+
+  const headerContent = getHeaderContent();
 
   return (
     <div className="h-screen bg-gray-100 flex p-5 pr-0">
@@ -121,7 +168,7 @@ export default function StudentLayout({ children }) {
               return (
                 <li key={item.name}>
                   <button
-                    onClick={() => router.push(item.href)}
+                    onClick={() => handleNavigation(item.href)}
                     className={`w-full flex items-center gap-3 px-3 py-3.5 rounded-xl text-[13px] font-medium cursor-pointer transition-all duration-200 ${
                       item.active
                         ? 'shadow-lg shadow-gray-300/80 text-white bg-[var(--planetary)]'
@@ -157,8 +204,8 @@ export default function StudentLayout({ children }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-[var(--galaxy)]">Good Evening, John! 👋</h1>
-                <p className="text-[var(--planetary)] text-sm tracking-wide">Tuesday, September 16th 2025</p>
+                <h1 className="text-2xl font-bold text-[var(--galaxy)]">{headerContent.title}</h1>
+                <p className="text-[var(--planetary)] text-sm tracking-wide">{headerContent.subtitle}</p>
               </div>
             </div>
 
