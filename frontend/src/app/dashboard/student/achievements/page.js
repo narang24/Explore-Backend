@@ -34,12 +34,37 @@ const achievementsData = {
 
 const coCurrenticularAchievements = [
   {
+    id: 3,
+    activityName: 'Web Development Bootcamp',
+    organizingClub: 'Coding Club',
+    date: '2024-12-10',
+    creditsEarned: 3,
+    isApproved: false,
+    isPending: false,
+    certificatesCount: 0,
+    clubIcon: '💻',
+    category: 'Workshop'
+  },
+  {
+    id: 4,
+    activityName: 'React.js Workshop',
+    organizingClub: 'Tech Society',
+    date: '2024-12-05',
+    creditsEarned: 2,
+    isApproved: false,
+    isPending: true,
+    certificatesCount: 0,
+    clubIcon: '⚛️',
+    category: 'Workshop'
+  },
+  {
     id: 1,
     activityName: 'Machine Learning Workshop',
     organizingClub: 'GDSC TIET',
     date: '2024-11-15',
     creditsEarned: 4,
     isApproved: true,
+    isPending: false,
     certificatesCount: 2,
     clubIcon: '🚀',
     category: 'Workshop'
@@ -51,35 +76,14 @@ const coCurrenticularAchievements = [
     date: '2024-10-20',
     creditsEarned: 6,
     isApproved: true,
+    isPending: false,
     certificatesCount: 1,
     clubIcon: '⚡',
     category: 'Conference'
-  },
-  {
-    id: 3,
-    activityName: 'Web Development Bootcamp',
-    organizingClub: 'Coding Club',
-    date: '2024-12-10',
-    creditsEarned: 3,
-    isApproved: false,
-    certificatesCount: 0,
-    clubIcon: '💻',
-    category: 'Workshop'
   }
 ];
 
 const extraCurricularAchievements = [
-  {
-    id: 4,
-    activityName: 'Hackathon Winner - Code Sprint 2024',
-    organizingClub: 'Tech Society',
-    date: '2024-09-25',
-    creditsEarned: 8,
-    isApproved: true,
-    certificatesCount: 3,
-    clubIcon: '🏆',
-    category: 'Competition'
-  },
   {
     id: 5,
     activityName: 'Cultural Fest Performance',
@@ -87,9 +91,34 @@ const extraCurricularAchievements = [
     date: '2024-11-30',
     creditsEarned: 5,
     isApproved: false,
+    isPending: false,
     certificatesCount: 0,
     clubIcon: '🎭',
     category: 'Cultural'
+  },
+  {
+    id: 7,
+    activityName: 'Photography Competition',
+    organizingClub: 'Photography Club',
+    date: '2024-12-01',
+    creditsEarned: 3,
+    isApproved: false,
+    isPending: true,
+    certificatesCount: 0,
+    clubIcon: '📸',
+    category: 'Competition'
+  },
+  {
+    id: 4,
+    activityName: 'Hackathon Winner - Code Sprint 2024',
+    organizingClub: 'Tech Society',
+    date: '2024-09-25',
+    creditsEarned: 8,
+    isApproved: true,
+    isPending: false,
+    certificatesCount: 3,
+    clubIcon: '🏆',
+    category: 'Competition'
   },
   {
     id: 6,
@@ -98,6 +127,7 @@ const extraCurricularAchievements = [
     date: '2024-10-15',
     creditsEarned: 2,
     isApproved: true,
+    isPending: false,
     certificatesCount: 1,
     clubIcon: '❤️',
     category: 'Social Service'
@@ -250,24 +280,67 @@ function UploadModal({ isOpen, onClose, achievement }) {
 }
 
 export default function AchievementsPage() {
-  const [searchTerm, setSearchTerm] = useState('');
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedAchievement, setSelectedAchievement] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('status'); // default sort by status
 
   const handleRequestApproval = (achievement) => {
     setSelectedAchievement(achievement);
     setShowUploadModal(true);
   };
 
-  const filteredCoCurrenticular = coCurrenticularAchievements.filter(achievement =>
-    achievement.activityName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    achievement.organizingClub.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Function to get status priority for sorting
+  const getStatusPriority = (achievement) => {
+    if (!achievement.isApproved && !achievement.isPending) return 1; // Request Approval
+    if (achievement.isPending) return 2; // Pending
+    if (achievement.isApproved) return 3; // Approved
+    return 4;
+  };
 
-  const filteredExtraCurricular = extraCurricularAchievements.filter(achievement =>
-    achievement.activityName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    achievement.organizingClub.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Function to sort achievements
+  const sortAchievements = (achievements) => {
+    return [...achievements].sort((a, b) => {
+      switch (sortBy) {
+        case 'status':
+          return getStatusPriority(a) - getStatusPriority(b);
+        case 'date':
+          return new Date(b.date) - new Date(a.date); // Most recent first
+        case 'club':
+          return a.organizingClub.localeCompare(b.organizingClub);
+        case 'credits':
+          return b.creditsEarned - a.creditsEarned; // Highest first
+        case 'activity':
+          return a.activityName.localeCompare(b.activityName);
+        case 'category':
+          return a.category.localeCompare(b.category);
+        default:
+          return 0;
+      }
+    });
+  };
+
+  // Function to filter achievements
+  const filterAchievements = (achievements) => {
+    return achievements.filter(achievement =>
+      achievement.activityName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      achievement.organizingClub.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      achievement.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
+  // Get filtered and sorted achievements
+  const filteredCoCurrenticular = sortAchievements(filterAchievements(coCurrenticularAchievements));
+  const filteredExtraCurricular = sortAchievements(filterAchievements(extraCurricularAchievements));
+
+  const sortOptions = [
+    { value: 'status', label: 'Status' },
+    { value: 'date', label: 'Date' },
+    { value: 'club', label: 'Club' },
+    { value: 'credits', label: 'Credits' },
+    { value: 'activity', label: 'Activity Name' },
+    { value: 'category', label: 'Category' }
+  ];
 
   return (
     <StudentLayout>
@@ -314,6 +387,82 @@ export default function AchievementsPage() {
           </div>
         </div>
 
+        {/* Search and Sort Bar */}
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-4">
+          <div className="flex items-center gap-4">
+            {/* Search Bar */}
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              <input
+                type="text"
+                placeholder="Search achievements by name, club, or category..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent bg-white text-sm"
+              />
+            </div>
+            
+            {/* Sort Dropdown */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Sort by:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent bg-white text-sm font-medium text-[var(--galaxy)] min-w-[120px]"
+              >
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Results Count */}
+            <div className="text-sm text-gray-500 whitespace-nowrap">
+              {filteredCoCurrenticular.length + filteredExtraCurricular.length} result{filteredCoCurrenticular.length + filteredExtraCurricular.length !== 1 ? 's' : ''}
+            </div>
+          </div>
+          
+          {/* Active Filters */}
+          {(searchTerm || sortBy !== 'status') && (
+            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+              <span className="text-xs font-medium text-gray-600">Active filters:</span>
+              {searchTerm && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 bg-[var(--sky)] text-[var(--planetary)] rounded-lg text-xs font-medium">
+                  Search: "{searchTerm}"
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="hover:bg-[var(--planetary)] hover:text-white rounded p-0.5 transition-colors"
+                  >
+                    <X size={12} />
+                  </button>
+                </span>
+              )}
+              {sortBy !== 'status' && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 bg-[var(--sky)] text-[var(--planetary)] rounded-lg text-xs font-medium">
+                  Sort: {sortOptions.find(opt => opt.value === sortBy)?.label}
+                  <button
+                    onClick={() => setSortBy('status')}
+                    className="hover:bg-[var(--planetary)] hover:text-white rounded p-0.5 transition-colors"
+                  >
+                    <X size={12} />
+                  </button>
+                </span>
+              )}
+              <button
+                onClick={() => {
+                  setSearchTerm('');
+                  setSortBy('status');
+                }}
+                className="text-xs text-[var(--planetary)] hover:text-[var(--sapphire)] font-medium transition-colors ml-auto"
+              >
+                Clear all
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Achievements Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Co-curricular Achievements Section */}
@@ -321,19 +470,7 @@ export default function AchievementsPage() {
             <div className="p-4 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-[var(--galaxy)]">Co-curricular Achievements</h2>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-[var(--planetary)]">{filteredCoCurrenticular.length}</span>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
-                    <input
-                      type="text"
-                      placeholder="Search..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent bg-white text-xs w-32"
-                    />
-                  </div>
-                </div>
+                <span className="text-sm text-[var(--planetary)]">{filteredCoCurrenticular.length}</span>
               </div>
               <p className="text-[var(--planetary)] text-sm mt-1">Workshops, seminars & conferences</p>
             </div>
@@ -352,17 +489,6 @@ export default function AchievementsPage() {
                           <div className="flex-1">
                             <h3 className="font-semibold text-[var(--galaxy)] text-sm mb-1">{achievement.activityName}</h3>
                             <p className="text-xs text-[var(--planetary)]">{achievement.organizingClub}</p>
-                            
-                            <div className="flex items-center gap-2 mt-2">
-                              <Calendar size={12} className="text-[var(--planetary)]" />
-                              <span className="text-xs text-[var(--planetary)]">
-                                {new Date(achievement.date).toLocaleDateString('en-US', { 
-                                  month: 'short', 
-                                  day: 'numeric',
-                                  year: 'numeric'
-                                })}
-                              </span>
-                            </div>
                             
                             <div className="mt-2">
                               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
@@ -388,6 +514,11 @@ export default function AchievementsPage() {
                                     {achievement.certificatesCount} Certificate{achievement.certificatesCount !== 1 ? 's' : ''}
                                   </p>
                                 </div>
+                              ) : achievement.isPending ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+                                  <Clock size={10} />
+                                  Pending
+                                </span>
                               ) : (
                                 <button
                                   onClick={() => handleRequestApproval(achievement)}
@@ -412,7 +543,7 @@ export default function AchievementsPage() {
                   </div>
                   <h3 className="font-semibold text-[var(--galaxy)] mb-1">No achievements found</h3>
                   <p className="text-[var(--planetary)] text-xs">
-                    {searchTerm ? 'Try different search terms' : 'Start participating in workshops!'}
+                    {searchTerm ? 'No achievements match your search' : 'Start participating in workshops!'}
                   </p>
                 </div>
               )}
@@ -424,19 +555,7 @@ export default function AchievementsPage() {
             <div className="p-4 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-[var(--galaxy)]">Extra-curricular Achievements</h2>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-[var(--planetary)]">{filteredExtraCurricular.length}</span>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
-                    <input
-                      type="text"
-                      placeholder="Search..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent bg-white text-xs w-32"
-                    />
-                  </div>
-                </div>
+                <span className="text-sm text-[var(--planetary)]">{filteredExtraCurricular.length}</span>
               </div>
               <p className="text-[var(--planetary)] text-sm mt-1">Competitions, cultural events & volunteering</p>
             </div>
@@ -455,17 +574,6 @@ export default function AchievementsPage() {
                           <div className="flex-1">
                             <h3 className="font-semibold text-[var(--galaxy)] text-sm mb-1">{achievement.activityName}</h3>
                             <p className="text-xs text-[var(--planetary)]">{achievement.organizingClub}</p>
-                            
-                            <div className="flex items-center gap-2 mt-2">
-                              <Calendar size={12} className="text-[var(--planetary)]" />
-                              <span className="text-xs text-[var(--planetary)]">
-                                {new Date(achievement.date).toLocaleDateString('en-US', { 
-                                  month: 'short', 
-                                  day: 'numeric',
-                                  year: 'numeric'
-                                })}
-                              </span>
-                            </div>
                             
                             <div className="mt-2">
                               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
@@ -491,6 +599,11 @@ export default function AchievementsPage() {
                                     {achievement.certificatesCount} Certificate{achievement.certificatesCount !== 1 ? 's' : ''}
                                   </p>
                                 </div>
+                              ) : achievement.isPending ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+                                  <Clock size={10} />
+                                  Pending
+                                </span>
                               ) : (
                                 <button
                                   onClick={() => handleRequestApproval(achievement)}
@@ -515,7 +628,7 @@ export default function AchievementsPage() {
                   </div>
                   <h3 className="font-semibold text-[var(--galaxy)] mb-1">No achievements found</h3>
                   <p className="text-[var(--planetary)] text-xs">
-                    {searchTerm ? 'Try different search terms' : 'Start participating in competitions!'}
+                    {searchTerm ? 'No achievements match your search' : 'Start participating in competitions!'}
                   </p>
                 </div>
               )}
