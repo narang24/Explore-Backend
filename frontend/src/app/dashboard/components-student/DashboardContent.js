@@ -8,7 +8,14 @@ import {
   GraduationCap,
   MapPin,
   Clock,
-  MoreVertical
+  MoreVertical,
+  BookOpen,
+  Star,
+  Bell,
+  AlertCircle,
+  CheckCircle,
+  TrendingUp,
+  Zap
 } from 'lucide-react';
 
 export default function DashboardContent() {
@@ -16,8 +23,13 @@ export default function DashboardContent() {
   
   const dashboardData = {
     student: {
-      joinedClubsCount: 3,
-      activitiesCount: 8
+      currentYear: '3rd',
+      branch: 'Computer Science & Engineering',
+      cgpa: '8.7',
+      sgpa: '9.1',
+      totalCredits: 42,
+      totalAchievements: 8,
+      totalActivities: 15
     }
   };
 
@@ -25,29 +37,43 @@ export default function DashboardContent() {
     <>
       {/* Stats Cards Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {/* Joined Clubs Card */}
+        {/* Academic Data Card */}
         <div className="bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-3xl p-6 text-white relative overflow-hidden shadow-sm hover:shadow-md">
           <div className="flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                <Users className="text-white" size={18} />
+                <GraduationCap className="text-white" size={18} />
               </div>
             </div>
-            <p className="text-white/80 text-sm mb-1">Enrolled Clubs</p>
-            <p className="text-3xl font-bold">{dashboardData?.student?.joinedClubsCount || 0}</p>
+            <p className="text-white/80 text-sm mb-1">Academic Performance</p>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-white/80">Year:</span>
+                <span className="text-lg font-bold">{dashboardData?.student?.currentYear}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-white/80">CGPA:</span>
+                <span className="text-lg font-bold">{dashboardData?.student?.cgpa}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-white/80">SGPA:</span>
+                <span className="text-lg font-bold">{dashboardData?.student?.sgpa}</span>
+              </div>
+            </div>
           </div>
           <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full"></div>
         </div>
 
-        {/* Activities Card */}
+        {/* Total Credits Card */}
         <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md">
           <div className="flex items-center justify-between mb-4">
             <div className="w-8 h-8 bg-[var(--sky)] rounded-lg flex items-center justify-center">
-              <Activity className="text-[var(--planetary)]" size={18} />
+              <BookOpen className="text-[var(--planetary)]" size={18} />
             </div>
           </div>
-          <p className="text-gray-600 text-sm mb-1">Total Activities</p>
-          <p className="text-2xl font-bold text-gray-900 mb-1">{dashboardData?.student?.activitiesCount || 0}</p>
+          <p className="text-gray-600 text-sm mb-1">Total Credits Earned</p>
+          <p className="text-2xl font-bold text-gray-900 mb-1">{dashboardData?.student?.totalCredits}</p>
+          <p className="text-xs text-gray-500">Co-curricular + Extra-curricular</p>
         </div>
 
         {/* Achievements Card */}
@@ -58,44 +84,43 @@ export default function DashboardContent() {
             </div>
           </div>
           <p className="text-gray-600 text-sm mb-1">Total Achievements</p>
-          <p className="text-2xl font-bold text-gray-900 mb-1">2</p>
+          <p className="text-2xl font-bold text-gray-900 mb-1">{dashboardData?.student?.totalAchievements}</p>
+          <p className="text-xs text-gray-500">Certificates & Awards</p>
         </div>
 
-        {/* Year Card */}
+        {/* Activities Card */}
         <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md">
-          <div className="flex flex-1 justify-between mb-4">
+          <div className="flex items-center justify-between mb-4">
             <div className="w-8 h-8 bg-[var(--sky)] rounded-lg flex items-center justify-center">
-              <GraduationCap className="text-[var(--planetary)]" size={18} />
-            </div>
-            <div className='text-right'>
-              <p className="text-gray-600 text-sm mb-1">Current Academic Year</p>
-              <p className="text-xl font-bold text-gray-900 mb-1">3rd</p> 
-              <p className="text-gray-600 text-sm mb-1">Branch</p>
-              <p className="text-base font-bold text-gray-900 mb-1">Computer Science & Engineering</p>  
+              <Activity className="text-[var(--planetary)]" size={18} />
             </div>
           </div>
+          <p className="text-gray-600 text-sm mb-1">Activities Participated</p>
+          <p className="text-2xl font-bold text-gray-900 mb-1">{dashboardData?.student?.totalActivities}</p>
+          <p className="text-xs text-gray-500">Seminars, Workshops & More</p>
         </div>
       </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Registered Events */}
+        {/* Notifications & Reminders */}
         <div className="space-y-6">
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-[var(--galaxy)]">Registered Events</h2>
+                <h2 className="text-lg font-semibold text-[var(--galaxy)]">Notifications & Reminders</h2>
                 <div className="flex items-center gap-3">
                   <select className="px-3 py-1.5 rounded-lg text-sm bg-white text-[var(--galaxy)] font-semibold">
-                    <option>This year</option>
-                    <option>Last year</option>
+                    <option>All</option>
+                    <option>Pending</option>
+                    <option>Urgent</option>
                   </select>
                   <button className="p-1.5 hover:bg-gray-100 rounded-lg">
                     <MoreVertical size={16} className="text-gray-400" />
                   </button>
                 </div>
               </div>
-              <p className="text-[var(--planetary)] text-sm mt-1">Track your registered events</p>
+              <p className="text-[var(--planetary)] text-sm mt-1">Stay updated with approvals & deadlines</p>
             </div>
             
             <div className="p-6">
@@ -103,60 +128,66 @@ export default function DashboardContent() {
                 {[
                   {
                     id: 1,
-                    title: 'Bhangra Workshop',
-                    venue: 'A3 Civil Building',
-                    time: '5:30 pm',
-                    date: '2024-03-10',
-                    status: 'Happened',
-                    clubIcon: '🎭',
-                    clubName: 'Cultural Club'
+                    title: 'Faculty Approval Pending',
+                    description: 'AI Workshop participation certificate',
+                    type: 'approval',
+                    urgency: 'medium',
+                    date: '2024-03-20',
+                    icon: <AlertCircle size={16} />
                   },
                   {
                     id: 2,
-                    title: 'NETRA Exhibition',
-                    venue: 'EC Circle',
-                    time: '6:00 pm',
-                    date: '2024-03-15',
-                    status: 'Yet To Happen',
-                    clubIcon: '🎨',
-                    clubName: 'Art Club'
+                    title: 'Deadline Approaching',
+                    description: 'Submit internship completion report',
+                    type: 'deadline',
+                    urgency: 'high',
+                    date: '2024-03-25',
+                    icon: <Clock size={16} />
+                  },
+                  {
+                    id: 3,
+                    title: 'Certificate Approved',
+                    description: 'Hackathon participation certificate',
+                    type: 'approved',
+                    urgency: 'low',
+                    date: '2024-03-18',
+                    icon: <CheckCircle size={16} />
                   }
-                ].map((event) => (
-                  <div key={event.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
-                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-lg shadow-sm border border-gray-100">
-                      {event.clubIcon}
+                ].map((notification) => (
+                  <div key={notification.id} className="flex items-start gap-4 p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm ${
+                      notification.urgency === 'high' ? 'bg-red-500' :
+                      notification.urgency === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
+                    }`}>
+                      {notification.icon}
                     </div>
                     
                     <div className="flex-1">
                       <div className="flex items-start justify-between">
                         <div>
-                          <h3 className="font-semibold text-[var(--galaxy)] text-sm mb-1">{event.title}</h3>
-                          <div className="flex items-center gap-2 text-xs text-[var(--planetary)] mb-2">
-                            <MapPin size={12} />
-                            <span>{event.venue}</span>
-                            <Clock size={12} className="ml-1" />
-                            <span>{event.time}</span>
-                          </div>
-                          <p className="text-xs text-[var(--planetary)]">{event.clubName}</p>
+                          <h3 className="font-semibold text-[var(--galaxy)] text-sm mb-1">{notification.title}</h3>
+                          <p className="text-xs text-[var(--planetary)] mb-2">{notification.description}</p>
+                          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                            notification.type === 'approval' ? 'bg-yellow-100 text-yellow-700' :
+                            notification.type === 'deadline' ? 'bg-red-100 text-red-700' :
+                            'bg-green-100 text-green-700'
+                          }`}>
+                            <div className={`w-2 h-2 rounded-full ${
+                              notification.type === 'approval' ? 'bg-yellow-500' :
+                              notification.type === 'deadline' ? 'bg-red-500' : 'bg-green-500'
+                            }`}></div>
+                            {notification.type === 'approval' ? 'Pending' :
+                             notification.type === 'deadline' ? 'Urgent' : 'Completed'}
+                          </span>
                         </div>
                         
                         <div className="text-right">
-                          <p className="text-sm text-[var(--planetary)] mb-2">
-                            {new Date(event.date).toLocaleDateString('en-US', { 
+                          <p className="text-xs text-[var(--planetary)]">
+                            {new Date(notification.date).toLocaleDateString('en-US', { 
                               month: 'short', 
                               day: 'numeric' 
                             })}
                           </p>
-                          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                            event.status === 'Happened' 
-                              ? 'bg-green-100 text-green-700' 
-                              : 'bg-yellow-100 text-yellow-700'
-                          }`}>
-                            <div className={`w-2 h-2 rounded-full ${
-                              event.status === 'Happened' ? 'bg-green-500' : 'bg-yellow-500'
-                            }`}></div>
-                            {event.status}
-                          </span>
                         </div>
                       </div>
                     </div>
@@ -166,30 +197,31 @@ export default function DashboardContent() {
               
               <div className="mt-6 text-center">
                 <button className="text-[var(--planetary)] text-sm font-medium hover:text-[var(--sapphire)] transition-colors">
-                  See More Info
+                  View All Notifications
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Upcoming Events */}
+        {/* Upcoming Activities/Events */}
         <div className="space-y-6">
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-[var(--galaxy)]">Upcoming Events</h2>
+                <h2 className="text-lg font-semibold text-[var(--galaxy)]">Upcoming Activities</h2>
                 <div className="flex items-center gap-3">
                   <select className="px-3 py-1.5 rounded-lg text-sm bg-white text-[var(--galaxy)] font-semibold">
                     <option>This month</option>
                     <option>Next month</option>
+                    <option>All types</option>
                   </select>
                   <button className="p-1.5 hover:bg-gray-100 rounded-lg">
                     <MoreVertical size={16} className="text-gray-400" />
                   </button>
                 </div>
               </div>
-              <p className="text-[var(--planetary)] text-sm mt-1">Discover new events to join</p>
+              <p className="text-[var(--planetary)] text-sm mt-1">Seminars, workshops, competitions & more</p>
             </div>
             
             <div className="p-6">
@@ -197,49 +229,72 @@ export default function DashboardContent() {
                 {[
                   {
                     id: 1,
-                    title: 'EK Tara',
-                    venue: 'CSH',
-                    time: '3:30 pm',
+                    title: 'Machine Learning Workshop',
+                    venue: 'Tech Lab 1',
+                    time: '2:00 pm',
                     date: '2024-03-25',
-                    clubIcon: '🌟',
-                    clubName: 'Drama Club',
-                    registrations: '45/100'
+                    type: 'Workshop',
+                    credits: '2',
+                    icon: '🤖',
+                    category: 'Technical',
+                    registrations: '45/60'
                   },
                   {
                     id: 2,
-                    title: 'AI Workshop Series',
-                    venue: 'Tech Lab 2',
-                    time: '2:00 pm',
+                    title: 'International Conference on AI',
+                    venue: 'Main Auditorium',
+                    time: '9:00 am',
                     date: '2024-03-28',
-                    clubIcon: '🤖',
-                    clubName: 'Tech Club',
-                    registrations: '78/120'
+                    type: 'Conference',
+                    credits: '4',
+                    icon: '🌍',
+                    category: 'Academic',
+                    registrations: '120/150'
+                  },
+                  {
+                    id: 3,
+                    title: 'Coding Competition',
+                    venue: 'Computer Lab 2',
+                    time: '10:00 am',
+                    date: '2024-03-30',
+                    type: 'Competition',
+                    credits: '3',
+                    icon: '💻',
+                    category: 'Extra-curricular',
+                    registrations: '78/100'
                   }
-                ].map((event) => (
-                  <div key={event.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
+                ].map((activity) => (
+                  <div key={activity.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
                     <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-lg shadow-sm border border-gray-100">
-                      {event.clubIcon}
+                      {activity.icon}
                     </div>
                     
                     <div className="flex-1">
                       <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-semibold text-[var(--galaxy)] text-sm mb-1">{event.title}</h3>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-[var(--galaxy)] text-sm mb-1">{activity.title}</h3>
                           <div className="flex items-center gap-2 text-xs text-[var(--planetary)] mb-2">
                             <MapPin size={12} />
-                            <span>{event.venue}</span>
+                            <span>{activity.venue}</span>
                             <Clock size={12} className="ml-1" />
-                            <span>{event.time}</span>
+                            <span>{activity.time}</span>
                           </div>
                           <div className="flex items-center justify-between">
-                            <p className="text-xs text-[var(--planetary)]">{event.clubName}</p>
-                            <span className="text-xs text-[var(--planetary)]">{event.registrations}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs bg-[var(--sky)] text-[var(--planetary)] px-2 py-1 rounded-full font-medium">
+                                {activity.type}
+                              </span>
+                              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium flex items-center gap-1">
+                                <Zap size={12} />
+                                {activity.credits} Credits
+                              </span>
+                            </div>
                           </div>
                         </div>
                         
-                        <div className="text-right">
+                        <div className="text-right ml-4">
                           <p className="text-sm text-[var(--planetary)] mb-2">
-                            {new Date(event.date).toLocaleDateString('en-US', { 
+                            {new Date(activity.date).toLocaleDateString('en-US', { 
                               month: 'short', 
                               day: 'numeric' 
                             })}
@@ -259,7 +314,7 @@ export default function DashboardContent() {
               
               <div className="mt-6 text-center">
                 <button className="text-[var(--planetary)] text-sm font-medium hover:text-[var(--sapphire)] transition-colors">
-                  See More Info
+                  View All Activities
                 </button>
               </div>
             </div>
@@ -275,16 +330,17 @@ export default function DashboardContent() {
               <div className="w-16 h-16 bg-[var(--sky)] rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Calendar className="text-[var(--planetary)]" size={24} />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Register for Event</h3>
-              <p className="text-gray-600 text-sm mb-6">Confirm your registration for this exciting event.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Register for Activity</h3>
+              <p className="text-gray-600 text-sm mb-6">Confirm your registration for this activity.</p>
               
               <div className="bg-gray-50 rounded-2xl p-4 mb-6 text-left">
-                <h4 className="font-semibold text-gray-900 mb-2">Event Details</h4>
+                <h4 className="font-semibold text-gray-900 mb-2">Activity Details</h4>
                 <div className="space-y-1 text-sm text-gray-600">
-                  <p><span className="font-medium">Event:</span> AI Workshop Series</p>
-                  <p><span className="font-medium">Date:</span> March 28, 2024</p>
+                  <p><span className="font-medium">Activity:</span> Machine Learning Workshop</p>
+                  <p><span className="font-medium">Date:</span> March 25, 2024</p>
                   <p><span className="font-medium">Time:</span> 2:00 PM</p>
-                  <p><span className="font-medium">Venue:</span> Tech Lab 2</p>
+                  <p><span className="font-medium">Venue:</span> Tech Lab 1</p>
+                  <p><span className="font-medium">Credits:</span> 2</p>
                 </div>
               </div>
               
