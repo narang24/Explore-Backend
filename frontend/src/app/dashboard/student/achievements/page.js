@@ -387,80 +387,40 @@ export default function AchievementsPage() {
           </div>
         </div>
 
-        {/* Search and Sort Bar */}
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-4">
-          <div className="flex items-center gap-4">
-            {/* Search Bar */}
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-              <input
-                type="text"
-                placeholder="Search achievements by name, club, or category..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent bg-white text-sm"
-              />
-            </div>
-            
-            {/* Sort Dropdown */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Sort by:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent bg-white text-sm font-medium text-[var(--galaxy)] min-w-[120px]"
-              >
-                {sortOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            {/* Results Count */}
-            <div className="text-sm text-gray-500 whitespace-nowrap">
-              {filteredCoCurrenticular.length + filteredExtraCurricular.length} result{filteredCoCurrenticular.length + filteredExtraCurricular.length !== 1 ? 's' : ''}
-            </div>
-          </div>
-          
-          {/* Active Filters */}
-          {(searchTerm || sortBy !== 'status') && (
-            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
-              <span className="text-xs font-medium text-gray-600">Active filters:</span>
-              {searchTerm && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 bg-[var(--sky)] text-[var(--planetary)] rounded-lg text-xs font-medium">
-                  Search: "{searchTerm}"
-                  <button
-                    onClick={() => setSearchTerm('')}
-                    className="hover:bg-[var(--planetary)] hover:text-white rounded p-0.5 transition-colors"
-                  >
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
-              {sortBy !== 'status' && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 bg-[var(--sky)] text-[var(--planetary)] rounded-lg text-xs font-medium">
-                  Sort: {sortOptions.find(opt => opt.value === sortBy)?.label}
-                  <button
-                    onClick={() => setSortBy('status')}
-                    className="hover:bg-[var(--planetary)] hover:text-white rounded p-0.5 transition-colors"
-                  >
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
-              <button
-                onClick={() => {
-                  setSearchTerm('');
-                  setSortBy('status');
-                }}
-                className="text-xs text-[var(--planetary)] hover:text-[var(--sapphire)] font-medium transition-colors ml-auto"
-              >
-                Clear all
-              </button>
-            </div>
-          )}
+        {/* Search and Sort Bar - Improved Version */}
+        <div className="flex items-center gap-4 mb-6">
+  {/* Search Bar */}
+  <div className="flex-1 relative">
+    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+    <input
+      type="text"
+      placeholder="Search achievements by name, club, or category..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent bg-white text-sm shadow-sm hover:shadow-md transition-all duration-200"
+    />
+  </div>
+  
+  {/* Sort Dropdown */}
+  <div className="relative">
+    <select
+      value={sortBy}
+      onChange={(e) => setSortBy(e.target.value)}
+      className="appearance-none px-4 py-4 pr-10 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent bg-white text-sm font-medium text-[var(--galaxy)] min-w-[140px] shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+    >
+      {sortOptions.map((option) => (
+        <option key={option.value} value={option.value}>
+          Sort by {option.label}
+        </option>
+      ))}
+    </select>
+    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+  </div>
+  
+  {/* Results Count */}
+  <div className="text-sm text-gray-500 font-medium bg-gray-50 px-4 py-4 rounded-2xl border border-gray-100">
+    {filteredCoCurrenticular.length + filteredExtraCurricular.length} result{filteredCoCurrenticular.length + filteredExtraCurricular.length !== 1 ? 's' : ''}
+  </div>
         </div>
 
         {/* Achievements Sections */}
