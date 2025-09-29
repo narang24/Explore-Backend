@@ -12,7 +12,8 @@ import {
   Settings,
   FileText,
   Home,
-  MessageSquare
+  MessageSquare,
+  UserCheck
 } from 'lucide-react';
 
 export default function ClubAdminLayout({ children }) {
@@ -78,19 +79,19 @@ export default function ClubAdminLayout({ children }) {
         subtitle: currentDate,
         isMainDashboard: true
       },
-      '/dashboard/club-admin/events': {
-        title: `Events Hub 🎯`,
-        subtitle: 'Create amazing experiences and manage your club events',
+      '/dashboard/club-admin/approval': {
+        title: `Approval Panel ✅`,
+        subtitle: 'Review and approve registrations, memberships and requests',
         isMainDashboard: false
       },
-      '/dashboard/club-admin/record': {
-        title: `Records & Analytics 📊`,
-        subtitle: 'Track attendance, analyze data and monitor club performance',
+      '/dashboard/club-admin/reports': {
+        title: `Reports & Analysis 📊`,
+        subtitle: 'Track performance, analyze data and generate insights',
         isMainDashboard: false
       },
-      '/dashboard/club-admin/members': {
-        title: `Member Central 👥`,
-        subtitle: 'Connect with your community and manage member relationships',
+      '/dashboard/club-admin/activities': {
+        title: `Activities Hub 🎯`,
+        subtitle: 'Manage events, workshops and club activities',
         isMainDashboard: false
       },
       '/dashboard/club-admin/profile': {
@@ -116,22 +117,22 @@ export default function ClubAdminLayout({ children }) {
       active: activeTab === '/dashboard/club-admin/overview' || activeTab === '/dashboard'
     },
     { 
-      name: 'Events', 
-      href: '/dashboard/club-admin/events', 
-      icon: Calendar,
-      active: activeTab === '/dashboard/club-admin/events'
+      name: 'Approval Panel', 
+      href: '/dashboard/club-admin/approval', 
+      icon: UserCheck,
+      active: activeTab === '/dashboard/club-admin/approval'
     },
     { 
-      name: 'Record', 
-      href: '/dashboard/club-admin/record', 
+      name: 'Reports & Analysis', 
+      href: '/dashboard/club-admin/reports', 
       icon: FileText,
-      active: activeTab === '/dashboard/club-admin/record'
+      active: activeTab === '/dashboard/club-admin/reports'
     },
     { 
-      name: 'Club Members', 
-      href: '/dashboard/club-admin/members', 
-      icon: Users,
-      active: activeTab === '/dashboard/club-admin/members'
+      name: 'Activities', 
+      href: '/dashboard/club-admin/activities', 
+      icon: Calendar,
+      active: activeTab === '/dashboard/club-admin/activities'
     },
     { 
       name: 'Profile', 
