@@ -328,17 +328,18 @@ export default function ApprovalPanel() {
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex flex-col gap-4">
+          {/* Search Bar + Filters - Single Line */}
+          <div className="flex flex-col lg:flex-row gap-3">
             {/* Search Bar */}
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search by student name, roll number, activity, or club..."
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm"
+                className="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm text-gray-900 placeholder-gray-500 shadow-sm"
               />
             </div>
 
@@ -348,7 +349,7 @@ export default function ApprovalPanel() {
               <select
                 value={filterBranch}
                 onChange={(e) => setFilterBranch(e.target.value)}
-                className="px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm bg-white"
+                className="px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm text-gray-900 font-medium shadow-sm cursor-pointer"
               >
                 <option value="all">All Branches</option>
                 {branches.map(branch => (
@@ -360,7 +361,7 @@ export default function ApprovalPanel() {
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm bg-white"
+                className="px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm text-gray-900 font-medium shadow-sm cursor-pointer"
               >
                 <option value="all">All Categories</option>
                 {categories.map(category => (
@@ -372,7 +373,7 @@ export default function ApprovalPanel() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm bg-white"
+                className="px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm text-gray-900 font-medium shadow-sm cursor-pointer"
               >
                 <option value="all">All Status</option>
                 {statuses.map(status => (
@@ -386,7 +387,7 @@ export default function ApprovalPanel() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm bg-white"
+                className="px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm text-gray-900 font-medium shadow-sm cursor-pointer"
               >
                 <option value="submissionDate">Sort by Submission Date</option>
                 <option value="studentName">Sort by Student Name</option>
@@ -398,7 +399,7 @@ export default function ApprovalPanel() {
 
           {/* Bulk Actions */}
           {selectedItems.length > 0 && (
-            <div className="flex items-center justify-between mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border-2 border-blue-200 shadow-sm">
               <span className="text-sm text-blue-700 font-medium">
                 {selectedItems.length} item{selectedItems.length > 1 ? 's' : ''} selected
               </span>
@@ -406,7 +407,7 @@ export default function ApprovalPanel() {
                 <select
                   value={bulkAction}
                   onChange={(e) => setBulkAction(e.target.value)}
-                  className="px-3 py-1.5 border border-blue-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
+                  className="px-3 py-2 bg-white border-2 border-blue-300 rounded-lg text-sm text-gray-900 font-medium focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none cursor-pointer"
                 >
                   <option value="">Select Action</option>
                   <option value="approved">Bulk Approve</option>
@@ -415,7 +416,7 @@ export default function ApprovalPanel() {
                 <button
                   onClick={handleBulkAction}
                   disabled={!bulkAction}
-                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white rounded-lg text-sm font-medium transition-colors"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white rounded-lg text-sm font-medium transition-colors"
                 >
                   Apply
                 </button>

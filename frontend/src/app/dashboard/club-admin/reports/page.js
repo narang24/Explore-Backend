@@ -1,651 +1,828 @@
 'use client';
-import { useState } from 'react';
-import { 
-  Calendar, 
-  Clock, 
-  MapPin, 
-  Users, 
-  Star,
-  Trophy,
-  Archive,
-  TrendingUp,
-  History,
-  Search,
-  Filter,
-  SortDesc,
-  ChevronDown,
-  Eye,
-  Download,
+import React, { useState } from 'react';
+import {
   BarChart3,
-  Award,
-  Image as ImageIcon,
+  TrendingUp,
+  Download,
   FileText,
-  Medal,
-  Crown,
+  Award,
+  Users,
+  Building2,
+  Calendar,
   Target,
-  Activity,
+  Filter,
+  Search,
+  ChevronDown,
   BookOpen,
+  Briefcase,
+  Trophy,
+  Star,
+  Activity,
+  PieChart,
+  LineChart,
+  CheckCircle,
+  AlertCircle,
+  Clock,
+  Globe,
+  GraduationCap,
+  Medal,
+  Lightbulb,
+  FileCheck,
+  Eye,
+  X,
   ChevronRight,
-  UserCheck,
-  Camera
+  ArrowUpRight,
+  ArrowDownRight,
+  Minus
 } from 'lucide-react';
 import ClubAdminLayout from '../../components-club-admin/ClubAdminLayout';
-import EventRecordModal from './EventRecordModal';
 
-// Mock data for past events with complete details
-const mockPastEvents = {
-  archived: [
-    {
-      id: 1,
-      name: 'Annual Tech Symposium 2023',
-      club: 'GDSC',
-      clubLogo: '🚀',
-      about: 'A comprehensive technical symposium featuring workshops, competitions, and industry talks on emerging technologies.',
-      date: '2023-03-15',
-      time: '9:00 AM - 6:00 PM',
-      location: 'Main Auditorium & Lab Complex',
-      category: 'Symposium',
-      totalParticipants: 245,
-      registrations: 245,
-      totalSeats: 250,
-      schedule: [
-        { time: '9:00 AM', activity: 'Registration & Welcome Coffee' },
-        { time: '10:00 AM', activity: 'Opening Ceremony & Keynote' },
-        { time: '11:30 AM', activity: 'Technical Workshops - Session 1' },
-        { time: '1:00 PM', activity: 'Lunch Break' },
-        { time: '2:00 PM', activity: 'Technical Workshops - Session 2' },
-        { time: '3:30 PM', activity: 'Competition Finals' },
-        { time: '5:00 PM', activity: 'Awards Ceremony & Closing' }
-      ],
-      participants: [
-        { name: 'Rahul Sharma', rollNumber: '22CS001', branch: 'CSE' },
-        { name: 'Priya Singh', rollNumber: '22EC015', branch: 'ECE' },
-        { name: 'Amit Kumar', rollNumber: '22ME022', branch: 'ME' },
-        // ... more participants
-      ],
-      officials: [
-        { name: 'Dr. Rajesh Kumar', position: 'Faculty Coordinator', department: 'CSE', role: 'organizer' },
-        { name: 'Ankit Verma', position: 'Club President', department: 'CSE', role: 'organizer' },
-        { name: 'Sneha Gupta', responsibility: 'Registration Desk', role: 'volunteer' },
-        { name: 'Vikram Singh', responsibility: 'Technical Support', role: 'volunteer' },
-        { name: 'Pooja Mehta', responsibility: 'Event Photography', role: 'volunteer' }
-      ],
-      winners: [
-        { name: 'Team Alpha', rollNumber: 'CSE Team', position: '1st', prize: '₹15,000 + Internship' },
-        { name: 'Team Beta', rollNumber: 'ECE Team', position: '2nd', prize: '₹10,000' },
-        { name: 'Team Gamma', rollNumber: 'ME Team', position: '3rd', prize: '₹5,000' }
-      ],
-      gallery: [
-        { url: '/api/placeholder/400/300', caption: 'Opening Ceremony' },
-        { url: '/api/placeholder/400/300', caption: 'Workshop Session' },
-        { url: '/api/placeholder/400/300', caption: 'Competition Finals' },
-        { url: '/api/placeholder/400/300', caption: 'Awards Ceremony' },
-        { url: '/api/placeholder/400/300', caption: 'Group Photo' },
-        { url: '/api/placeholder/400/300', caption: 'Technical Demonstration' }
-      ],
-      isArchived: true,
-      completionDate: '2023-03-15'
-    },
-    {
-      id: 2,
-      name: 'Cultural Fest 2023',
-      club: 'Cultural Club',
-      clubLogo: '🎭',
-      about: 'Three-day cultural extravaganza featuring dance, music, drama, and art competitions from across the region.',
-      date: '2023-04-20',
-      time: '10:00 AM - 10:00 PM',
-      location: 'Open Air Theatre & Various Venues',
-      category: 'Cultural',
-      totalParticipants: 180,
-      registrations: 180,
-      totalSeats: 200,
-      schedule: [
-        { time: '10:00 AM', activity: 'Opening Ceremony' },
-        { time: '11:00 AM', activity: 'Classical Dance Competition' },
-        { time: '2:00 PM', activity: 'Music Competition' },
-        { time: '4:00 PM', activity: 'Drama Performance' },
-        { time: '6:00 PM', activity: 'Art Exhibition' },
-        { time: '8:00 PM', activity: 'Cultural Evening & Awards' }
-      ],
-      participants: [
-        { name: 'Kavya Reddy', rollNumber: '22EN003', branch: 'EN' },
-        { name: 'Arjun Patel', rollNumber: '22CS045', branch: 'CSE' },
-        { name: 'Meera Shah', rollNumber: '22EC018', branch: 'ECE' },
-        // ... more participants
-      ],
-      officials: [
-        { name: 'Prof. Sunita Sharma', position: 'Cultural Head', department: 'EN', role: 'organizer' },
-        { name: 'Ravi Kumar', position: 'Cultural Secretary', department: 'EN', role: 'organizer' },
-        { name: 'Deepika Joshi', responsibility: 'Stage Management', role: 'volunteer' },
-        { name: 'Rohit Agarwal', responsibility: 'Sound & Lighting', role: 'volunteer' }
-      ],
-      winners: [
-        { name: 'Kavya Reddy', rollNumber: '22EN003', position: '1st', prize: 'Classical Dance - Gold Medal' },
-        { name: 'Arjun Patel', rollNumber: '22CS045', position: '1st', prize: 'Music Competition - Trophy' },
-        { name: 'Drama Club', rollNumber: 'Club Team', position: '1st', prize: 'Best Drama - ₹8,000' }
-      ],
-      gallery: [
-        { url: '/api/placeholder/400/300', caption: 'Classical Dance Performance' },
-        { url: '/api/placeholder/400/300', caption: 'Music Competition' },
-        { url: '/api/placeholder/400/300', caption: 'Drama Performance' },
-        { url: '/api/placeholder/400/300', caption: 'Art Exhibition' }
-      ],
-      isArchived: true,
-      completionDate: '2023-04-22'
-    }
-  ],
-  popular: [
-    {
-      id: 3,
-      name: 'Hackathon 2024',
-      club: 'GDSC',
-      clubLogo: '💻',
-      about: '48-hour coding marathon with industry mentors and exciting prizes for innovative solutions.',
-      date: '2024-01-15',
-      time: '10:00 AM',
-      location: 'Tech Lab Complex',
-      category: 'Competition',
-      totalParticipants: 320,
-      registrations: 320,
-      totalSeats: 300,
-      schedule: [
-        { time: '10:00 AM', activity: 'Registration & Problem Statement' },
-        { time: '12:00 PM', activity: 'Coding Begins' },
-        { time: '8:00 PM', activity: 'Dinner & Networking' },
-        { time: '10:00 AM', activity: 'Final Presentations' },
-        { time: '2:00 PM', activity: 'Judging & Awards' }
-      ],
-      participants: [
-        { name: 'Tech Ninjas Team', rollNumber: 'Mixed Team', branch: 'Multi' },
-        { name: 'Code Warriors', rollNumber: 'CSE Team', branch: 'CSE' },
-        // ... more participants
-      ],
-      officials: [
-        { name: 'Dr. Amit Singh', position: 'Tech Lead', department: 'CSE', role: 'organizer' },
-        { name: 'Industry Mentor 1', position: 'Senior Developer', department: 'External', role: 'organizer' },
-        { name: 'Student Volunteers', responsibility: 'General Support', role: 'volunteer' }
-      ],
-      winners: [
-        { name: 'Tech Ninjas', rollNumber: 'Mixed Team', position: '1st', prize: '₹50,000 + Internship Opportunity' },
-        { name: 'Code Warriors', rollNumber: 'CSE Team', position: '2nd', prize: '₹30,000' },
-        { name: 'Innovation Squad', rollNumber: 'ECE Team', position: '3rd', prize: '₹20,000' }
-      ],
-      gallery: [
-        { url: '/api/placeholder/400/300', caption: 'Hackathon Arena' },
-        { url: '/api/placeholder/400/300', caption: 'Teams Coding' },
-        { url: '/api/placeholder/400/300', caption: 'Mentoring Session' },
-        { url: '/api/placeholder/400/300', caption: 'Final Presentations' },
-        { url: '/api/placeholder/400/300', caption: 'Winners Announcement' }
-      ],
-      completionDate: '2024-01-17'
-    },
-    {
-      id: 4,
-      name: 'Sports Tournament 2023',
-      club: 'Sports Club',
-      clubLogo: '🏆',
-      about: 'Inter-departmental sports tournament featuring cricket, football, basketball, and athletics.',
-      date: '2023-11-10',
-      time: '8:00 AM - 6:00 PM',
-      location: 'Sports Complex',
-      category: 'Sports',
-      totalParticipants: 280,
-      registrations: 280,
-      totalSeats: 300,
-      schedule: [
-        { time: '8:00 AM', activity: 'Opening Ceremony' },
-        { time: '9:00 AM', activity: 'Cricket Matches Begin' },
-        { time: '10:00 AM', activity: 'Football Matches Begin' },
-        { time: '2:00 PM', activity: 'Basketball Finals' },
-        { time: '4:00 PM', activity: 'Athletics Events' },
-        { time: '5:30 PM', activity: 'Closing Ceremony & Awards' }
-      ],
-      participants: [
-        { name: 'CSE Cricket Team', rollNumber: 'Dept Team', branch: 'CSE' },
-        { name: 'ECE Football Team', rollNumber: 'Dept Team', branch: 'ECE' },
-        { name: 'ME Basketball Team', rollNumber: 'Dept Team', branch: 'ME' },
-        // ... more participants
-      ],
-      officials: [
-        { name: 'Prof. Sports Director', position: 'Sports Head', department: 'PE', role: 'organizer' },
-        { name: 'Coaches Team', position: 'Sports Coaches', department: 'External', role: 'organizer' },
-        { name: 'Student Council', responsibility: 'Event Management', role: 'volunteer' }
-      ],
-      winners: [
-        { name: 'CSE Department', rollNumber: 'CSE', position: '1st', prize: 'Overall Champions Trophy' },
-        { name: 'ECE Department', rollNumber: 'ECE', position: '2nd', prize: 'Runner-up Trophy' },
-        { name: 'ME Department', rollNumber: 'ME', position: '3rd', prize: 'Third Place Trophy' }
-      ],
-      gallery: [
-        { url: '/api/placeholder/400/300', caption: 'Cricket Match Action' },
-        { url: '/api/placeholder/400/300', caption: 'Football Finals' },
-        { url: '/api/placeholder/400/300', caption: 'Basketball Championship' },
-        { url: '/api/placeholder/400/300', caption: 'Athletics Events' },
-        { url: '/api/placeholder/400/300', caption: 'Award Ceremony' }
-      ],
-      completionDate: '2023-11-12'
-    }
-  ],
-  allPast: [
-    {
-      id: 5,
-      name: 'Workshop on AI/ML',
-      club: 'Tech Society',
-      clubLogo: '🤖',
-      about: 'Comprehensive workshop on Artificial Intelligence and Machine Learning fundamentals.',
-      date: '2023-09-20',
-      time: '2:00 PM - 5:00 PM',
-      location: 'CS Lab 1',
-      category: 'Workshop',
-      totalParticipants: 85,
-      registrations: 85,
-      totalSeats: 90,
-      schedule: [
-        { time: '2:00 PM', activity: 'Introduction to AI' },
-        { time: '3:00 PM', activity: 'Machine Learning Basics' },
-        { time: '4:00 PM', activity: 'Hands-on Python Session' },
-        { time: '4:45 PM', activity: 'Q&A and Certificates' }
-      ],
-      participants: [
-        { name: 'Students from all branches', rollNumber: 'Mixed', branch: 'All' }
-      ],
-      officials: [
-        { name: 'Dr. AI Expert', position: 'Workshop Facilitator', department: 'CSE', role: 'organizer' },
-        { name: 'Student Assistants', responsibility: 'Technical Support', role: 'volunteer' }
-      ],
-      winners: [],
-      gallery: [
-        { url: '/api/placeholder/400/300', caption: 'Workshop Session' },
-        { url: '/api/placeholder/400/300', caption: 'Hands-on Practice' }
-      ],
-      completionDate: '2023-09-20'
-    },
-    {
-      id: 6,
-      name: 'Photography Exhibition',
-      club: 'PhotoSoc',
-      clubLogo: '📸',
-      about: 'Showcase of stunning photography work by talented students featuring various themes.',
-      date: '2023-12-05',
-      time: '4:00 PM - 7:00 PM',
-      location: 'Art Gallery',
-      category: 'Exhibition',
-      totalParticipants: 120,
-      registrations: 120,
-      totalSeats: 150,
-      schedule: [
-        { time: '4:00 PM', activity: 'Exhibition Opening' },
-        { time: '4:30 PM', activity: 'Photography Workshop' },
-        { time: '5:30 PM', activity: 'Portfolio Review' },
-        { time: '6:30 PM', activity: 'Awards & Closing' }
-      ],
-      participants: [
-        { name: 'Photography Enthusiasts', rollNumber: 'Mixed', branch: 'All' }
-      ],
-      officials: [
-        { name: 'Professional Photographer', position: 'Guest Judge', department: 'External', role: 'organizer' },
-        { name: 'PhotoSoc Members', responsibility: 'Exhibition Setup', role: 'volunteer' }
-      ],
-      winners: [
-        { name: 'Raj Patel', rollNumber: '22CS088', position: '1st', prize: 'Best Photography Award' },
-        { name: 'Nisha Sharma', rollNumber: '22EC055', position: '2nd', prize: 'People\'s Choice Award' }
-      ],
-      gallery: [
-        { url: '/api/placeholder/400/300', caption: 'Exhibition Display' },
-        { url: '/api/placeholder/400/300', caption: 'Visitors Viewing Photos' },
-        { url: '/api/placeholder/400/300', caption: 'Award Winners' }
-      ],
-      completionDate: '2023-12-05'
-    }
-  ]
+// Mock data
+const institutionStats = {
+  totalStudents: 3247,
+  withCertifications: 2156,
+  withInternships: 892,
+  activeInActivities: 1874,
+  certificationRate: 66.4,
+  internshipRate: 27.5,
+  activityRate: 57.7
 };
 
-export default function RecordPage() {
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [showEventModal, setShowEventModal] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('date');
-  const [filterCategory, setFilterCategory] = useState('all');
+const departmentData = [
+  { 
+    name: 'Computer Science', 
+    code: 'CSE',
+    students: 856,
+    certifications: 687,
+    internships: 312,
+    activities: 542,
+    participationRate: 80.2,
+    trend: 'up'
+  },
+  { 
+    name: 'Electronics', 
+    code: 'ECE',
+    students: 642,
+    certifications: 456,
+    internships: 198,
+    activities: 387,
+    participationRate: 71.1,
+    trend: 'up'
+  },
+  { 
+    name: 'Mechanical', 
+    code: 'ME',
+    students: 578,
+    certifications: 312,
+    internships: 145,
+    activities: 298,
+    participationRate: 54.0,
+    trend: 'down'
+  },
+  { 
+    name: 'Civil Engineering', 
+    code: 'CE',
+    students: 489,
+    certifications: 267,
+    internships: 98,
+    activities: 234,
+    participationRate: 54.6,
+    trend: 'up'
+  },
+  { 
+    name: 'Information Tech', 
+    code: 'IT',
+    students: 423,
+    certifications: 298,
+    internships: 87,
+    activities: 256,
+    participationRate: 60.5,
+    trend: 'stable'
+  },
+  { 
+    name: 'Electrical', 
+    code: 'EE',
+    students: 259,
+    certifications: 136,
+    internships: 52,
+    activities: 157,
+    participationRate: 52.9,
+    trend: 'up'
+  }
+];
+
+const activityTrends = [
+  { month: 'Jan', workshops: 45, competitions: 23, certifications: 189 },
+  { month: 'Feb', workshops: 52, competitions: 28, certifications: 234 },
+  { month: 'Mar', workshops: 67, competitions: 35, certifications: 312 },
+  { month: 'Apr', workshops: 58, competitions: 31, certifications: 287 },
+  { month: 'May', workshops: 43, competitions: 19, certifications: 198 },
+  { month: 'Jun', workshops: 71, competitions: 42, certifications: 356 },
+  { month: 'Jul', workshops: 64, competitions: 38, certifications: 298 },
+  { month: 'Aug', workshops: 78, competitions: 45, certifications: 412 }
+];
+
+const topActivities = [
+  { name: 'Technical Workshops', count: 892, growth: 23.5 },
+  { name: 'Coding Competitions', count: 645, growth: 18.2 },
+  { name: 'Hackathons', count: 534, growth: 31.8 },
+  { name: 'Industry Visits', count: 423, growth: 12.4 },
+  { name: 'Cultural Events', count: 398, growth: 8.9 }
+];
+
+const accreditationReports = [
+  { 
+    id: 1,
+    type: 'NAAC',
+    name: 'NAAC Accreditation Report 2024',
+    period: 'Jan 2023 - Dec 2023',
+    status: 'ready',
+    criteria: ['Student Performance', 'Infrastructure', 'Learning Resources', 'Student Support'],
+    lastGenerated: '2024-01-15'
+  },
+  { 
+    id: 2,
+    type: 'AICTE',
+    name: 'AICTE Annual Report 2023-24',
+    period: 'Academic Year 2023-24',
+    status: 'ready',
+    criteria: ['Faculty Data', 'Student Outcomes', 'Infrastructure', 'Research Activities'],
+    lastGenerated: '2024-01-10'
+  },
+  { 
+    id: 3,
+    type: 'NIRF',
+    name: 'NIRF Ranking Data 2024',
+    period: 'Previous 3 Years',
+    status: 'ready',
+    criteria: ['Teaching Learning', 'Research', 'Graduate Outcomes', 'Outreach'],
+    lastGenerated: '2024-01-12'
+  },
+  { 
+    id: 4,
+    type: 'NBA',
+    name: 'NBA Program Accreditation',
+    period: 'Last 3 Academic Years',
+    status: 'pending',
+    criteria: ['Curriculum', 'Faculty', 'Students', 'Resources'],
+    lastGenerated: null
+  }
+];
+
+const ReportsAnalytics = () => {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [selectedDepartment, setSelectedDepartment] = useState('all');
+  const [selectedTimeframe, setSelectedTimeframe] = useState('year');
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
 
-  // Get filtered and sorted events
-  const getFilteredEvents = (events) => {
-    let filteredEvents = events.filter(event =>
-      event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.club.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  const tabs = [
+    { id: 'overview', label: 'Overview', icon: BarChart3 },
+    { id: 'departments', label: 'Departments', icon: Building2 },
+    { id: 'trends', label: 'Trends', icon: TrendingUp },
+    { id: 'accreditation', label: 'Accreditation', icon: FileCheck }
+  ];
 
-    if (filterCategory !== 'all') {
-      filteredEvents = filteredEvents.filter(event => 
-        event.category.toLowerCase() === filterCategory.toLowerCase()
-      );
-    }
-
-    filteredEvents.sort((a, b) => {
-      if (sortBy === 'date') {
-        return new Date(b.date) - new Date(a.date);
-      } else if (sortBy === 'name') {
-        return a.name.localeCompare(b.name);
-      } else if (sortBy === 'participants') {
-        return (b.totalParticipants || 0) - (a.totalParticipants || 0);
-      }
-      return 0;
-    });
-
-    return filteredEvents;
-  };
-
-  const handleViewEvent = (event) => {
-    setSelectedEvent(event);
-    setShowEventModal(true);
-  };
-
-  // Event Card Component
-  const EventCard = ({ event, showMetrics = false }) => (
-    <div 
-      onClick={() => handleViewEvent(event)}
-      className="bg-white border border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition-colors cursor-pointer group"
-    >
+  const StatCard = ({ icon: Icon, label, value, subValue, trend, color }) => (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-xl flex items-center justify-center text-white text-lg">
-            {event.clubLogo}
-          </div>
-          <div>
-            <h3 className="font-semibold text-[var(--galaxy)] text-sm group-hover:text-[var(--planetary)] transition-colors">
-              {event.name}
-            </h3>
-            <p className="text-xs text-[var(--planetary)]">{event.club}</p>
-          </div>
+        <div className={`w-10 h-10 ${color} rounded-xl flex items-center justify-center`}>
+          <Icon className={color.replace('bg-', 'text-').replace('100', '600')} size={18} />
         </div>
-        <ChevronRight size={16} className="text-gray-400 group-hover:text-[var(--planetary)] transition-colors" />
+        {trend && (
+          <div className={`flex items-center gap-1 text-xs font-medium ${
+            trend === 'up' ? 'text-green-600' : trend === 'down' ? 'text-red-600' : 'text-gray-600'
+          }`}>
+            {trend === 'up' ? <ArrowUpRight size={14} /> : trend === 'down' ? <ArrowDownRight size={14} /> : <Minus size={14} />}
+            {trend === 'up' ? '+12.5%' : trend === 'down' ? '-5.2%' : '0%'}
+          </div>
+        )}
       </div>
-      
-      <div className="flex items-center gap-4 text-xs text-[var(--planetary)] mb-3">
-        <span className="flex items-center gap-1">
-          <Calendar size={10} />
-          {new Date(event.date).toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric',
-            year: 'numeric'
-          })}
-        </span>
-        <span className="flex items-center gap-1">
-          <MapPin size={10} />
-          {event.location}
-        </span>
-        <span className="px-2 py-1 bg-[var(--sky)] text-[var(--planetary)] rounded-full text-xs font-medium">
-          {event.category}
-        </span>
-      </div>
-      
-      {showMetrics && (
-        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-gray-100">
-          <div className="text-center">
-            <div className="text-sm font-bold text-[var(--galaxy)]">{event.totalParticipants}</div>
-            <div className="text-xs text-[var(--planetary)]">Participants</div>
-          </div>
-          <div className="text-center">
-            <div className="text-sm font-bold text-[var(--galaxy)]">{event.winners?.length || 0}</div>
-            <div className="text-xs text-[var(--planetary)]">Winners</div>
-          </div>
-          <div className="text-center">
-            <div className="text-sm font-bold text-[var(--galaxy)]">{event.gallery?.length || 0}</div>
-            <div className="text-xs text-[var(--planetary)]">Photos</div>
-          </div>
-        </div>
-      )}
+      <p className="text-2xl font-bold text-[var(--galaxy)] mb-1">{value}</p>
+      <p className="text-xs text-[var(--planetary)] mb-1">{label}</p>
+      {subValue && <p className="text-xs text-gray-500">{subValue}</p>}
     </div>
   );
 
-  // Summary Stats
-  const getAllEvents = () => [
-    ...mockPastEvents.archived,
-    ...mockPastEvents.popular,
-    ...mockPastEvents.allPast
-  ];
+  const renderOverview = () => (
+    <div className="space-y-6">
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <StatCard
+          icon={Users}
+          label="Total Students"
+          value={institutionStats.totalStudents.toLocaleString()}
+          subValue="Across all departments"
+          color="bg-blue-100"
+          trend="up"
+        />
+        <StatCard
+          icon={Award}
+          label="With Certifications"
+          value={institutionStats.withCertifications.toLocaleString()}
+          subValue={`${institutionStats.certificationRate}% of students`}
+          color="bg-green-100"
+          trend="up"
+        />
+        <StatCard
+          icon={Briefcase}
+          label="Internships Secured"
+          value={institutionStats.withInternships.toLocaleString()}
+          subValue={`${institutionStats.internshipRate}% placement rate`}
+          color="bg-purple-100"
+          trend="up"
+        />
+        <StatCard
+          icon={Activity}
+          label="Active in Activities"
+          value={institutionStats.activeInActivities.toLocaleString()}
+          subValue={`${institutionStats.activityRate}% participation`}
+          color="bg-orange-100"
+          trend="stable"
+        />
+      </div>
 
-  const totalEvents = getAllEvents().length;
-  const totalParticipants = getAllEvents().reduce((sum, event) => sum + (event.totalParticipants || 0), 0);
-  const totalWinners = getAllEvents().reduce((sum, event) => sum + (event.winners?.length || 0), 0);
-  const totalPhotos = getAllEvents().reduce((sum, event) => sum + (event.gallery?.length || 0), 0);
+      {/* Quick Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Top Activities */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-4 flex items-center gap-2">
+            <Trophy size={18} />
+            Top Activities by Participation
+          </h3>
+          <div className="space-y-3">
+            {topActivities.map((activity, index) => (
+              <div key={index} className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-[var(--planetary)] text-white rounded-lg flex items-center justify-center text-xs font-bold">
+                  {index + 1}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-sm font-medium text-[var(--galaxy)]">{activity.name}</p>
+                    <span className="text-xs text-green-600 font-medium flex items-center gap-1">
+                      <ArrowUpRight size={12} />
+                      {activity.growth}%
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] h-2 rounded-full"
+                        style={{ width: `${(activity.count / topActivities[0].count) * 100}%` }}
+                      ></div>
+                    </div>
+                    <span className="text-xs font-semibold text-[var(--planetary)]">{activity.count}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Department Overview */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-4 flex items-center gap-2">
+            <Building2 size={18} />
+            Department Participation Rates
+          </h3>
+          <div className="space-y-3">
+            {departmentData.slice(0, 5).map((dept, index) => (
+              <div key={index} className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-xl flex items-center justify-center text-white text-xs font-bold">
+                  {dept.code}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-sm font-medium text-[var(--galaxy)]">{dept.name}</p>
+                    <span className="text-sm font-bold text-[var(--planetary)]">{dept.participationRate}%</span>
+                  </div>
+                  <div className="bg-gray-200 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${
+                        dept.participationRate >= 70 ? 'bg-green-500' :
+                        dept.participationRate >= 60 ? 'bg-yellow-500' : 'bg-orange-500'
+                      }`}
+                      style={{ width: `${dept.participationRate}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Monthly Trend Chart */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-[var(--galaxy)] flex items-center gap-2">
+            <LineChart size={18} />
+            Activity Trends (Last 8 Months)
+          </h3>
+          <select className="px-3 py-2 border border-gray-200 rounded-lg text-sm font-medium">
+            <option>All Activities</option>
+            <option>Workshops</option>
+            <option>Competitions</option>
+            <option>Certifications</option>
+          </select>
+        </div>
+        <div className="space-y-4">
+          {activityTrends.map((month, index) => (
+            <div key={index} className="flex items-center gap-3">
+              <div className="w-12 text-xs font-semibold text-[var(--planetary)]">{month.month}</div>
+              <div className="flex-1 flex gap-2">
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-gray-600">Workshops</span>
+                    <span className="text-xs font-semibold">{month.workshops}</span>
+                  </div>
+                  <div className="bg-blue-100 rounded-full h-2">
+                    <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${(month.workshops / 80) * 100}%` }}></div>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-gray-600">Competitions</span>
+                    <span className="text-xs font-semibold">{month.competitions}</span>
+                  </div>
+                  <div className="bg-green-100 rounded-full h-2">
+                    <div className="bg-green-500 h-2 rounded-full" style={{ width: `${(month.competitions / 50) * 100}%` }}></div>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-gray-600">Certifications</span>
+                    <span className="text-xs font-semibold">{month.certifications}</span>
+                  </div>
+                  <div className="bg-purple-100 rounded-full h-2">
+                    <div className="bg-purple-500 h-2 rounded-full" style={{ width: `${(month.certifications / 450) * 100}%` }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderDepartments = () => (
+    <div className="space-y-6">
+      {/* Department Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {departmentData.map((dept, index) => (
+          <div key={index} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:shadow-md transition-shadow cursor-pointer">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-xl flex items-center justify-center text-white font-bold">
+                  {dept.code}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-[var(--galaxy)]">{dept.name}</h3>
+                  <p className="text-xs text-[var(--planetary)]">{dept.students} students</p>
+                </div>
+              </div>
+              {dept.trend === 'up' ? (
+                <ArrowUpRight className="text-green-600" size={20} />
+              ) : dept.trend === 'down' ? (
+                <ArrowDownRight className="text-red-600" size={20} />
+              ) : (
+                <Minus className="text-gray-600" size={20} />
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-gray-600">Certifications</span>
+                  <span className="text-xs font-bold text-[var(--galaxy)]">
+                    {dept.certifications} ({((dept.certifications / dept.students) * 100).toFixed(1)}%)
+                  </span>
+                </div>
+                <div className="bg-gray-200 rounded-full h-1.5">
+                  <div 
+                    className="bg-green-500 h-1.5 rounded-full"
+                    style={{ width: `${(dept.certifications / dept.students) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-gray-600">Internships</span>
+                  <span className="text-xs font-bold text-[var(--galaxy)]">
+                    {dept.internships} ({((dept.internships / dept.students) * 100).toFixed(1)}%)
+                  </span>
+                </div>
+                <div className="bg-gray-200 rounded-full h-1.5">
+                  <div 
+                    className="bg-purple-500 h-1.5 rounded-full"
+                    style={{ width: `${(dept.internships / dept.students) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-gray-600">Activities</span>
+                  <span className="text-xs font-bold text-[var(--galaxy)]">
+                    {dept.activities} ({((dept.activities / dept.students) * 100).toFixed(1)}%)
+                  </span>
+                </div>
+                <div className="bg-gray-200 rounded-full h-1.5">
+                  <div 
+                    className="bg-blue-500 h-1.5 rounded-full"
+                    style={{ width: `${(dept.activities / dept.students) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-[var(--planetary)]">Overall Participation</span>
+                <span className={`text-lg font-bold ${
+                  dept.participationRate >= 70 ? 'text-green-600' :
+                  dept.participationRate >= 60 ? 'text-yellow-600' : 'text-orange-600'
+                }`}>
+                  {dept.participationRate}%
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Comparative Analysis */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-4 flex items-center gap-2">
+          <BarChart3 size={18} />
+          Comparative Department Analysis
+        </h3>
+        <div className="space-y-4">
+          {departmentData.map((dept, index) => (
+            <div key={index} className="flex items-center gap-4">
+              <div className="w-28">
+                <p className="text-sm font-medium text-[var(--galaxy)]">{dept.code}</p>
+              </div>
+              <div className="flex-1">
+                <div className="flex gap-2 h-10">
+                  <div 
+                    className="bg-green-500 rounded flex items-center justify-center text-white text-xs font-semibold"
+                    style={{ width: `${(dept.certifications / dept.students) * 100}%` }}
+                    title="Certifications"
+                  >
+                    {dept.certifications}
+                  </div>
+                  <div 
+                    className="bg-purple-500 rounded flex items-center justify-center text-white text-xs font-semibold"
+                    style={{ width: `${(dept.internships / dept.students) * 100}%` }}
+                    title="Internships"
+                  >
+                    {dept.internships}
+                  </div>
+                  <div 
+                    className="bg-blue-500 rounded flex items-center justify-center text-white text-xs font-semibold"
+                    style={{ width: `${(dept.activities / dept.students) * 100}%` }}
+                    title="Activities"
+                  >
+                    {dept.activities}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-green-500 rounded"></div>
+            <span className="text-xs text-gray-600">Certifications</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-purple-500 rounded"></div>
+            <span className="text-xs text-gray-600">Internships</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-blue-500 rounded"></div>
+            <span className="text-xs text-gray-600">Activities</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderAccreditation = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {accreditationReports.map((report) => (
+          <div 
+            key={report.id}
+            className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => {
+              setSelectedReport(report);
+              setShowReportModal(true);
+            }}
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                  report.type === 'NAAC' ? 'bg-blue-100 text-blue-600' :
+                  report.type === 'AICTE' ? 'bg-green-100 text-green-600' :
+                  report.type === 'NIRF' ? 'bg-purple-100 text-purple-600' :
+                  'bg-orange-100 text-orange-600'
+                }`}>
+                  <FileCheck size={20} />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-[var(--galaxy)]">{report.name}</h3>
+                  <p className="text-xs text-[var(--planetary)] mt-1">{report.period}</p>
+                </div>
+              </div>
+              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                report.status === 'ready' 
+                  ? 'bg-green-100 text-green-700' 
+                  : 'bg-yellow-100 text-yellow-700'
+              }`}>
+                {report.status === 'ready' ? 'Ready' : 'Pending'}
+              </span>
+            </div>
+
+            <div className="space-y-2 mb-4">
+              <p className="text-xs font-semibold text-gray-400 uppercase">Criteria Included</p>
+              <div className="flex flex-wrap gap-2">
+                {report.criteria.map((criterion, idx) => (
+                  <span key={idx} className="px-2 py-1 bg-[var(--sky)] text-[var(--planetary)] rounded-lg text-xs">
+                    {criterion}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {report.lastGenerated && (
+              <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                <span className="text-xs text-gray-500">
+                  Last generated: {new Date(report.lastGenerated).toLocaleDateString()}
+                </span>
+                <button className="flex items-center gap-1 px-3 py-1.5 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-lg text-xs font-medium transition-colors">
+                  <Download size={12} />
+                  Download
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Quick Generate Section */}
+      <div className="bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-2xl p-6 text-white">
+        <h3 className="text-lg font-semibold mb-2">Generate Custom Report</h3>
+        <p className="text-sm opacity-90 mb-4">
+          Create custom reports for specific timeframes, departments, or criteria
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <button className="px-4 py-2 bg-white text-[var(--planetary)] rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors">
+            Custom NAAC Report
+          </button>
+          <button className="px-4 py-2 bg-white text-[var(--planetary)] rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors">
+            Department Analysis
+          </button>
+          <button className="px-4 py-2 bg-white text-[var(--planetary)] rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors">
+            Student Outcomes
+          </button>
+          <button className="px-4 py-2 bg-white text-[var(--planetary)] rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors">
+            Activity Summary
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <ClubAdminLayout>
       <div className="space-y-6">
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <History className="text-blue-600" size={18} />
-              </div>
-              <div>
-                <p className="text-xl font-bold text-[var(--galaxy)]">{totalEvents}</p>
-                <p className="text-xs text-[var(--planetary)]">Total Events</p>
-              </div>
-            </div>
+        {/* Header */}
+        {/* <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-[var(--galaxy)] flex items-center gap-2">
+              <BarChart3 size={28} />
+              Reports & Analytics
+            </h1>
+            <p className="text-[var(--planetary)] mt-1">
+              Comprehensive insights for accreditation and institutional excellence
+            </p>
           </div>
-
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                <Users className="text-green-600" size={18} />
-              </div>
-              <div>
-                <p className="text-xl font-bold text-[var(--galaxy)]">{totalParticipants}</p>
-                <p className="text-xs text-[var(--planetary)]">Total Participants</p>
-              </div>
-            </div>
+          <div className="flex items-center gap-3">
+            <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-[var(--galaxy)] hover:bg-gray-50 transition-colors">
+              <Calendar size={16} />
+              <span>This Year</span>
+              <ChevronDown size={14} />
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl text-sm font-medium transition-colors">
+              <Download size={16} />
+              Export All
+            </button>
           </div>
+        </div> */}
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
-                <Trophy className="text-yellow-600" size={18} />
-              </div>
-              <div>
-                <p className="text-xl font-bold text-[var(--galaxy)]">{totalWinners}</p>
-                <p className="text-xs text-[var(--planetary)]">Awards Given</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                <Camera className="text-purple-600" size={18} />
-              </div>
-              <div>
-                <p className="text-xl font-bold text-[var(--galaxy)]">{totalPhotos}</p>
-                <p className="text-xs text-[var(--planetary)]">Photos Archived</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Archives Section */}
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-[var(--galaxy)] flex items-center gap-2">
-                  <Archive size={20} />
-                  Archives
-                </h2>
-                <p className="text-[var(--planetary)] text-sm mt-1">Important events saved for future reference</p>
-              </div>
-              <span className="px-3 py-1 bg-[var(--sky)] text-[var(--planetary)] rounded-full text-sm font-medium">
-                {mockPastEvents.archived.length} Events
-              </span>
-            </div>
-          </div>
-          
-          <div className="p-6">
-            {mockPastEvents.archived.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {mockPastEvents.archived.map((event) => (
-                  <EventCard key={event.id} event={event} showMetrics={true} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <Archive className="text-gray-400 mx-auto mb-3" size={24} />
-                <p className="text-[var(--planetary)] text-sm">No archived events yet</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Most Popular Events */}
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-[var(--galaxy)] flex items-center gap-2">
-                  <TrendingUp size={20} />
-                  Most Popular Events
-                </h2>
-                <p className="text-[var(--planetary)] text-sm mt-1">Events with highest participation rates</p>
-              </div>
-              <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-medium">
-                Top Performers
-              </span>
-            </div>
-          </div>
-          
-          <div className="p-6">
-            {mockPastEvents.popular.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {mockPastEvents.popular.map((event) => (
-                  <EventCard key={event.id} event={event} showMetrics={true} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <TrendingUp className="text-gray-400 mx-auto mb-3" size={24} />
-                <p className="text-[var(--planetary)] text-sm">No popular events data yet</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* All Past Events */}
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-lg font-bold text-[var(--galaxy)] flex items-center gap-2">
-                  <History size={20} />
-                  All Past Events
-                </h2>
-                <p className="text-[var(--planetary)] text-sm mt-1">Complete history of club events</p>
-              </div>
-            </div>
-
-            {/* Search and Filter Controls */}
-            <div className="flex items-center gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search events, clubs, or categories..."
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
-                />
-              </div>
-
-              <div className="relative">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-[var(--galaxy)] focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent cursor-pointer"
-                >
-                  <option value="date">Sort by Date</option>
-                  <option value="name">Sort by Name</option>
-                  <option value="participants">Sort by Participants</option>
-                </select>
-                <SortDesc className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-              </div>
-
-              <div className="relative">
+        {/* Tabs */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+          <div className="flex items-center gap-1 p-1">
+            {tabs.map((tab) => {
+              const IconComponent = tab.icon;
+              return (
                 <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-[var(--galaxy)] hover:bg-gray-50 transition-colors"
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-colors flex-1 ${
+                    activeTab === tab.id
+                      ? 'bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] text-white shadow-sm'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
                 >
-                  <Filter size={16} />
-                  Filter
-                  <ChevronDown size={14} className={`transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+                  <IconComponent size={16} />
+                  {tab.label}
                 </button>
+              );
+            })}
+          </div>
+        </div>
 
-                {showFilters && (
-                  <div className="absolute right-0 top-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-10 min-w-[180px]">
-                    <div className="p-3">
-                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Filter by Category</p>
-                      <div className="space-y-1">
-                        {[
-                          { value: 'all', label: 'All Categories' },
-                          { value: 'competition', label: 'Competitions' },
-                          { value: 'workshop', label: 'Workshops' },
-                          { value: 'cultural', label: 'Cultural' },
-                          { value: 'exhibition', label: 'Exhibitions' },
-                          { value: 'symposium', label: 'Symposiums' },
-                          { value: 'sports', label: 'Sports' }
-                        ].map((filter) => (
-                          <button
-                            key={filter.value}
-                            onClick={() => {
-                              setFilterCategory(filter.value);
-                              setShowFilters(false);
-                            }}
-                            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                              filterCategory === filter.value
-                                ? 'bg-[var(--planetary)] text-white'
-                                : 'hover:bg-gray-100 text-[var(--galaxy)]'
-                            }`}
-                          >
-                            {filter.label}
-                          </button>
-                        ))}
+        {/* Content */}
+        <div>
+          {activeTab === 'overview' && renderOverview()}
+          {activeTab === 'departments' && renderDepartments()}
+          {activeTab === 'trends' && renderOverview()}
+          {activeTab === 'accreditation' && renderAccreditation()}
+        </div>
+      </div>
+
+      {/* Report Detail Modal */}
+      {showReportModal && selectedReport && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-gray-100">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${
+                    selectedReport.type === 'NAAC' ? 'bg-blue-100 text-blue-600' :
+                    selectedReport.type === 'AICTE' ? 'bg-green-100 text-green-600' :
+                    selectedReport.type === 'NIRF' ? 'bg-purple-100 text-purple-600' :
+                    'bg-orange-100 text-orange-600'
+                  }`}>
+                    <FileCheck size={24} />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-[var(--galaxy)]">{selectedReport.name}</h2>
+                    <p className="text-[var(--planetary)] text-sm mt-1">{selectedReport.period}</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => {
+                    setShowReportModal(false);
+                    setSelectedReport(null);
+                  }}
+                  className="p-2 text-[var(--planetary)] hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+              <div className="space-y-6">
+                {/* Report Summary */}
+                <div className="bg-gray-50 rounded-2xl p-5">
+                  <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-4">Report Summary</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-white rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <Users size={14} className="text-blue-600" />
+                        </div>
+                        <p className="text-xs text-gray-600">Students</p>
                       </div>
+                      <p className="text-2xl font-bold text-[var(--galaxy)]">3,247</p>
+                    </div>
+                    <div className="bg-white rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                          <Award size={14} className="text-green-600" />
+                        </div>
+                        <p className="text-xs text-gray-600">Certifications</p>
+                      </div>
+                      <p className="text-2xl font-bold text-[var(--galaxy)]">2,156</p>
+                    </div>
+                    <div className="bg-white rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                          <Briefcase size={14} className="text-purple-600" />
+                        </div>
+                        <p className="text-xs text-gray-600">Internships</p>
+                      </div>
+                      <p className="text-2xl font-bold text-[var(--galaxy)]">892</p>
+                    </div>
+                    <div className="bg-white rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                          <Activity size={14} className="text-orange-600" />
+                        </div>
+                        <p className="text-xs text-gray-600">Activities</p>
+                      </div>
+                      <p className="text-2xl font-bold text-[var(--galaxy)]">1,874</p>
                     </div>
                   </div>
-                )}
+                </div>
+
+                {/* Criteria Details */}
+                <div className="bg-gray-50 rounded-2xl p-5">
+                  <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-4">Criteria Coverage</h3>
+                  <div className="space-y-3">
+                    {selectedReport.criteria.map((criterion, idx) => (
+                      <div key={idx} className="bg-white rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-[var(--galaxy)]">{criterion}</span>
+                          <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium flex items-center gap-1">
+                            <CheckCircle size={12} />
+                            Complete
+                          </span>
+                        </div>
+                        <div className="bg-gray-200 rounded-full h-2">
+                          <div className="bg-green-500 h-2 rounded-full" style={{ width: '100%' }}></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Export Options */}
+                <div className="bg-gray-50 rounded-2xl p-5">
+                  <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-4">Export Options</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <button className="flex items-center gap-3 p-4 bg-white rounded-xl hover:bg-gray-50 transition-colors border border-gray-200">
+                      <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                        <FileText size={18} className="text-red-600" />
+                      </div>
+                      <div className="text-left flex-1">
+                        <p className="text-sm font-semibold text-[var(--galaxy)]">PDF Report</p>
+                        <p className="text-xs text-gray-500">Formatted for printing</p>
+                      </div>
+                      <Download size={16} className="text-gray-400" />
+                    </button>
+                    <button className="flex items-center gap-3 p-4 bg-white rounded-xl hover:bg-gray-50 transition-colors border border-gray-200">
+                      <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                        <FileText size={18} className="text-green-600" />
+                      </div>
+                      <div className="text-left flex-1">
+                        <p className="text-sm font-semibold text-[var(--galaxy)]">Excel Data</p>
+                        <p className="text-xs text-gray-500">Raw data for analysis</p>
+                      </div>
+                      <Download size={16} className="text-gray-400" />
+                    </button>
+                    <button className="flex items-center gap-3 p-4 bg-white rounded-xl hover:bg-gray-50 transition-colors border border-gray-200">
+                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <FileText size={18} className="text-blue-600" />
+                      </div>
+                      <div className="text-left flex-1">
+                        <p className="text-sm font-semibold text-[var(--galaxy)]">Word Document</p>
+                        <p className="text-xs text-gray-500">Editable format</p>
+                      </div>
+                      <Download size={16} className="text-gray-400" />
+                    </button>
+                    <button className="flex items-center gap-3 p-4 bg-white rounded-xl hover:bg-gray-50 transition-colors border border-gray-200">
+                      <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <BarChart3 size={18} className="text-purple-600" />
+                      </div>
+                      <div className="text-left flex-1">
+                        <p className="text-sm font-semibold text-[var(--galaxy)]">PowerPoint</p>
+                        <p className="text-xs text-gray-500">Presentation slides</p>
+                      </div>
+                      <Download size={16} className="text-gray-400" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
+                  <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] text-white rounded-xl font-medium hover:shadow-lg transition-shadow">
+                    <Download size={18} />
+                    Download Complete Report
+                  </button>
+                  <button className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+                    <Eye size={18} />
+                    Preview
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-
-          <div className="p-6">
-            <div className="space-y-3">
-              {getFilteredEvents(getAllEvents()).map((event) => (
-                <EventCard key={event.id} event={event} showMetrics={true} />
-              ))}
-              
-              {getFilteredEvents(getAllEvents()).length === 0 && (
-                <div className="text-center py-12">
-                  <BookOpen className="text-gray-400 mx-auto mb-4" size={32} />
-                  <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-2">No events found</h3>
-                  <p className="text-[var(--planetary)] text-sm">
-                    Try adjusting your search or filter criteria
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
         </div>
-
-        {/* Event Details Modal */}
-        <EventRecordModal
-          event={selectedEvent}
-          isOpen={showEventModal}
-          onClose={() => {
-            setShowEventModal(false);
-            setSelectedEvent(null);
-          }}
-        />
-      </div>
+      )}
+  
     </ClubAdminLayout>
   );
-}
+};
+
+export default ReportsAnalytics;
