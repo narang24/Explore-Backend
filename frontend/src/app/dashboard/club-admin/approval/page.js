@@ -1,881 +1,604 @@
 'use client';
 import { useState } from 'react';
 import { 
-  Calendar, 
-  Clock, 
-  MapPin, 
-  Users, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  Eye, 
-  Star,
-  Trophy,
-  Image as ImageIcon,
-  User,
-  Settings,
-  Activity,
-  ChevronRight,
-  X,
-  Save,
-  Upload,
-  Award,
-  Target,
-  Zap,
-  Gift,
   Search,
   Filter,
   SortDesc,
-  ChevronDown
+  ChevronDown,
+  Eye,
+  Check,
+  X,
+  Clock,
+  Calendar,
+  User,
+  Award,
+  FileText,
+  Download,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  Users,
+  GraduationCap,
+  Building,
+  Tag,
+  MessageSquare,
+  ChevronRight,
+  Paperclip,
+  Image as ImageIcon,
+  File
 } from 'lucide-react';
 import ClubAdminLayout from '../../components-club-admin/ClubAdminLayout';
-import EventModal from './EventModal';
+import ApprovalModal from './ApprovalModal';
 
-// Mock data for events
-const mockEvents = {
-  live: [
-    {
-      id: 1,
-      name: 'Tech Hackathon 2025',
-      club: 'GDSC',
-      clubLogo: '🚀',
-      about: 'A 48-hour coding marathon where students build innovative solutions to real-world problems using cutting-edge technologies. Join us for an intensive weekend of coding, learning, and networking with fellow developers.',
-      date: '2025-01-15',
-      time: '10:00 AM',
-      location: 'Tech Lab Complex',
-      schedule: [
-        { time: '10:00 AM', activity: 'Registration & Welcome Coffee' },
-        { time: '11:00 AM', activity: 'Problem Statement Reveal' },
-        { time: '12:00 PM', activity: 'Team Formation & Coding Begins' },
-        { time: '2:00 PM', activity: 'Lunch Break' },
-        { time: '6:00 PM', activity: 'First Mentorship Round' },
-        { time: '8:00 PM', activity: 'Dinner & Networking' }
-      ],
-      pastImages: ['/api/placeholder/200/150', '/api/placeholder/200/150', '/api/placeholder/200/150'],
-      registrations: 84,
-      totalSeats: 120,
-      awards: ['Winner: ₹50,000 + Internship', '1st Runner-up: ₹30,000', '2nd Runner-up: ₹20,000', 'Best Innovation: ₹10,000'],
-      status: 'live',
-      registrationDeadline: '2025-01-10',
-      category: 'Competition'
-    },
-    {
-      id: 2,
-      name: 'Cultural Evening',
-      club: 'Cultural Club',
-      clubLogo: '🎭',
-      about: 'An enchanting evening of traditional dance, music, and drama performances celebrating our rich cultural heritage. Experience the beauty of classical arts and folk traditions.',
-      date: '2025-01-20',
-      time: '6:30 PM',
-      location: 'Open Air Theatre',
-      schedule: [
-        { time: '6:30 PM', activity: 'Inaugural Ceremony' },
-        { time: '7:00 PM', activity: 'Classical Dance Performance' },
-        { time: '7:30 PM', activity: 'Folk Music Session' },
-        { time: '8:00 PM', activity: 'Drama Performance' },
-        { time: '8:45 PM', activity: 'Closing Ceremony & Awards' }
-      ],
-      pastImages: ['/api/placeholder/200/150', '/api/placeholder/200/150'],
-      registrations: 156,
-      totalSeats: 200,
-      awards: ['Participation Certificate', 'Best Performance Award', 'Audience Choice Award'],
-      status: 'live',
-      registrationDeadline: '2025-01-18',
-      category: 'Cultural'
-    }
-  ],
-  active: [
-    {
-      id: 3,
-      name: 'AI Workshop Series',
-      club: 'Tech Society',
-      clubLogo: '🤖',
-      about: 'Comprehensive workshop series covering machine learning fundamentals, neural networks, and practical AI applications in various industries.',
-      date: '2024-12-22',
-      time: '2:00 PM',
-      location: 'CS Lab 1',
-      schedule: [
-        { time: '2:00 PM', activity: 'Introduction to AI' },
-        { time: '3:00 PM', activity: 'Machine Learning Basics' },
-        { time: '4:00 PM', activity: 'Hands-on Python Session' },
-        { time: '5:00 PM', activity: 'Neural Networks Demo' }
-      ],
-      registrations: 45,
-      totalSeats: 60,
-      status: 'active',
-      category: 'Workshop',
-      awards: ['Certificate of Completion', 'Best Project Award']
-    },
-    {
-      id: 4,
-      name: 'Photography Exhibition',
-      club: 'PhotoSoc',
-      clubLogo: '📸',
-      about: 'Showcase of stunning photography work by our talented students, featuring nature, portrait, and street photography from across the campus.',
-      date: '2024-12-25',
-      time: '4:00 PM',
-      location: 'Art Gallery',
-      schedule: [
-        { time: '4:00 PM', activity: 'Exhibition Opening' },
-        { time: '4:30 PM', activity: 'Photography Workshop' },
-        { time: '5:30 PM', activity: 'Portfolio Review Session' },
-        { time: '6:00 PM', activity: 'Awards Ceremony' }
-      ],
-      registrations: 89,
-      totalSeats: 100,
-      status: 'active',
-      category: 'Exhibition',
-      awards: ['Best Photography Award', 'People\'s Choice Award']
-    }
-  ],
-  upcoming: [
-    {
-      id: 5,
-      name: 'Startup Pitch Competition',
-      club: 'E-Cell',
-      clubLogo: '💡',
-      about: 'Present your innovative business ideas to industry experts and investors. Best pitches win funding opportunities and mentorship programs.',
-      date: '2025-02-10',
-      time: '10:00 AM',
-      location: 'Seminar Hall',
-      registrations: 0,
-      totalSeats: 80,
-      status: 'upcoming',
-      category: 'Competition',
-      awards: ['Winner: ₹1,00,000 funding', 'Mentorship Program', 'Incubation Support']
-    },
-    {
-      id: 6,
-      name: 'Literary Fest',
-      club: 'Literary Society',
-      clubLogo: '📚',
-      about: 'A celebration of literature featuring poetry recitations, storytelling sessions, creative writing workshops, and interactions with renowned authors.',
-      date: '2025-02-15',
-      time: '5:00 PM',
-      location: 'Library Auditorium',
-      registrations: 0,
-      totalSeats: 150,
-      status: 'upcoming',
-      category: 'Cultural',
-      awards: ['Best Poetry Award', 'Creative Writing Prize', 'Storytelling Champion']
-    }
-  ]
-};
-
-export default function EventsPage() {
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showEventModal, setShowEventModal] = useState(false);
-  const [events, setEvents] = useState(mockEvents);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('date');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [showFilters, setShowFilters] = useState(false);
-
-  const [newEvent, setNewEvent] = useState({
-    name: '',
-    club: '',
-    clubLogo: '',
-    about: '',
-    date: '',
-    time: '',
-    location: '',
-    totalSeats: '',
+// Mock data for student submissions
+const mockSubmissions = [
+  {
+    id: 1,
+    studentName: 'Rahul Sharma',
+    rollNumber: 'CSE21001',
+    branch: 'Computer Science',
+    year: '3rd Year',
+    activityTitle: 'Tech Hackathon 2025 - Winner',
+    category: 'Competition',
+    eventDate: '2025-01-15',
+    submissionDate: '2025-01-18',
+    description: 'Won first prize in 48-hour coding marathon with innovative AI-powered healthcare solution.',
+    documents: [
+      { name: 'certificate.pdf', type: 'pdf', size: '2.1 MB' },
+      { name: 'project_demo.mp4', type: 'video', size: '15.3 MB' },
+      { name: 'team_photo.jpg', type: 'image', size: '1.8 MB' }
+    ],
+    status: 'pending',
+    points: 25,
+    clubName: 'GDSC',
+    remarks: ''
+  },
+  {
+    id: 2,
+    studentName: 'Priya Patel',
+    rollNumber: 'ECE21045',
+    branch: 'Electronics',
+    year: '2nd Year',
+    activityTitle: 'Cultural Evening - Dance Performance',
+    category: 'Cultural',
+    eventDate: '2025-01-20',
+    submissionDate: '2025-01-22',
+    description: 'Performed classical dance in the cultural evening organized by Cultural Club.',
+    documents: [
+      { name: 'participation_cert.pdf', type: 'pdf', size: '1.5 MB' },
+      { name: 'performance_video.mp4', type: 'video', size: '22.1 MB' }
+    ],
+    status: 'approved',
+    points: 15,
+    clubName: 'Cultural Club',
+    remarks: 'Excellent performance, well documented.'
+  },
+  {
+    id: 3,
+    studentName: 'Amit Kumar',
+    rollNumber: 'ME21089',
+    branch: 'Mechanical',
+    year: '4th Year',
+    activityTitle: 'Workshop on IoT Applications',
     category: 'Workshop',
-    awards: [''],
-    schedule: [{ time: '', activity: '' }]
-  });
+    eventDate: '2024-12-22',
+    submissionDate: '2024-12-25',
+    description: 'Attended comprehensive workshop on IoT fundamentals and practical applications.',
+    documents: [
+      { name: 'workshop_certificate.pdf', type: 'pdf', size: '1.2 MB' },
+      { name: 'project_report.docx', type: 'document', size: '3.4 MB' }
+    ],
+    status: 'rejected',
+    points: 10,
+    clubName: 'Tech Society',
+    remarks: 'Certificate appears to be modified. Please submit original document.'
+  },
+  {
+    id: 4,
+    studentName: 'Sneha Singh',
+    rollNumber: 'CSE21156',
+    branch: 'Computer Science',
+    year: '3rd Year',
+    activityTitle: 'Photography Exhibition - Best Photo Award',
+    category: 'Cultural',
+    eventDate: '2024-12-25',
+    submissionDate: '2024-12-28',
+    description: 'Won best photography award in the annual photography exhibition.',
+    documents: [
+      { name: 'award_certificate.pdf', type: 'pdf', size: '2.8 MB' },
+      { name: 'winning_photos.zip', type: 'archive', size: '8.9 MB' }
+    ],
+    status: 'pending',
+    points: 20,
+    clubName: 'PhotoSoc',
+    remarks: ''
+  },
+  {
+    id: 5,
+    studentName: 'Vikash Gupta',
+    rollNumber: 'EE21078',
+    branch: 'Electrical',
+    year: '2nd Year',
+    activityTitle: 'AI Workshop Series - Module 1',
+    category: 'Workshop',
+    eventDate: '2024-12-22',
+    submissionDate: '2024-12-24',
+    description: 'Successfully completed Module 1 of AI Workshop Series covering ML fundamentals.',
+    documents: [
+      { name: 'completion_cert.pdf', type: 'pdf', size: '1.7 MB' },
+      { name: 'assignment.py', type: 'code', size: '0.8 MB' }
+    ],
+    status: 'pending',
+    points: 12,
+    clubName: 'Tech Society',
+    remarks: ''
+  }
+];
 
-  // Get all events for the "All Events" section
-  const getAllEvents = () => {
-    const allEvents = [...events.live, ...events.active, ...events.upcoming];
-    
-    // Filter by search term
-    let filteredEvents = allEvents.filter(event =>
-      event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.club.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+export default function ApprovalPanel() {
+  const [submissions, setSubmissions] = useState(mockSubmissions);
+  const [selectedSubmission, setSelectedSubmission] = useState(null);
+  const [showApprovalModal, setShowApprovalModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterBranch, setFilterBranch] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [sortBy, setSortBy] = useState('submissionDate');
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [bulkAction, setBulkAction] = useState('');
 
-    // Filter by status
-    if (filterStatus !== 'all') {
-      filteredEvents = filteredEvents.filter(event => event.status === filterStatus);
-    }
+  // Get filtered and sorted submissions
+  const getFilteredSubmissions = () => {
+    let filtered = submissions.filter(submission => {
+      const matchesSearch = 
+        submission.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        submission.rollNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        submission.activityTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        submission.clubName.toLowerCase().includes(searchTerm.toLowerCase());
 
-    // Sort events
-    filteredEvents.sort((a, b) => {
-      if (sortBy === 'date') {
-        return new Date(a.date) - new Date(b.date);
-      } else if (sortBy === 'name') {
-        return a.name.localeCompare(b.name);
-      } else if (sortBy === 'registrations') {
-        return (b.registrations || 0) - (a.registrations || 0);
+      const matchesBranch = filterBranch === 'all' || submission.branch === filterBranch;
+      const matchesStatus = filterStatus === 'all' || submission.status === filterStatus;
+      const matchesCategory = filterCategory === 'all' || submission.category === filterCategory;
+
+      return matchesSearch && matchesBranch && matchesStatus && matchesCategory;
+    });
+
+    // Sort submissions
+    filtered.sort((a, b) => {
+      if (sortBy === 'submissionDate') {
+        return new Date(b.submissionDate) - new Date(a.submissionDate);
+      } else if (sortBy === 'studentName') {
+        return a.studentName.localeCompare(b.studentName);
+      } else if (sortBy === 'eventDate') {
+        return new Date(b.eventDate) - new Date(a.eventDate);
+      } else if (sortBy === 'points') {
+        return b.points - a.points;
       }
       return 0;
     });
 
-    return filteredEvents;
+    return filtered;
   };
 
-  const handleCreateEvent = () => {
-    const event = {
-      id: Date.now(),
-      ...newEvent,
-      registrations: 0,
-      status: 'upcoming',
-      pastImages: []
-    };
-    
-    setEvents(prev => ({
-      ...prev,
-      upcoming: [...prev.upcoming, event]
-    }));
-    
-    setNewEvent({
-      name: '',
-      club: '',
-      clubLogo: '',
-      about: '',
-      date: '',
-      time: '',
-      location: '',
-      totalSeats: '',
-      category: 'Workshop',
-      awards: [''],
-      schedule: [{ time: '', activity: '' }]
-    });
-    setShowCreateModal(false);
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'approved':
+        return <CheckCircle2 size={16} className="text-green-600" />;
+      case 'rejected':
+        return <XCircle size={16} className="text-red-600" />;
+      case 'pending':
+        return <Clock size={16} className="text-orange-600" />;
+      default:
+        return <AlertCircle size={16} className="text-gray-600" />;
+    }
   };
 
-  const handleDeleteEvent = (eventId) => {
-    const eventToDelete = selectedEvent;
-    setEvents(prev => ({
-      ...prev,
-      [eventToDelete.status]: prev[eventToDelete.status].filter(event => event.id !== eventId)
-    }));
-    setShowEventModal(false);
-    setSelectedEvent(null);
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'approved':
+        return 'bg-green-100 text-green-700 border-green-200';
+      case 'rejected':
+        return 'bg-red-100 text-red-700 border-red-200';
+      case 'pending':
+        return 'bg-orange-100 text-orange-700 border-orange-200';
+      default:
+        return 'bg-gray-100 text-gray-700 border-gray-200';
+    }
   };
 
-  const handleViewEvent = (event) => {
-    setSelectedEvent(event);
-    setShowEventModal(true);
+  const getFileTypeIcon = (type) => {
+    switch (type) {
+      case 'pdf':
+        return <FileText size={14} className="text-red-500" />;
+      case 'image':
+        return <ImageIcon size={14} className="text-blue-500" />;
+      case 'video':
+        return <File size={14} className="text-purple-500" />;
+      case 'document':
+        return <FileText size={14} className="text-blue-600" />;
+      default:
+        return <File size={14} className="text-gray-500" />;
+    }
   };
 
-  const addScheduleItem = () => {
-    setNewEvent(prev => ({
-      ...prev,
-      schedule: [...prev.schedule, { time: '', activity: '' }]
-    }));
+  const handleViewSubmission = (submission) => {
+    setSelectedSubmission(submission);
+    setShowApprovalModal(true);
   };
 
-  const addAward = () => {
-    setNewEvent(prev => ({
-      ...prev,
-      awards: [...prev.awards, '']
-    }));
-  };
-
-  const updateSchedule = (index, field, value) => {
-    setNewEvent(prev => ({
-      ...prev,
-      schedule: prev.schedule.map((item, i) => 
-        i === index ? { ...item, [field]: value } : item
+  const handleApprovalAction = (id, status, remarks = '') => {
+    setSubmissions(prev => 
+      prev.map(sub => 
+        sub.id === id ? { ...sub, status, remarks } : sub
       )
-    }));
+    );
+    setShowApprovalModal(false);
+    setSelectedSubmission(null);
   };
 
-  const updateAward = (index, value) => {
-    setNewEvent(prev => ({
-      ...prev,
-      awards: prev.awards.map((award, i) => i === index ? value : award)
-    }));
-  };
-
-  const removeScheduleItem = (index) => {
-    if (newEvent.schedule.length > 1) {
-      setNewEvent(prev => ({
-        ...prev,
-        schedule: prev.schedule.filter((_, i) => i !== index)
-      }));
+  const handleBulkAction = () => {
+    if (bulkAction && selectedItems.length > 0) {
+      setSubmissions(prev => 
+        prev.map(sub => 
+          selectedItems.includes(sub.id) 
+            ? { ...sub, status: bulkAction, remarks: `Bulk ${bulkAction} action` }
+            : sub
+        )
+      );
+      setSelectedItems([]);
+      setBulkAction('');
     }
   };
 
-  const removeAward = (index) => {
-    if (newEvent.awards.length > 1) {
-      setNewEvent(prev => ({
-        ...prev,
-        awards: prev.awards.filter((_, i) => i !== index)
-      }));
-    }
-  };
-
-  // Enhanced Event Card Component with highlighted registration numbers
-  const EventCard = ({ event }) => (
-    <div 
-      onClick={() => handleViewEvent(event)}
-      className="bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors cursor-pointer group"
-    >
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="font-semibold text-[var(--galaxy)] text-sm group-hover:text-[var(--planetary)] transition-colors">
-          {event.name}
-        </h3>
-        <ChevronRight size={12} className="text-gray-400 group-hover:text-[var(--planetary)] transition-colors" />
-      </div>
-      
-      <div className="flex items-center gap-3 text-xs text-[var(--planetary)] mb-2">
-        <span>{new Date(event.date).toLocaleDateString('en-US', { 
-          month: 'short', 
-          day: 'numeric'
-        })}</span>
-        <span>•</span>
-        <span>{event.time}</span>
-      </div>
-      
-      <div className="flex items-center justify-between text-xs">
-        <span className="text-[var(--planetary)]">
-          <span className="px-2 py-1 bg-[var(--planetary)] text-white rounded-full font-medium">
-            {event.registrations}/{event.totalSeats}
-          </span>
-          <span className="ml-2">registered</span>
-        </span>
-        <span className="px-2 py-1 bg-orange-100 text-orange-600 rounded-full font-medium">
-          {event.totalSeats - event.registrations} left
-        </span>
-      </div>
-    </div>
-  );
-
-  // Event Row Component for All Events Section
-  const EventRow = ({ event }) => {
-    const getStatusColor = (status) => {
-      switch (status) {
-        case 'live': return 'bg-green-100 text-green-700 border-green-200';
-        case 'active': return 'bg-blue-100 text-blue-700 border-blue-200';
-        case 'upcoming': return 'bg-orange-100 text-orange-700 border-orange-200';
-        default: return 'bg-gray-100 text-gray-700 border-gray-200';
-      }
-    };
-
-    const getStatusDot = (status) => {
-      switch (status) {
-        case 'live': return 'bg-green-500';
-        case 'active': return 'bg-blue-500';
-        case 'upcoming': return 'bg-orange-500';
-        default: return 'bg-gray-500';
-      }
-    };
-
-    return (
-      <div 
-        onClick={() => handleViewEvent(event)}
-        className="bg-white border border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition-colors cursor-pointer group"
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 flex-1">
-            <div className="w-12 h-12 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-xl flex items-center justify-center text-white text-lg">
-              {event.clubLogo}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-semibold text-[var(--galaxy)] text-sm group-hover:text-[var(--planetary)] transition-colors truncate">
-                  {event.name}
-                </h3>
-                <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(event.status)}`}>
-                  <div className={`w-1.5 h-1.5 rounded-full ${getStatusDot(event.status)}`}></div>
-                  {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
-                </span>
-              </div>
-              <div className="flex items-center gap-4 text-xs text-[var(--planetary)]">
-                <span className="flex items-center gap-1">
-                  <Calendar size={10} />
-                  {new Date(event.date).toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    day: 'numeric',
-                    year: 'numeric'
-                  })}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Clock size={10} />
-                  {event.time}
-                </span>
-                <span className="flex items-center gap-1">
-                  <MapPin size={10} />
-                  {event.location}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Star size={10} />
-                  {event.category}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <div className="text-sm font-semibold text-[var(--galaxy)]">
-                {event.registrations || 0}/{event.totalSeats}
-              </div>
-              <div className="text-xs text-[var(--planetary)]">registered</div>
-            </div>
-            <ChevronRight size={16} className="text-gray-400 group-hover:text-[var(--planetary)] transition-colors" />
-          </div>
-        </div>
-      </div>
+  const toggleSelectItem = (id) => {
+    setSelectedItems(prev => 
+      prev.includes(id) 
+        ? prev.filter(item => item !== id)
+        : [...prev, id]
     );
   };
+
+  const toggleSelectAll = () => {
+    const filteredSubmissions = getFilteredSubmissions();
+    if (selectedItems.length === filteredSubmissions.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(filteredSubmissions.map(sub => sub.id));
+    }
+  };
+
+  const branches = ['Computer Science', 'Electronics', 'Mechanical', 'Electrical', 'Civil'];
+  const categories = ['Competition', 'Workshop', 'Cultural', 'Technical', 'Sports'];
+  const statuses = ['pending', 'approved', 'rejected'];
 
   return (
     <ClubAdminLayout>
       <div className="space-y-6">
-        {/* Events Status Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Live Events */}
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
-            <div className="p-4 border-b border-gray-100">
-              <div className="flex items-center justify-between">
-                <h2 className="text-base font-semibold text-[var(--galaxy)]">Live Events</h2>
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-xs text-green-600 font-medium">{events.live.length}</span>
-                </div>
-              </div>
-              <p className="text-xs text-[var(--planetary)] mt-1">Registrations open</p>
-            </div>
-            
-            <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
-              {events.live.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-              {events.live.length === 0 && (
-                <div className="text-center py-8">
-                  <Activity className="text-gray-400 mx-auto mb-2" size={20} />
-                  <p className="text-[var(--planetary)] text-sm">No live events</p>
-                </div>
-              )}
+        {/* Header with Stats */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-2xl font-bold text-[var(--galaxy)]">Faculty Approval Panel</h1>
+              <p className="text-[var(--planetary)] text-sm mt-1">Review and approve student activity submissions</p>
             </div>
           </div>
 
-          {/* Active Events */}
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
-            <div className="p-4 border-b border-gray-100">
-              <div className="flex items-center justify-between">
-                <h2 className="text-base font-semibold text-[var(--galaxy)]">Active Events</h2>
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span className="text-xs text-blue-600 font-medium">{events.active.length}</span>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[
+              { 
+                label: 'Pending Review', 
+                count: submissions.filter(s => s.status === 'pending').length, 
+                color: 'orange',
+                icon: Clock
+              },
+              { 
+                label: 'Approved Today', 
+                count: submissions.filter(s => s.status === 'approved').length, 
+                color: 'green',
+                icon: CheckCircle2
+              },
+              { 
+                label: 'Total Submissions', 
+                count: submissions.length, 
+                color: 'blue',
+                icon: FileText
+              },
+              { 
+                label: 'Students Involved', 
+                count: new Set(submissions.map(s => s.studentName)).size, 
+                color: 'purple',
+                icon: Users
+              }
+            ].map((stat, index) => (
+              <div key={index} className="bg-gray-50 rounded-xl p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-[var(--planetary)] font-medium">{stat.label}</p>
+                    <p className="text-2xl font-bold text-[var(--galaxy)] mt-1">{stat.count}</p>
+                  </div>
+                  <div className={`w-10 h-10 bg-${stat.color}-100 rounded-lg flex items-center justify-center`}>
+                    <stat.icon size={18} className={`text-${stat.color}-600`} />
+                  </div>
                 </div>
               </div>
-              <p className="text-xs text-[var(--planetary)] mt-1">Currently running</p>
-            </div>
-            
-            <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
-              {events.active.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-              {events.active.length === 0 && (
-                <div className="text-center py-8">
-                  <Zap className="text-gray-400 mx-auto mb-2" size={20} />
-                  <p className="text-[var(--planetary)] text-sm">No active events</p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Upcoming Events */}
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
-            <div className="p-4 border-b border-gray-100">
-              <div className="flex items-center justify-between">
-                <h2 className="text-base font-semibold text-[var(--galaxy)]">Upcoming Events</h2>
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  <span className="text-xs text-orange-600 font-medium">{events.upcoming.length}</span>
-                </div>
-              </div>
-              <p className="text-xs text-[var(--planetary)] mt-1">Scheduled for future</p>
-            </div>
-            
-            <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
-              {events.upcoming.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-              {events.upcoming.length === 0 && (
-                <div className="text-center py-8">
-                  <Calendar className="text-gray-400 mx-auto mb-2" size={20} />
-                  <p className="text-[var(--planetary)] text-sm">No upcoming events</p>
-                </div>
-              )}
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* All Events Section */}
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
-          {/* Header with Search and Filters */}
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-xl font-bold text-[var(--galaxy)]">All Events</h2>
-                <p className="text-[var(--planetary)] text-sm mt-1">Comprehensive event management and overview</p>
-              </div>
-              
-              <button 
-                onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl font-medium transition-colors"
-              >
-                <Plus size={16} />
-                Create New Event
-              </button>
+        {/* Search and Filters */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* Search Bar */}
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by student name, roll number, activity, or club..."
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm"
+              />
             </div>
 
-            {/* Search and Filter Controls */}
-            <div className="flex items-center gap-4">
-              {/* Search Bar */}
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search events, clubs, or categories..."
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
-                />
-              </div>
+            {/* Filter Dropdowns */}
+            <div className="flex gap-3">
+              {/* Branch Filter */}
+              <select
+                value={filterBranch}
+                onChange={(e) => setFilterBranch(e.target.value)}
+                className="px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm bg-white"
+              >
+                <option value="all">All Branches</option>
+                {branches.map(branch => (
+                  <option key={branch} value={branch}>{branch}</option>
+                ))}
+              </select>
 
-              {/* Sort Dropdown */}
-              <div className="relative">
+              {/* Category Filter */}
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm bg-white"
+              >
+                <option value="all">All Categories</option>
+                {categories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+
+              {/* Status Filter */}
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm bg-white"
+              >
+                <option value="all">All Status</option>
+                {statuses.map(status => (
+                  <option key={status} value={status}>
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                  </option>
+                ))}
+              </select>
+
+              {/* Sort */}
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-[var(--planetary)] outline-none text-sm bg-white"
+              >
+                <option value="submissionDate">Sort by Submission Date</option>
+                <option value="studentName">Sort by Student Name</option>
+                <option value="eventDate">Sort by Event Date</option>
+                <option value="points">Sort by Points</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Bulk Actions */}
+          {selectedItems.length > 0 && (
+            <div className="flex items-center justify-between mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <span className="text-sm text-blue-700 font-medium">
+                {selectedItems.length} item{selectedItems.length > 1 ? 's' : ''} selected
+              </span>
+              <div className="flex items-center gap-2">
                 <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-[var(--galaxy)] focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent cursor-pointer"
+                  value={bulkAction}
+                  onChange={(e) => setBulkAction(e.target.value)}
+                  className="px-3 py-1.5 border border-blue-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
                 >
-                  <option value="date">Sort by Date</option>
-                  <option value="name">Sort by Name</option>
-                  <option value="registrations">Sort by Registrations</option>
+                  <option value="">Select Action</option>
+                  <option value="approved">Bulk Approve</option>
+                  <option value="rejected">Bulk Reject</option>
                 </select>
-                <SortDesc className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-              </div>
-
-              {/* Filter Dropdown */}
-              <div className="relative">
                 <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-[var(--galaxy)] hover:bg-gray-50 transition-colors"
+                  onClick={handleBulkAction}
+                  disabled={!bulkAction}
+                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white rounded-lg text-sm font-medium transition-colors"
                 >
-                  <Filter size={16} />
-                  Filter
-                  <ChevronDown size={14} className={`transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+                  Apply
                 </button>
+              </div>
+            </div>
+          )}
+        </div>
 
-                {showFilters && (
-                  <div className="absolute right-0 top-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-10 min-w-[180px]">
-                    <div className="p-3">
-                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Filter by Status</p>
-                      <div className="space-y-1">
-                        {[
-                          { value: 'all', label: 'All Events', count: getAllEvents().length },
-                          { value: 'live', label: 'Live Events', count: events.live.length },
-                          { value: 'active', label: 'Active Events', count: events.active.length },
-                          { value: 'upcoming', label: 'Upcoming Events', count: events.upcoming.length }
-                        ].map((filter) => (
-                          <button
-                            key={filter.value}
-                            onClick={() => {
-                              setFilterStatus(filter.value);
-                              setShowFilters(false);
-                            }}
-                            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
-                              filterStatus === filter.value
-                                ? 'bg-[var(--planetary)] text-white'
-                                : 'hover:bg-gray-100 text-[var(--galaxy)]'
-                            }`}
-                          >
-                            <span>{filter.label}</span>
-                            <span className={`text-xs px-2 py-1 rounded-full ${
-                              filterStatus === filter.value
-                                ? 'bg-white/20 text-white'
-                                : 'bg-gray-200 text-gray-600'
-                            }`}>
-                              {filter.count}
-                            </span>
-                          </button>
-                        ))}
+        {/* Submissions List */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+          <div className="p-6 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-[var(--galaxy)]">
+                Student Submissions ({getFilteredSubmissions().length})
+              </h2>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={selectedItems.length === getFilteredSubmissions().length && getFilteredSubmissions().length > 0}
+                  onChange={toggleSelectAll}
+                  className="rounded border-gray-300 text-[var(--planetary)] focus:ring-[var(--planetary)]"
+                />
+                <span className="text-sm text-[var(--planetary)]">Select All</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="divide-y divide-gray-100">
+            {getFilteredSubmissions().map((submission) => (
+              <div
+                key={submission.id}
+                className={`p-6 hover:bg-gray-50 transition-colors ${
+                  selectedItems.includes(submission.id) ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
+                }`}
+              >
+                <div className="flex items-start gap-4">
+                  {/* Checkbox */}
+                  <input
+                    type="checkbox"
+                    checked={selectedItems.includes(submission.id)}
+                    onChange={() => toggleSelectItem(submission.id)}
+                    className="mt-1 rounded border-gray-300 text-[var(--planetary)] focus:ring-[var(--planetary)]"
+                  />
+
+                  {/* Student Avatar */}
+                  <div className="w-12 h-12 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-xl flex items-center justify-center text-white font-semibold text-sm">
+                    {submission.studentName.split(' ').map(n => n[0]).join('')}
+                  </div>
+
+                  {/* Main Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-semibold text-[var(--galaxy)] text-sm">
+                            {submission.studentName}
+                          </h3>
+                          <span className="text-xs text-[var(--planetary)] bg-gray-100 px-2 py-1 rounded-full">
+                            {submission.rollNumber}
+                          </span>
+                          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(submission.status)}`}>
+                            {getStatusIcon(submission.status)}
+                            {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
+                          </span>
+                        </div>
+
+                        <p className="text-sm font-medium text-[var(--galaxy)] mb-2">
+                          {submission.activityTitle}
+                        </p>
+
+                        <div className="flex items-center gap-4 text-xs text-[var(--planetary)] mb-3">
+                          <span className="flex items-center gap-1">
+                            <GraduationCap size={10} />
+                            {submission.branch} - {submission.year}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Tag size={10} />
+                            {submission.category}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Building size={10} />
+                            {submission.clubName}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Award size={10} />
+                            {submission.points} pts
+                          </span>
+                        </div>
+
+                        <p className="text-sm text-[var(--planetary)] mb-3">
+                          {submission.description}
+                        </p>
+
+                        {/* Documents */}
+                        <div className="flex items-center gap-2 mb-2">
+                          <Paperclip size={12} className="text-gray-400" />
+                          <span className="text-xs text-[var(--planetary)] font-medium">
+                            {submission.documents.length} document{submission.documents.length > 1 ? 's' : ''}:
+                          </span>
+                          <div className="flex gap-2">
+                            {submission.documents.map((doc, index) => (
+                              <div key={index} className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-lg">
+                                {getFileTypeIcon(doc.type)}
+                                <span className="text-xs text-[var(--galaxy)]">{doc.name}</span>
+                                <span className="text-xs text-gray-500">({doc.size})</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Dates */}
+                        <div className="flex items-center gap-4 text-xs text-[var(--planetary)]">
+                          <span className="flex items-center gap-1">
+                            <Calendar size={10} />
+                            Event: {new Date(submission.eventDate).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock size={10} />
+                            Submitted: {new Date(submission.submissionDate).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </span>
+                        </div>
+
+                        {/* Remarks */}
+                        {submission.remarks && (
+                          <div className="mt-2 p-2 bg-gray-100 rounded-lg">
+                            <div className="flex items-center gap-1 mb-1">
+                              <MessageSquare size={12} className="text-gray-500" />
+                              <span className="text-xs text-gray-500 font-medium">Remarks:</span>
+                            </div>
+                            <p className="text-xs text-[var(--galaxy)]">{submission.remarks}</p>
+                          </div>
+                        )}
                       </div>
+
+                      {/* Action Button */}
+                      <button
+                        onClick={() => handleViewSubmission(submission)}
+                        className="flex items-center gap-2 px-3 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-lg text-sm font-medium transition-colors ml-4"
+                      >
+                        <Eye size={14} />
+                        Review
+                        <ChevronRight size={12} />
+                      </button>
                     </div>
                   </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Events List */}
-          <div className="p-6">
-            <div className="space-y-3">
-              {getAllEvents().map((event) => (
-                <EventRow key={event.id} event={event} />
-              ))}
-              
-              {getAllEvents().length === 0 && (
-                <div className="text-center py-12">
-                  <Calendar className="text-gray-400 mx-auto mb-4" size={32} />
-                  <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-2">No events found</h3>
-                  <p className="text-[var(--planetary)] text-sm mb-4">
-                    {searchTerm || filterStatus !== 'all' 
-                      ? 'Try adjusting your search or filter criteria' 
-                      : 'Create your first event to get started'
-                    }
-                  </p>
-                  {(!searchTerm && filterStatus === 'all') && (
-                    <button 
-                      onClick={() => setShowCreateModal(true)}
-                      className="px-4 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl text-sm font-medium transition-colors"
-                    >
-                      Create First Event
-                    </button>
-                  )}
                 </div>
-              )}
-            </div>
+              </div>
+            ))}
+
+            {getFilteredSubmissions().length === 0 && (
+              <div className="text-center py-12">
+                <FileText className="text-gray-400 mx-auto mb-4" size={32} />
+                <h3 className="text-lg font-semibold text-[var(--galaxy)] mb-2">No submissions found</h3>
+                <p className="text-[var(--planetary)] text-sm">
+                  {searchTerm || filterBranch !== 'all' || filterStatus !== 'all' || filterCategory !== 'all'
+                    ? 'Try adjusting your search or filter criteria'
+                    : 'No student submissions available for review'
+                  }
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Event Details Modal */}
-        <EventModal
-          event={selectedEvent}
-          isOpen={showEventModal}
+        {/* Approval Modal */}
+        <ApprovalModal
+          submission={selectedSubmission}
+          isOpen={showApprovalModal}
           onClose={() => {
-            setShowEventModal(false);
-            setSelectedEvent(null);
+            setShowApprovalModal(false);
+            setSelectedSubmission(null);
           }}
-          onDelete={handleDeleteEvent}
-          onEdit={(event) => {
-            // Handle edit functionality
-            console.log('Edit event:', event);
-          }}
+          onApprove={(id, remarks) => handleApprovalAction(id, 'approved', remarks)}
+          onReject={(id, remarks) => handleApprovalAction(id, 'rejected', remarks)}
         />
-
-        {/* Create Event Modal */}
-        {showCreateModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-              <div className="p-4 border-b border-gray-100 sticky top-0 bg-white rounded-t-2xl">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-[var(--galaxy)]">Create New Event</h3>
-                  <button 
-                    onClick={() => setShowCreateModal(false)}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <X size={18} />
-                  </button>
-                </div>
-              </div>
-              
-              <div className="p-4 space-y-4">
-                {/* Basic Info */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-1">Event Name</label>
-                    <input
-                      type="text"
-                      value={newEvent.name}
-                      onChange={(e) => setNewEvent(prev => ({ ...prev, name: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
-                      placeholder="Enter event name"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-1">Club</label>
-                    <input
-                      type="text"
-                      value={newEvent.club}
-                      onChange={(e) => setNewEvent(prev => ({ ...prev, club: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
-                      placeholder="Club name"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-1">Club Logo (Emoji)</label>
-                    <input
-                      type="text"
-                      value={newEvent.clubLogo}
-                      onChange={(e) => setNewEvent(prev => ({ ...prev, clubLogo: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
-                      placeholder="🚀"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-1">Category</label>
-                    <select
-                      value={newEvent.category}
-                      onChange={(e) => setNewEvent(prev => ({ ...prev, category: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
-                    >
-                      <option value="Workshop">Workshop</option>
-                      <option value="Competition">Competition</option>
-                      <option value="Cultural">Cultural</option>
-                      <option value="Exhibition">Exhibition</option>
-                      <option value="Seminar">Seminar</option>
-                    </select>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-1">Date</label>
-                    <input
-                      type="date"
-                      value={newEvent.date}
-                      onChange={(e) => setNewEvent(prev => ({ ...prev, date: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-1">Time</label>
-                    <input
-                      type="time"
-                      value={newEvent.time}
-                      onChange={(e) => setNewEvent(prev => ({ ...prev, time: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-1">Location</label>
-                    <input
-                      type="text"
-                      value={newEvent.location}
-                      onChange={(e) => setNewEvent(prev => ({ ...prev, location: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
-                      placeholder="Venue location"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-1">Total Seats</label>
-                    <input
-                      type="number"
-                      value={newEvent.totalSeats}
-                      onChange={(e) => setNewEvent(prev => ({ ...prev, totalSeats: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
-                      placeholder="100"
-                    />
-                  </div>
-                </div>
-
-                {/* About */}
-                <div>
-                  <label className="block text-sm font-medium text-[var(--galaxy)] mb-1">About the Event</label>
-                  <textarea
-                    value={newEvent.about}
-                    onChange={(e) => setNewEvent(prev => ({ ...prev, about: e.target.value }))}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent resize-none text-sm"
-                    placeholder="Describe the event..."
-                  />
-                </div>
-
-                {/* Schedule */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-[var(--galaxy)]">Schedule</label>
-                    <button
-                      type="button"
-                      onClick={addScheduleItem}
-                      className="flex items-center gap-1 px-2 py-1 text-[var(--planetary)] hover:text-[var(--sapphire)] text-xs"
-                    >
-                      <Plus size={12} />
-                      Add Item
-                    </button>
-                  </div>
-                  <div className="space-y-2 max-h-32 overflow-y-auto">
-                    {newEvent.schedule.map((item, index) => (
-                      <div key={index} className="flex gap-2 items-center">
-                        <input
-                          type="time"
-                          value={item.time}
-                          onChange={(e) => updateSchedule(index, 'time', e.target.value)}
-                          className="px-2 py-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-xs"
-                        />
-                        <input
-                          type="text"
-                          value={item.activity}
-                          onChange={(e) => updateSchedule(index, 'activity', e.target.value)}
-                          className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-xs"
-                          placeholder="Activity description"
-                        />
-                        {newEvent.schedule.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => removeScheduleItem(index)}
-                            className="p-1 text-red-500 hover:text-red-700"
-                          >
-                            <X size={14} />
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Awards */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-[var(--galaxy)]">Awards & Prizes</label>
-                    <button
-                      type="button"
-                      onClick={addAward}
-                      className="flex items-center gap-1 px-2 py-1 text-[var(--planetary)] hover:text-[var(--sapphire)] text-xs"
-                    >
-                      <Plus size={12} />
-                      Add Award
-                    </button>
-                  </div>
-                  <div className="space-y-2 max-h-24 overflow-y-auto">
-                    {newEvent.awards.map((award, index) => (
-                      <div key={index} className="flex gap-2 items-center">
-                        <input
-                          type="text"
-                          value={award}
-                          onChange={(e) => updateAward(index, e.target.value)}
-                          className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-xs"
-                          placeholder="Award description"
-                        />
-                        {newEvent.awards.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => removeAward(index)}
-                            className="p-1 text-red-500 hover:text-red-700"
-                          >
-                            <X size={14} />
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-3 pt-4 border-t border-gray-100 sticky bottom-0 bg-white">
-                  <button
-                    onClick={handleCreateEvent}
-                    disabled={!newEvent.name || !newEvent.date || !newEvent.time}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--planetary)] hover:bg-[var(--sapphire)] disabled:bg-gray-300 text-white rounded-lg font-medium transition-colors"
-                  >
-                    <Save size={16} />
-                    Create Event
-                  </button>
-                  <button
-                    onClick={() => setShowCreateModal(false)}
-                    className="px-4 py-2.5 border border-gray-200 hover:bg-gray-50 text-[var(--galaxy)] rounded-lg font-medium transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </ClubAdminLayout>
   );

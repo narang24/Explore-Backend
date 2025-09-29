@@ -27,13 +27,9 @@ import {
 // Mock data - replace with actual API calls
 const dashboardStats = {
   totalReports: 24,
-  totalReportsChange: '+12%',
   pendingApprovals: 8,
-  pendingApprovalsChange: '-5%',
   totalStudents: 342,
-  totalStudentsChange: '+15%',
-  recentUploads: 16,
-  recentUploadsChange: '+8%'
+  recentUploads: 16
 };
 
 const upcomingActivities = [
@@ -132,70 +128,7 @@ const recentActivities = [
   }
 ];
 
-const mockAnnouncements = [
-  {
-    id: 1,
-    title: 'Accreditation Report Due Soon',
-    message: 'NBA accreditation report submission deadline is approaching. Please ensure all documents are ready.',
-    type: 'warning',
-    createdAt: '2 hours ago',
-    views: 45
-  },
-  {
-    id: 2,
-    title: 'New Activity Guidelines',
-    message: 'Updated guidelines for club activities have been released. Please review the new requirements.',
-    type: 'info',
-    createdAt: '1 day ago',
-    views: 78
-  }
-];
-
 export default function DashboardContent() {
-  const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
-  const [announcements, setAnnouncements] = useState(mockAnnouncements);
-  const [newAnnouncement, setNewAnnouncement] = useState({
-    title: '',
-    message: '',
-    type: 'info'
-  });
-
-  const handleCreateAnnouncement = () => {
-    if (newAnnouncement.title.trim() && newAnnouncement.message.trim()) {
-      const announcement = {
-        id: Date.now(),
-        ...newAnnouncement,
-        createdAt: 'Just now',
-        views: 0
-      };
-      setAnnouncements([announcement, ...announcements]);
-      setNewAnnouncement({ title: '', message: '', type: 'info' });
-      setShowAnnouncementModal(false);
-    }
-  };
-
-  const handleDeleteAnnouncement = (id) => {
-    setAnnouncements(announcements.filter(ann => ann.id !== id));
-  };
-
-  const getAnnouncementIcon = (type) => {
-    switch (type) {
-      case 'warning': return AlertCircle;
-      case 'success': return CheckCircle;
-      case 'info': 
-      default: return Info;
-    }
-  };
-
-  const getAnnouncementColor = (type) => {
-    switch (type) {
-      case 'warning': return 'text-orange-500 bg-orange-50 border-orange-200';
-      case 'success': return 'text-green-500 bg-green-50 border-green-200';
-      case 'info':
-      default: return 'text-blue-500 bg-blue-50 border-blue-200';
-    }
-  };
-
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'high': return 'text-red-500 bg-red-50';
@@ -222,9 +155,6 @@ export default function DashboardContent() {
             <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
               <FileText className="text-green-600" size={24} />
             </div>
-            <span className="text-green-500 text-sm font-medium tracking-wide bg-green-50 px-2 py-1 rounded-full">
-              {dashboardStats.totalReportsChange}
-            </span>
           </div>
           <h3 className="text-2xl font-bold text-[var(--galaxy)] mb-1 tracking-wide">
             {dashboardStats.totalReports}
@@ -239,9 +169,6 @@ export default function DashboardContent() {
             <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
               <UserCheck className="text-orange-600" size={24} />
             </div>
-            <span className="text-orange-500 text-sm font-medium tracking-wide bg-orange-50 px-2 py-1 rounded-full">
-              {dashboardStats.pendingApprovalsChange}
-            </span>
           </div>
           <h3 className="text-2xl font-bold text-[var(--galaxy)] mb-1 tracking-wide">
             {dashboardStats.pendingApprovals}
@@ -256,9 +183,6 @@ export default function DashboardContent() {
             <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
               <Users className="text-blue-600" size={24} />
             </div>
-            <span className="text-green-500 text-sm font-medium tracking-wide bg-green-50 px-2 py-1 rounded-full">
-              {dashboardStats.totalStudentsChange}
-            </span>
           </div>
           <h3 className="text-2xl font-bold text-[var(--galaxy)] mb-1 tracking-wide">
             {dashboardStats.totalStudents}
@@ -273,9 +197,6 @@ export default function DashboardContent() {
             <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
               <Upload className="text-purple-600" size={24} />
             </div>
-            <span className="text-green-500 text-sm font-medium tracking-wide bg-green-50 px-2 py-1 rounded-full">
-              {dashboardStats.recentUploadsChange}
-            </span>
           </div>
           <h3 className="text-2xl font-bold text-[var(--galaxy)] mb-1 tracking-wide">
             {dashboardStats.recentUploads}
@@ -285,122 +206,82 @@ export default function DashboardContent() {
         </div>
       </div>
 
-      {/* Alerts & Quick Actions Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Accreditation Alerts */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Accreditation Alerts</h3>
-              <AlertTriangle className="text-orange-500" size={20} />
-            </div>
-          </div>
-          <div className="p-4">
-            <div className="space-y-3">
-              {accreditationDeadlines.slice(0, 3).map((item) => {
-                const statusColor = getStatusColor(item.status);
-                return (
-                  <div key={item.id} className={`p-3 rounded-lg border ${statusColor}`}>
-                    <div className="flex items-start justify-between mb-2">
-                      <h4 className="font-medium text-[var(--galaxy)] text-sm tracking-wide">
-                        {item.title}
-                      </h4>
-                      <span className="text-xs font-medium px-2 py-1 rounded-full bg-white/50">
-                        {item.daysLeft} days
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-600 mb-2">Due: {item.deadline}</p>
-                    <div className="w-full bg-white/50 rounded-full h-2">
-                      <div 
-                        className="bg-current h-2 rounded-full opacity-60" 
-                        style={{ width: `${item.progress}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+      {/* Accreditation Alerts (Full Width) */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+        <div className="p-6 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Accreditation Alerts</h3>
+            <AlertTriangle className="text-orange-500" size={20} />
           </div>
         </div>
-
-        {/* Upcoming Activities */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Upcoming Activities</h3>
-              <Calendar className="text-blue-500" size={20} />
-            </div>
-          </div>
-          <div className="p-4">
-            <div className="space-y-3">
-              {upcomingActivities.map((activity) => {
-                const priorityColor = getPriorityColor(activity.priority);
-                return (
-                  <div key={activity.id} className="p-3 border border-gray-200 rounded-lg">
-                    <div className="flex items-start justify-between mb-2">
-                      <h4 className="font-medium text-[var(--galaxy)] text-sm tracking-wide">
-                        {activity.title}
-                      </h4>
-                      <span className={`text-xs font-medium px-2 py-1 rounded-full ${priorityColor}`}>
-                        {activity.daysLeft} days
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 text-xs text-gray-500">
-                      <span>{activity.date}</span>
-                      <span>•</span>
-                      <span>{activity.time}</span>
-                    </div>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {accreditationDeadlines.map((item) => {
+              const statusColor = getStatusColor(item.status);
+              return (
+                <div key={item.id} className={`p-4 rounded-lg border ${statusColor}`}>
+                  <div className="flex items-start justify-between mb-3">
+                    <h4 className="font-medium text-[var(--galaxy)] text-sm tracking-wide">
+                      {item.title}
+                    </h4>
+                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-white/50">
+                      {item.daysLeft} days
+                    </span>
                   </div>
-                );
-              })}
-            </div>
+                  <p className="text-xs text-gray-600 mb-3">Due: {item.deadline}</p>
+                  <div className="w-full bg-white/50 rounded-full h-2">
+                    <div 
+                      className="bg-current h-2 rounded-full opacity-60" 
+                      style={{ width: `${item.progress}%` }}
+                    ></div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
+      </div>
 
-        {/* Quick Actions Card */}
-        <div className="bg-gradient-to-br from-[var(--planetary)] to-[var(--sapphire)] rounded-2xl p-6 text-white shadow-sm">
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold mb-1">Quick Actions</h3>
-            <p className="text-white/70 text-sm">Manage efficiently</p>
-          </div>
-          
-          <div className="grid grid-cols-1 gap-3">
-            {/* Generate Report */}
-            <button className="w-full flex items-center gap-3 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all cursor-pointer group">
-              <div className="w-8 h-8 bg-white/20 group-hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors">
-                <FileText size={16} />
-              </div>
-              <div className="text-left flex-1">
-                <span className="text-sm font-medium block">Generate Report</span>
-                <span className="text-xs text-white/70">Create new report</span>
-              </div>
-            </button>
+      {/* Quick Actions Card (Compact) */}
+      <div className="bg-gradient-to-br from-[var(--planetary)] to-[var(--sapphire)] rounded-2xl p-4 text-white shadow-sm">
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold mb-1">Quick Actions</h3>
+          <p className="text-white/70 text-sm">Manage efficiently</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {/* Generate Report */}
+          <button className="w-full flex items-center gap-3 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all cursor-pointer group">
+            <div className="w-8 h-8 bg-white/20 group-hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors">
+              <FileText size={16} />
+            </div>
+            <div className="text-left flex-1">
+              <span className="text-sm font-medium block">Generate Report</span>
+              <span className="text-xs text-white/70">Create new report</span>
+            </div>
+          </button>
 
-            {/* Review Approvals */}
-            <button className="w-full flex items-center gap-3 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all cursor-pointer group">
-              <div className="w-8 h-8 bg-white/20 group-hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors">
-                <UserCheck size={16} />
-              </div>
-              <div className="text-left flex-1">
-                <span className="text-sm font-medium block">Review Approvals</span>
-                <span className="text-xs text-white/70">Pending requests</span>
-              </div>
-            </button>
+          {/* Review Approvals */}
+          <button className="w-full flex items-center gap-3 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all cursor-pointer group">
+            <div className="w-8 h-8 bg-white/20 group-hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors">
+              <UserCheck size={16} />
+            </div>
+            <div className="text-left flex-1">
+              <span className="text-sm font-medium block">Review Approvals</span>
+              <span className="text-xs text-white/70">Pending requests</span>
+            </div>
+          </button>
 
-            {/* Make Announcement */}
-            <button 
-              onClick={() => setShowAnnouncementModal(true)}
-              className="w-full flex items-center gap-3 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all cursor-pointer group"
-            >
-              <div className="w-8 h-8 bg-white/20 group-hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors">
-                <Megaphone size={16} />
-              </div>
-              <div className="text-left flex-1">
-                <span className="text-sm font-medium block">Announce</span>
-                <span className="text-xs text-white/70">Notify students</span>
-              </div>
-            </button>
-          </div>
+          {/* Make Announcement */}
+          <button className="w-full flex items-center gap-3 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all cursor-pointer group">
+            <div className="w-8 h-8 bg-white/20 group-hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors">
+              <Megaphone size={16} />
+            </div>
+            <div className="text-left flex-1">
+              <span className="text-sm font-medium block">Announce</span>
+              <span className="text-xs text-white/70">Notify students</span>
+            </div>
+          </button>
         </div>
       </div>
 
@@ -410,9 +291,15 @@ export default function DashboardContent() {
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Recent Activity</h3>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm text-green-500 font-medium tracking-wide">Live</span>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm text-green-500 font-medium tracking-wide">Live</span>
+                </div>
+                <button className="flex items-center gap-2 px-4 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl text-sm font-medium tracking-wide transition-colors cursor-pointer">
+                  <Bell size={16} />
+                  Notify
+                </button>
               </div>
             </div>
           </div>
@@ -449,59 +336,39 @@ export default function DashboardContent() {
           </div>
         </div>
 
-        {/* Recent Announcements */}
+        {/* Upcoming Activities */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Recent Announcements</h3>
-              <button 
-                onClick={() => setShowAnnouncementModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl text-sm font-medium tracking-wide transition-colors cursor-pointer"
-              >
-                <Plus size={16} />
-                New Announcement
-              </button>
+              <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Upcoming Activities</h3>
+              <Calendar className="text-blue-500" size={20} />
             </div>
           </div>
 
           <div className="p-4">
-            {announcements.length > 0 ? (
+            {upcomingActivities.length > 0 ? (
               <div className="space-y-3">
-                {announcements.slice(0, 3).map((announcement) => {
-                  const Icon = getAnnouncementIcon(announcement.type);
-                  const colorClasses = getAnnouncementColor(announcement.type);
+                {upcomingActivities.slice(0, 3).map((activity) => {
+                  const priorityColor = getPriorityColor(activity.priority);
                   return (
-                    <div key={announcement.id} className={`p-3 rounded-lg border ${colorClasses}`}>
+                    <div key={activity.id} className="p-3 rounded-lg border border-gray-200">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-2 flex-1 min-w-0">
-                          <Icon size={16} className="mt-0.5 flex-shrink-0" />
+                          <Calendar size={16} className="mt-0.5 flex-shrink-0 text-blue-500" />
                           <div className="flex-1 min-w-0">
                             <h4 className="font-medium text-[var(--galaxy)] text-sm tracking-wide truncate">
-                              {announcement.title}
+                              {activity.title}
                             </h4>
-                            <p className="text-[var(--planetary)] text-xs tracking-wide line-clamp-2 mt-1">
-                              {announcement.message}
-                            </p>
-                            <div className="flex items-center gap-3 text-xs text-gray-500 tracking-wide mt-2">
-                              <span>{announcement.createdAt}</span>
-                              <div className="flex items-center gap-1">
-                                <Eye size={10} />
-                                <span>{announcement.views}</span>
-                              </div>
+                            <div className="flex items-center gap-3 text-xs text-gray-500 tracking-wide mt-1">
+                              <span>{activity.date}</span>
+                              <span>•</span>
+                              <span>{activity.time}</span>
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-1 ml-2 flex-shrink-0">
-                          <button className="p-1 hover:bg-gray-100 rounded transition-colors cursor-pointer">
-                            <Edit size={12} className="text-gray-500" />
-                          </button>
-                          <button 
-                            onClick={() => handleDeleteAnnouncement(announcement.id)}
-                            className="p-1 hover:bg-red-50 rounded transition-colors cursor-pointer"
-                          >
-                            <Trash2 size={12} className="text-red-500" />
-                          </button>
-                        </div>
+                        <span className={`text-xs font-medium px-2 py-1 rounded-full ${priorityColor} ml-2 flex-shrink-0`}>
+                          {activity.daysLeft} days
+                        </span>
                       </div>
                     </div>
                   );
@@ -509,98 +376,24 @@ export default function DashboardContent() {
               </div>
             ) : (
               <div className="text-center py-6">
-                <Megaphone className="text-gray-400 mx-auto mb-3" size={32} />
-                <h4 className="text-sm font-medium text-[var(--galaxy)] mb-1 tracking-wide">No Announcements Yet</h4>
+                <Calendar className="text-gray-400 mx-auto mb-3" size={32} />
+                <h4 className="text-sm font-medium text-[var(--galaxy)] mb-1 tracking-wide">No Activities Scheduled</h4>
                 <p className="text-[var(--planetary)] text-xs tracking-wide mb-3">
-                  Create your first announcement
+                  Schedule your first activity
                 </p>
-                <button 
-                  onClick={() => setShowAnnouncementModal(true)}
-                  className="px-4 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl text-xs font-medium tracking-wide transition-colors cursor-pointer"
-                >
-                  Create Announcement
+                <button className="px-4 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl text-xs font-medium tracking-wide transition-colors cursor-pointer">
+                  Create Activity
                 </button>
               </div>
             )}
-            {announcements.length > 3 && (
+            {upcomingActivities.length > 3 && (
               <button className="w-full mt-3 text-center text-sm text-[var(--planetary)] hover:text-[var(--sapphire)] font-medium tracking-wide cursor-pointer transition-colors">
-                View All Announcements
+                View All Activities
               </button>
             )}
           </div>
         </div>
       </div>
-
-      {/* Create Announcement Modal */}
-      {showAnnouncementModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-[var(--galaxy)] tracking-wide">Create Announcement</h3>
-              <button 
-                onClick={() => setShowAnnouncementModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
-              >
-                <X size={18} />
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--galaxy)] mb-2 tracking-wide">Title</label>
-                <input
-                  type="text"
-                  value={newAnnouncement.title}
-                  onChange={(e) => setNewAnnouncement(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent tracking-wide text-sm"
-                  placeholder="Enter announcement title"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-[var(--galaxy)] mb-2 tracking-wide">Message</label>
-                <textarea
-                  value={newAnnouncement.message}
-                  onChange={(e) => setNewAnnouncement(prev => ({ ...prev, message: e.target.value }))}
-                  rows={3}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent resize-none tracking-wide text-sm"
-                  placeholder="Enter announcement message"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-[var(--galaxy)] mb-2 tracking-wide">Type</label>
-                <select
-                  value={newAnnouncement.type}
-                  onChange={(e) => setNewAnnouncement(prev => ({ ...prev, type: e.target.value }))}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent tracking-wide text-sm"
-                >
-                  <option value="info">Information</option>
-                  <option value="warning">Warning</option>
-                  <option value="success">Success</option>
-                </select>
-              </div>
-              
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={handleCreateAnnouncement}
-                  disabled={!newAnnouncement.title.trim() || !newAnnouncement.message.trim()}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--planetary)] hover:bg-[var(--sapphire)] disabled:bg-gray-300 text-white rounded-xl text-sm font-medium tracking-wide transition-colors cursor-pointer"
-                >
-                  <Send size={14} />
-                  Create
-                </button>
-                <button
-                  onClick={() => setShowAnnouncementModal(false)}
-                  className="px-4 py-2.5 border border-gray-200 hover:bg-gray-50 text-[var(--galaxy)] rounded-xl text-sm font-medium tracking-wide transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
