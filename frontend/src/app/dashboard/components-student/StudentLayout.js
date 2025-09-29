@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '../../../contexts/AuthContext';
 import { 
@@ -14,7 +14,9 @@ import {
   MessageSquare,
   Home,
   Zap,
-  Briefcase
+  Briefcase,
+  Menu,
+  X
 } from 'lucide-react';
 
 export default function StudentLayout({ children }) {
@@ -22,6 +24,32 @@ export default function StudentLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState(pathname);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Close sidebar when clicking outside on mobile
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isSidebarOpen && !event.target.closest('.sidebar') && !event.target.closest('.hamburger-menu')) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isSidebarOpen]);
+
+  // Prevent body scroll when sidebar is open on mobile
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isSidebarOpen]);
 
   const handleLogout = () => {
     logout();
@@ -30,7 +58,12 @@ export default function StudentLayout({ children }) {
 
   const handleNavigation = (href) => {
     setActiveTab(href); // Immediately update active state
+    setIsSidebarOpen(false); // Close sidebar on navigation for mobile
     router.push(href);
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   // Get header content based on current route
@@ -119,8 +152,15 @@ export default function StudentLayout({ children }) {
 
   return (
     <div className="h-screen bg-gray-100 flex p-5 pr-0">
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setIsSidebarOpen(false)} />
+      )}
+
       {/* Sidebar */}
-      <div className="h-[95%] fixed w-[238px] bg-white rounded-3xl flex flex-col">
+      <div className={`sidebar h-[95%] fixed w-[238px] bg-white rounded-3xl flex flex-col z-50 transition-transform duration-300 ease-in-out lg:transform-none ${
+        isSidebarOpen ? 'transform translate-x-0' : 'transform -translate-x-full lg:translate-x-0'
+      }`}>
         {/* Logo */}
         <div className="flex items-center px-4 py-2">
           <img src="/favicon.png" alt="Xplore Logo" className="h-16 w-16 rounded-full object-cover" />
@@ -198,11 +238,23 @@ export default function StudentLayout({ children }) {
       </div>
 
       {/* Main Content */}
-      <div className="ml-[240px] flex-1 flex flex-col overflow-y-auto">
+      <div className="ml-0 lg:ml-[240px] flex-1 flex flex-col overflow-y-auto">
         {/* Top Header */}
         <header className="px-6 pt-2 pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
+              {/* Mobile Hamburger Menu */}
+              <button
+                onClick={toggleSidebar}
+                className="hamburger-menu lg:hidden p-2 rounded-lg hover:bg-white transition-colors"
+              >
+                {isSidebarOpen ? (
+                  <X className="text-[var(--galaxy)]" size={20} />
+                ) : (
+                  <Menu className="text-[var(--galaxy)]" size={20} />
+                )}
+              </button>
+
               <div>
                 <h1 className="text-2xl font-bold text-[var(--galaxy)]">{headerContent.title}</h1>
                 <p className="text-[var(--planetary)] text-sm tracking-wide">{headerContent.subtitle}</p>
@@ -221,7 +273,7 @@ export default function StudentLayout({ children }) {
               </button>
 
               <div className="flex items-center gap-3">
-                <div className="text-right">
+                <div className="text-right hidden sm:block">
                   <p className="text-sm font-semibold text-gray-900">John Doe</p>
                   <p className="text-xs text-gray-500">Student</p>
                 </div>

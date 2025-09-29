@@ -1,410 +1,539 @@
 'use client';
 import { useState } from 'react';
 import { 
-  Users, 
-  Crown, 
-  User, 
-  Plus, 
-  Search, 
-  Filter, 
-  MoreVertical,
-  UserPlus,
-  UserMinus,
-  UserCheck,
-  Mail,
-  Hash,
-  GraduationCap,
   Calendar,
-  BookOpen,
-  Shield,
+  Trophy,
+  Award,
+  Users,
+  Briefcase,
+  Heart,
+  GraduationCap,
+  Plus,
+  Search,
+  Filter,
+  MoreVertical,
+  Eye,
+  Edit3,
+  Trash2,
   X,
   Save,
   ChevronDown,
   SortDesc,
-  Edit3,
-  Trash2,
-  Settings
+  MapPin,
+  Clock,
+  User,
+  CheckCircle,
+  AlertCircle,
+  BookOpen,
+  Target,
+  Star,
+  Building,
+  FileText,
+  Download,
+  Upload
 } from 'lucide-react';
 import ClubAdminLayout from '../../components-club-admin/ClubAdminLayout';
 
-// Mock data for club members
-const mockMembers = {
-  clubHeads: [
+// Mock data for activities
+const mockActivities = {
+  conferences: [
     {
       id: 1,
-      name: 'Sarah Johnson',
-      rollNumber: '21CS010',
-      email: 'sarah.johnson.21cs010@college.edu',
-      profilePicture: null,
-      position: 'Club Lead',
-      role: 'lead',
-      branch: 'Computer Science & Engineering',
-      batch: '2021-2025',
-      joinedDate: '2023-01-15',
-      isAdmin: true
+      title: 'IEEE International Conference on AI',
+      type: 'conference',
+      category: 'Conferences and Workshops',
+      description: 'International conference on Artificial Intelligence and Machine Learning',
+      date: '2024-03-15',
+      endDate: '2024-03-17',
+      location: 'New Delhi, India',
+      organizer: 'IEEE',
+      status: 'completed',
+      participantCount: 45,
+      maxParticipants: 50,
+      registrationDeadline: '2024-03-10',
+      isInternal: false,
+      certificate: true,
+      points: 50,
+      createdBy: 'Dr. Sarah Johnson',
+      createdAt: '2024-02-01'
     },
     {
       id: 2,
-      name: 'Michael Chen',
-      rollNumber: '21CS025',
-      email: 'michael.chen.21cs025@college.edu',
-      profilePicture: null,
-      position: 'Technical Head',
-      role: 'technical_head',
-      branch: 'Computer Science & Engineering',
-      batch: '2021-2025',
-      joinedDate: '2023-02-01',
-      isAdmin: true
-    },
-    {
-      id: 3,
-      name: 'Priya Sharma',
-      rollNumber: '22ME008',
-      email: 'priya.sharma.22me008@college.edu',
-      profilePicture: null,
-      position: 'Event Coordinator',
-      role: 'event_coordinator',
-      branch: 'Mechanical Engineering',
-      batch: '2022-2026',
-      joinedDate: '2023-03-10',
-      isAdmin: false
+      title: 'Web Development Workshop',
+      type: 'workshop',
+      category: 'Conferences and Workshops',
+      description: 'Hands-on workshop on modern web development using React and Node.js',
+      date: '2024-04-20',
+      endDate: '2024-04-21',
+      location: 'College Auditorium',
+      organizer: 'Computer Science Department',
+      status: 'upcoming',
+      participantCount: 28,
+      maxParticipants: 40,
+      registrationDeadline: '2024-04-15',
+      isInternal: true,
+      certificate: true,
+      points: 30,
+      createdBy: 'Prof. Michael Chen',
+      createdAt: '2024-03-25'
     }
   ],
-  activeMembers: [
+  certifications: [
+    {
+      id: 3,
+      title: 'AWS Cloud Practitioner Certification',
+      type: 'certification',
+      category: 'Certifications',
+      description: 'Industry-recognized cloud computing certification from Amazon Web Services',
+      date: '2024-02-28',
+      endDate: null,
+      location: 'Online',
+      organizer: 'Amazon Web Services',
+      status: 'completed',
+      participantCount: 12,
+      maxParticipants: null,
+      registrationDeadline: '2024-02-20',
+      isInternal: false,
+      certificate: true,
+      points: 75,
+      createdBy: 'Dr. Priya Sharma',
+      createdAt: '2024-01-15'
+    }
+  ],
+  competitions: [
     {
       id: 4,
-      name: 'David Wilson',
-      rollNumber: '22CS045',
-      email: 'david.wilson.22cs045@college.edu',
-      profilePicture: null,
-      position: 'Member',
-      role: 'member',
-      branch: 'Computer Science & Engineering',
-      batch: '2022-2026',
-      joinedDate: '2023-08-20',
-      isAdmin: false
-    },
+      title: 'National Coding Championship',
+      type: 'competition',
+      category: 'Competitions and Contests',
+      description: 'National level programming competition for engineering students',
+      date: '2024-05-10',
+      endDate: '2024-05-12',
+      location: 'IIT Delhi',
+      organizer: 'CodeChef',
+      status: 'upcoming',
+      participantCount: 15,
+      maxParticipants: 20,
+      registrationDeadline: '2024-05-05',
+      isInternal: false,
+      certificate: true,
+      points: 100,
+      createdBy: 'Prof. Rajesh Kumar',
+      createdAt: '2024-04-01'
+    }
+  ],
+  clubActivities: [
     {
       id: 5,
-      name: 'Anna Rodriguez',
-      rollNumber: '23EE012',
-      email: 'anna.rodriguez.23ee012@college.edu',
-      profilePicture: null,
-      position: 'Member',
-      role: 'member',
-      branch: 'Electrical Engineering',
-      batch: '2023-2027',
-      joinedDate: '2023-09-15',
-      isAdmin: false
-    },
+      title: 'Tech Talk Series - AI & Ethics',
+      type: 'seminar',
+      category: 'Club Activities',
+      description: 'Monthly tech talk series discussing ethical implications of AI',
+      date: '2024-04-25',
+      endDate: null,
+      location: 'Seminar Hall B',
+      organizer: 'Tech Club',
+      status: 'upcoming',
+      participantCount: 35,
+      maxParticipants: 60,
+      registrationDeadline: '2024-04-20',
+      isInternal: true,
+      certificate: false,
+      points: 20,
+      createdBy: 'Sarah Johnson',
+      createdAt: '2024-04-10'
+    }
+  ],
+  internships: [
     {
       id: 6,
-      name: 'Rajesh Kumar',
-      rollNumber: '22IT020',
-      email: 'rajesh.kumar.22it020@college.edu',
-      profilePicture: null,
-      position: 'Member',
-      role: 'member',
-      branch: 'Information Technology',
-      batch: '2022-2026',
-      joinedDate: '2023-10-01',
-      isAdmin: false
-    },
+      title: 'Summer Internship Program',
+      type: 'internship',
+      category: 'Internships and Leadership',
+      description: 'Summer internship opportunities with industry partners',
+      date: '2024-06-01',
+      endDate: '2024-07-31',
+      location: 'Various Companies',
+      organizer: 'Placement Cell',
+      status: 'registration_open',
+      participantCount: 67,
+      maxParticipants: 100,
+      registrationDeadline: '2024-05-15',
+      isInternal: false,
+      certificate: true,
+      points: 150,
+      createdBy: 'Dr. Anna Rodriguez',
+      createdAt: '2024-03-01'
+    }
+  ],
+  community: [
     {
       id: 7,
-      name: 'Emily Davis',
-      rollNumber: '23CS033',
-      email: 'emily.davis.23cs033@college.edu',
-      profilePicture: null,
-      position: 'Member',
-      role: 'member',
-      branch: 'Computer Science & Engineering',
-      batch: '2023-2027',
-      joinedDate: '2023-11-10',
-      isAdmin: false
+      title: 'Blood Donation Drive',
+      type: 'community_service',
+      category: 'Community Service',
+      description: 'Annual blood donation camp in collaboration with local hospital',
+      date: '2024-04-30',
+      endDate: null,
+      location: 'College Campus',
+      organizer: 'NSS Unit',
+      status: 'upcoming',
+      participantCount: 82,
+      maxParticipants: 150,
+      registrationDeadline: '2024-04-28',
+      isInternal: true,
+      certificate: true,
+      points: 40,
+      createdBy: 'Dr. David Wilson',
+      createdAt: '2024-04-15'
     }
   ]
 };
 
-// Mock student database for adding new members
-const mockStudentDatabase = [
-  {
-    id: 101,
-    name: 'Alex Thompson',
-    rollNumber: '22CS067',
-    email: 'alex.thompson.22cs067@college.edu',
-    branch: 'Computer Science & Engineering',
-    batch: '2022-2026',
-    profilePicture: null
-  },
-  {
-    id: 102,
-    name: 'Lisa Park',
-    rollNumber: '23ME015',
-    email: 'lisa.park.23me015@college.edu',
-    branch: 'Mechanical Engineering',
-    batch: '2023-2027',
-    profilePicture: null
-  },
-  {
-    id: 103,
-    name: 'James Brown',
-    rollNumber: '21EE030',
-    email: 'james.brown.21ee030@college.edu',
-    branch: 'Electrical Engineering',
-    batch: '2021-2025',
-    profilePicture: null
-  }
+const activityTypes = [
+  { value: 'conference', label: 'Conference', icon: GraduationCap, color: 'blue' },
+  { value: 'workshop', label: 'Workshop', icon: BookOpen, color: 'green' },
+  { value: 'seminar', label: 'Seminar', icon: Users, color: 'purple' },
+  { value: 'competition', label: 'Competition', icon: Trophy, color: 'yellow' },
+  { value: 'certification', label: 'Certification', icon: Award, color: 'indigo' },
+  { value: 'internship', label: 'Internship', icon: Briefcase, color: 'red' },
+  { value: 'community_service', label: 'Community Service', icon: Heart, color: 'pink' },
+  { value: 'leadership', label: 'Leadership Role', icon: Star, color: 'orange' }
 ];
 
-const branches = [
-  'Computer Science & Engineering',
-  'Information Technology',
-  'Electrical Engineering',
-  'Mechanical Engineering',
-  'Civil Engineering',
-  'Electronics & Communication'
+const categories = [
+  'Conferences and Workshops',
+  'Certifications',
+  'Club Activities',
+  'Competitions and Contests',
+  'Internships and Leadership',
+  'Community Service'
 ];
 
-const batches = ['2021-2025', '2022-2026', '2023-2027', '2024-2028'];
-
-const roles = [
-  { value: 'lead', label: 'Club Lead', isHead: true },
-  { value: 'technical_head', label: 'Technical Head', isHead: true },
-  { value: 'event_coordinator', label: 'Event Coordinator', isHead: true },
-  { value: 'marketing_head', label: 'Marketing Head', isHead: true },
-  { value: 'member', label: 'Member', isHead: false }
+const statusOptions = [
+  { value: 'upcoming', label: 'Upcoming', color: 'blue' },
+  { value: 'registration_open', label: 'Registration Open', color: 'green' },
+  { value: 'ongoing', label: 'Ongoing', color: 'yellow' },
+  { value: 'completed', label: 'Completed', color: 'gray' },
+  { value: 'cancelled', label: 'Cancelled', color: 'red' }
 ];
 
-export default function MembersPage() {
-  const [members, setMembers] = useState(mockMembers);
-  const [selectedMember, setSelectedMember] = useState(null);
-  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
-  const [showMemberDetailsModal, setShowMemberDetailsModal] = useState(false);
-  const [showMemberActions, setShowMemberActions] = useState(null);
+export default function ActivitiesPage() {
+  const [activities, setActivities] = useState(mockActivities);
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [showAddActivityModal, setShowAddActivityModal] = useState(false);
+  const [showActivityDetailsModal, setShowActivityDetailsModal] = useState(false);
+  const [showActivityActions, setShowActivityActions] = useState(null);
   
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterBranch, setFilterBranch] = useState('all');
-  const [filterBatch, setFilterBatch] = useState('all');
-  const [sortBy, setSortBy] = useState('name');
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterType, setFilterType] = useState('all');
+  const [sortBy, setSortBy] = useState('date');
   const [showFilters, setShowFilters] = useState(false);
+  const [activeTab, setActiveTab] = useState('all');
 
-  // Add member form states
-  const [newMember, setNewMember] = useState({
-    studentId: '',
-    role: 'member',
-    position: ''
+  // Add activity form states
+  const [newActivity, setNewActivity] = useState({
+    title: '',
+    type: 'conference',
+    category: 'Conferences and Workshops',
+    description: '',
+    date: '',
+    endDate: '',
+    location: '',
+    organizer: '',
+    maxParticipants: '',
+    registrationDeadline: '',
+    isInternal: true,
+    certificate: false,
+    points: 0
   });
-  const [studentSearch, setStudentSearch] = useState('');
-  const [filteredStudents, setFilteredStudents] = useState([]);
-  const [selectedStudent, setSelectedStudent] = useState(null);
 
-  // Filter and search logic
-  const getAllMembers = () => {
-    const allMembers = [...members.clubHeads, ...members.activeMembers];
+  // Get all activities as a flat array
+  const getAllActivities = () => {
+    return Object.values(activities).flat();
+  };
+
+  // Filter activities based on current filters
+  const getFilteredActivities = () => {
+    let allActivities = getAllActivities();
     
-    let filteredMembers = allMembers.filter(member => {
-      const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           member.rollNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           member.branch.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesBranch = filterBranch === 'all' || member.branch === filterBranch;
-      const matchesBatch = filterBatch === 'all' || member.batch === filterBatch;
-      
-      return matchesSearch && matchesBranch && matchesBatch;
-    });
-
-    // Sort members
-    filteredMembers.sort((a, b) => {
-      if (sortBy === 'name') return a.name.localeCompare(b.name);
-      if (sortBy === 'rollNumber') return a.rollNumber.localeCompare(b.rollNumber);
-      if (sortBy === 'joinedDate') return new Date(b.joinedDate) - new Date(a.joinedDate);
-      if (sortBy === 'branch') return a.branch.localeCompare(b.branch);
-      return 0;
-    });
-
-    return filteredMembers;
-  };
-
-  // Handle student search for adding new members
-  const handleStudentSearch = (searchValue) => {
-    setStudentSearch(searchValue);
-    if (searchValue.trim()) {
-      const filtered = mockStudentDatabase.filter(student => 
-        !getAllMembers().some(member => member.rollNumber === student.rollNumber) &&
-        (student.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-         student.rollNumber.toLowerCase().includes(searchValue.toLowerCase()) ||
-         student.branch.toLowerCase().includes(searchValue.toLowerCase()))
-      );
-      setFilteredStudents(filtered);
-    } else {
-      setFilteredStudents([]);
+    // Apply tab filter
+    if (activeTab !== 'all') {
+      allActivities = allActivities.filter(activity => activity.category === activeTab);
     }
+    
+    // Apply search filter
+    if (searchTerm) {
+      allActivities = allActivities.filter(activity =>
+        activity.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        activity.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        activity.organizer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        activity.location.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    // Apply category filter
+    if (filterCategory !== 'all') {
+      allActivities = allActivities.filter(activity => activity.category === filterCategory);
+    }
+    
+    // Apply status filter
+    if (filterStatus !== 'all') {
+      allActivities = allActivities.filter(activity => activity.status === filterStatus);
+    }
+    
+    // Apply type filter
+    if (filterType !== 'all') {
+      allActivities = allActivities.filter(activity => activity.type === filterType);
+    }
+    
+    // Sort activities
+    allActivities.sort((a, b) => {
+      switch (sortBy) {
+        case 'date':
+          return new Date(b.date) - new Date(a.date);
+        case 'title':
+          return a.title.localeCompare(b.title);
+        case 'participants':
+          return b.participantCount - a.participantCount;
+        case 'points':
+          return b.points - a.points;
+        case 'created':
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        default:
+          return 0;
+      }
+    });
+    
+    return allActivities;
   };
 
-  // Add new member
-  const handleAddMember = () => {
-    if (!selectedStudent || !newMember.role) return;
+  // Add new activity
+  const handleAddActivity = () => {
+    if (!newActivity.title || !newActivity.date || !newActivity.location) return;
 
-    const roleData = roles.find(r => r.value === newMember.role);
-    const newMemberData = {
+    const activityData = {
       id: Date.now(),
-      ...selectedStudent,
-      position: newMember.position || roleData.label,
-      role: newMember.role,
-      joinedDate: new Date().toISOString().split('T')[0],
-      isAdmin: false
+      ...newActivity,
+      participantCount: 0,
+      maxParticipants: newActivity.maxParticipants ? parseInt(newActivity.maxParticipants) : null,
+      points: parseInt(newActivity.points) || 0,
+      status: 'upcoming',
+      createdBy: 'Current User',
+      createdAt: new Date().toISOString()
     };
 
-    const targetSection = roleData.isHead ? 'clubHeads' : 'activeMembers';
-    setMembers(prev => ({
+    // Add to appropriate category
+    const categoryKey = newActivity.category === 'Conferences and Workshops' ? 'conferences' :
+                       newActivity.category === 'Certifications' ? 'certifications' :
+                       newActivity.category === 'Competitions and Contests' ? 'competitions' :
+                       newActivity.category === 'Club Activities' ? 'clubActivities' :
+                       newActivity.category === 'Internships and Leadership' ? 'internships' :
+                       'community';
+
+    setActivities(prev => ({
       ...prev,
-      [targetSection]: [...prev[targetSection], newMemberData]
+      [categoryKey]: [...prev[categoryKey], activityData]
     }));
 
     // Reset form
-    setNewMember({ studentId: '', role: 'member', position: '' });
-    setSelectedStudent(null);
-    setStudentSearch('');
-    setFilteredStudents([]);
-    setShowAddMemberModal(false);
+    setNewActivity({
+      title: '',
+      type: 'conference',
+      category: 'Conferences and Workshops',
+      description: '',
+      date: '',
+      endDate: '',
+      location: '',
+      organizer: '',
+      maxParticipants: '',
+      registrationDeadline: '',
+      isInternal: true,
+      certificate: false,
+      points: 0
+    });
+    setShowAddActivityModal(false);
   };
 
-  // Remove member
-  const handleRemoveMember = (memberId) => {
-    if (window.confirm('Are you sure you want to remove this member?')) {
-      setMembers(prev => ({
-        clubHeads: prev.clubHeads.filter(member => member.id !== memberId),
-        activeMembers: prev.activeMembers.filter(member => member.id !== memberId)
-      }));
-      setShowMemberActions(null);
+  // Delete activity
+  const handleDeleteActivity = (activityId) => {
+    if (window.confirm('Are you sure you want to delete this activity?')) {
+      setActivities(prev => {
+        const newActivities = { ...prev };
+        Object.keys(newActivities).forEach(key => {
+          newActivities[key] = newActivities[key].filter(activity => activity.id !== activityId);
+        });
+        return newActivities;
+      });
+      setShowActivityActions(null);
     }
   };
 
-  // Make member admin
-  const handleMakeAdmin = (memberId) => {
-    setMembers(prev => ({
-      clubHeads: prev.clubHeads.map(member => 
-        member.id === memberId ? { ...member, isAdmin: true } : member
-      ),
-      activeMembers: prev.activeMembers.map(member => 
-        member.id === memberId ? { ...member, isAdmin: true } : member
-      )
-    }));
-    setShowMemberActions(null);
+  // Get status color
+  const getStatusColor = (status) => {
+    const statusConfig = statusOptions.find(s => s.value === status);
+    return statusConfig ? statusConfig.color : 'gray';
   };
 
-  // Member Card Component
-  const MemberCard = ({ member, isHead = false }) => (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition-colors relative">
-      <div className="flex items-center gap-3">
-        <div className="relative">
-          <div className="w-12 h-12 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-full flex items-center justify-center">
-            {member.profilePicture ? (
-              <img 
-                src={member.profilePicture} 
-                alt={member.name} 
-                className="w-full h-full rounded-full object-cover"
-              />
-            ) : (
-              <User className="text-white" size={20} />
-            )}
-          </div>
-          {isHead && (
-            <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center">
-              <Crown size={10} className="text-white" />
-            </div>
-          )}
-          {member.isAdmin && (
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[var(--planetary)] rounded-full flex items-center justify-center">
-              <Shield size={8} className="text-white" />
-            </div>
-          )}
-        </div>
-        
-        <div className="flex-1 min-w-0">
-          <h4 className="font-medium text-[var(--galaxy)] text-sm truncate">{member.name}</h4>
-          <p className="text-[var(--planetary)] text-xs">{member.position}</p>
-          <p className="text-gray-500 text-xs">{member.rollNumber}</p>
-        </div>
+  // Get type icon and color
+  const getTypeConfig = (type) => {
+    return activityTypes.find(t => t.value === type) || activityTypes[0];
+  };
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => {
-              setSelectedMember(member);
-              setShowMemberDetailsModal(true);
-            }}
-            className="p-1.5 hover:bg-gray-200 rounded-lg transition-colors"
-          >
-            <User size={14} className="text-gray-600" />
-          </button>
+  // Activity Card Component
+  const ActivityCard = ({ activity }) => {
+    const typeConfig = getTypeConfig(activity.type);
+    const TypeIcon = typeConfig.icon;
+    const statusColor = getStatusColor(activity.status);
+    
+    return (
+      <div className="bg-white border border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition-colors relative">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 bg-${typeConfig.color}-100 rounded-lg flex items-center justify-center`}>
+              <TypeIcon className={`text-${typeConfig.color}-600`} size={20} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-semibold text-[var(--galaxy)] text-sm truncate">{activity.title}</h4>
+              <p className="text-[var(--planetary)] text-xs">{activity.organizer}</p>
+            </div>
+          </div>
           
-          <div className="relative">
-            <button
-              onClick={() => setShowMemberActions(showMemberActions === member.id ? null : member.id)}
-              className="p-1.5 hover:bg-gray-200 rounded-lg transition-colors"
-            >
-              <MoreVertical size={14} className="text-gray-600" />
-            </button>
-            
-            {showMemberActions === member.id && (
-              <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[160px]">
-                <div className="py-1">
-                  <button
-                    onClick={() => {
-                      setSelectedMember(member);
-                      setShowMemberDetailsModal(true);
-                      setShowMemberActions(null);
-                    }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    <User size={14} />
-                    View Details
-                  </button>
-                  {!member.isAdmin && (
+          <div className="flex items-center gap-2">
+            <span className={`px-2 py-1 bg-${statusColor}-100 text-${statusColor}-700 rounded-full text-xs font-medium`}>
+              {statusOptions.find(s => s.value === activity.status)?.label}
+            </span>
+            <div className="relative">
+              <button
+                onClick={() => setShowActivityActions(showActivityActions === activity.id ? null : activity.id)}
+                className="p-1.5 hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                <MoreVertical size={14} className="text-gray-600" />
+              </button>
+              
+              {showActivityActions === activity.id && (
+                <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[160px]">
+                  <div className="py-1">
                     <button
-                      onClick={() => handleMakeAdmin(member.id)}
+                      onClick={() => {
+                        setSelectedActivity(activity);
+                        setShowActivityDetailsModal(true);
+                        setShowActivityActions(null);
+                      }}
+                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      <Eye size={14} />
+                      View Details
+                    </button>
+                    <button
+                      onClick={() => {
+                        // Handle edit functionality
+                        setShowActivityActions(null);
+                      }}
                       className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[var(--planetary)] hover:bg-gray-100"
                     >
-                      <UserCheck size={14} />
-                      Make Admin
+                      <Edit3 size={14} />
+                      Edit Activity
                     </button>
-                  )}
-                  <button
-                    onClick={() => handleRemoveMember(member.id)}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100"
-                  >
-                    <UserMinus size={14} />
-                    Remove Member
-                  </button>
+                    <button
+                      onClick={() => handleDeleteActivity(activity.id)}
+                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100"
+                    >
+                      <Trash2 size={14} />
+                      Delete Activity
+                    </button>
+                  </div>
                 </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <p className="text-gray-600 text-xs mb-3 line-clamp-2">{activity.description}</p>
+
+        <div className="space-y-2 text-xs text-gray-500">
+          <div className="flex items-center gap-2">
+            <Calendar size={12} />
+            <span>
+              {new Date(activity.date).toLocaleDateString()}
+              {activity.endDate && ` - ${new Date(activity.endDate).toLocaleDateString()}`}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <MapPin size={12} />
+            <span className="truncate">{activity.location}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Users size={12} />
+              <span>{activity.participantCount}{activity.maxParticipants ? `/${activity.maxParticipants}` : ''} participants</span>
+            </div>
+            {activity.points > 0 && (
+              <div className="flex items-center gap-1">
+                <Star size={12} className="text-yellow-500" />
+                <span className="font-medium">{activity.points} pts</span>
               </div>
             )}
           </div>
         </div>
+
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+          <div className="flex items-center gap-2">
+            {activity.certificate && (
+              <div className="flex items-center gap-1">
+                <Award size={12} className="text-[var(--planetary)]" />
+                <span className="text-xs text-[var(--planetary)]">Certificate</span>
+              </div>
+            )}
+            {activity.isInternal && (
+              <span className="px-2 py-1 bg-[var(--sky)] text-[var(--planetary)] rounded-full text-xs">Internal</span>
+            )}
+          </div>
+          <button
+            onClick={() => {
+              setSelectedActivity(activity);
+              setShowActivityDetailsModal(true);
+            }}
+            className="text-[var(--planetary)] hover:text-[var(--sapphire)] text-xs font-medium"
+          >
+            View Details →
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
+
+  const tabs = [
+    { key: 'all', label: 'All Activities', count: getAllActivities().length },
+    { key: 'Conferences and Workshops', label: 'Conferences & Workshops', count: activities.conferences.length },
+    { key: 'Certifications', label: 'Certifications', count: activities.certifications.length },
+    { key: 'Competitions and Contests', label: 'Competitions', count: activities.competitions.length },
+    { key: 'Club Activities', label: 'Club Activities', count: activities.clubActivities.length },
+    { key: 'Internships and Leadership', label: 'Internships', count: activities.internships.length },
+    { key: 'Community Service', label: 'Community Service', count: activities.community.length }
+  ];
 
   return (
     <ClubAdminLayout>
       <div className="space-y-6">
-        {/* Header with Search and Add Button */}
+        {/* Header */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xl font-bold text-[var(--galaxy)]">Club Members</h2>
+              <h2 className="text-xl font-bold text-[var(--galaxy)]">Activities Management</h2>
               <p className="text-[var(--planetary)] text-sm mt-1">
-                Manage your club members and assign roles
+                Create and manage student activities, events, and opportunities
               </p>
             </div>
             <button
-              onClick={() => setShowAddMemberModal(true)}
+              onClick={() => setShowAddActivityModal(true)}
               className="flex items-center gap-2 px-4 py-2.5 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl font-medium transition-colors"
             >
-              <UserPlus size={16} />
-              Add Member
+              <Plus size={16} />
+              Add Activity
             </button>
           </div>
 
@@ -417,7 +546,7 @@ export default function MembersPage() {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by name, roll number, or branch..."
+                placeholder="Search activities by title, organizer, or location..."
                 className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
               />
             </div>
@@ -429,10 +558,11 @@ export default function MembersPage() {
                 onChange={(e) => setSortBy(e.target.value)}
                 className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-[var(--galaxy)] focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent cursor-pointer"
               >
-                <option value="name">Sort by Name</option>
-                <option value="rollNumber">Sort by Roll Number</option>
-                <option value="joinedDate">Sort by Join Date</option>
-                <option value="branch">Sort by Branch</option>
+                <option value="date">Sort by Date</option>
+                <option value="title">Sort by Title</option>
+                <option value="participants">Sort by Participants</option>
+                <option value="points">Sort by Points</option>
+                <option value="created">Sort by Created</option>
               </select>
               <SortDesc className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
             </div>
@@ -449,32 +579,45 @@ export default function MembersPage() {
               </button>
 
               {showFilters && (
-                <div className="absolute right-0 top-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-10 min-w-[200px]">
+                <div className="absolute right-0 top-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-10 min-w-[250px]">
                   <div className="p-3">
                     <div className="space-y-3">
                       <div>
-                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 block">Branch</label>
+                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 block">Category</label>
                         <select
-                          value={filterBranch}
-                          onChange={(e) => setFilterBranch(e.target.value)}
+                          value={filterCategory}
+                          onChange={(e) => setFilterCategory(e.target.value)}
                           className="w-full p-2 border border-gray-200 rounded-lg text-sm"
                         >
-                          <option value="all">All Branches</option>
-                          {branches.map(branch => (
-                            <option key={branch} value={branch}>{branch}</option>
+                          <option value="all">All Categories</option>
+                          {categories.map(category => (
+                            <option key={category} value={category}>{category}</option>
                           ))}
                         </select>
                       </div>
                       <div>
-                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 block">Batch</label>
+                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 block">Status</label>
                         <select
-                          value={filterBatch}
-                          onChange={(e) => setFilterBatch(e.target.value)}
+                          value={filterStatus}
+                          onChange={(e) => setFilterStatus(e.target.value)}
                           className="w-full p-2 border border-gray-200 rounded-lg text-sm"
                         >
-                          <option value="all">All Batches</option>
-                          {batches.map(batch => (
-                            <option key={batch} value={batch}>{batch}</option>
+                          <option value="all">All Statuses</option>
+                          {statusOptions.map(status => (
+                            <option key={status.value} value={status.value}>{status.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 block">Type</label>
+                        <select
+                          value={filterType}
+                          onChange={(e) => setFilterType(e.target.value)}
+                          className="w-full p-2 border border-gray-200 rounded-lg text-sm"
+                        >
+                          <option value="all">All Types</option>
+                          {activityTypes.map(type => (
+                            <option key={type.value} value={type.value}>{type.label}</option>
                           ))}
                         </select>
                       </div>
@@ -491,25 +634,13 @@ export default function MembersPage() {
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-[var(--sky)] rounded-lg flex items-center justify-center">
-                <Users className="text-[var(--planetary)]" size={20} />
+                <Calendar className="text-[var(--planetary)]" size={20} />
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--galaxy)]">
-                  {members.clubHeads.length + members.activeMembers.length}
+                  {getAllActivities().length}
                 </p>
-                <p className="text-[var(--planetary)] text-sm">Total Members</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <Crown className="text-yellow-600" size={20} />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-[var(--galaxy)]">{members.clubHeads.length}</p>
-                <p className="text-[var(--planetary)] text-sm">Club Heads</p>
+                <p className="text-[var(--planetary)] text-sm">Total Activities</p>
               </div>
             </div>
           </div>
@@ -517,11 +648,27 @@ export default function MembersPage() {
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <UserCheck className="text-green-600" size={20} />
+                <CheckCircle className="text-green-600" size={20} />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--galaxy)]">{members.activeMembers.length}</p>
-                <p className="text-[var(--planetary)] text-sm">Active Members</p>
+                <p className="text-2xl font-bold text-[var(--galaxy)]">
+                  {getAllActivities().filter(a => a.status === 'upcoming' || a.status === 'registration_open').length}
+                </p>
+                <p className="text-[var(--planetary)] text-sm">Upcoming</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <Users className="text-yellow-600" size={20} />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-[var(--galaxy)]">
+                  {getAllActivities().reduce((sum, activity) => sum + activity.participantCount, 0)}
+                </p>
+                <p className="text-[var(--planetary)] text-sm">Total Participants</p>
               </div>
             </div>
           </div>
@@ -529,134 +676,98 @@ export default function MembersPage() {
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-[var(--planetary)]/10 rounded-lg flex items-center justify-center">
-                <Shield className="text-[var(--planetary)]" size={20} />
+                <Award className="text-[var(--planetary)]" size={20} />
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--galaxy)]">
-                  {getAllMembers().filter(m => m.isAdmin).length}
+                  {getAllActivities().filter(a => a.certificate).length}
                 </p>
-                <p className="text-[var(--planetary)] text-sm">Admins</p>
+                <p className="text-[var(--planetary)] text-sm">With Certificates</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Club Heads Section */}
+        {/* Activity Category Tabs */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center gap-2">
-              <Crown className="text-yellow-500" size={20} />
-              <h3 className="text-lg font-semibold text-[var(--galaxy)]">Club Heads</h3>
-              <span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">
-                {members.clubHeads.filter(member => {
-                  const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                       member.rollNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                       member.branch.toLowerCase().includes(searchTerm.toLowerCase());
-                  const matchesBranch = filterBranch === 'all' || member.branch === filterBranch;
-                  const matchesBatch = filterBatch === 'all' || member.batch === filterBatch;
-                  return matchesSearch && matchesBranch && matchesBatch;
-                }).length}
-              </span>
+          <div className="p-4 border-b border-gray-100">
+            <div className="flex items-center gap-1 overflow-x-auto">
+              {tabs.map(tab => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-colors ${
+                    activeTab === tab.key
+                      ? 'bg-[var(--planetary)] text-white'
+                      : 'text-[var(--galaxy)] hover:bg-gray-100'
+                  }`}
+                >
+                  {tab.label}
+                  <span className={`px-2 py-0.5 rounded-full text-xs ${
+                    activeTab === tab.key
+                      ? 'bg-white/20 text-white'
+                      : 'bg-gray-100 text-[var(--planetary)]'
+                  }`}>
+                    {tab.count}
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
           
           <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {members.clubHeads
-                .filter(member => {
-                  const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                       member.rollNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                       member.branch.toLowerCase().includes(searchTerm.toLowerCase());
-                  const matchesBranch = filterBranch === 'all' || member.branch === filterBranch;
-                  const matchesBatch = filterBatch === 'all' || member.batch === filterBatch;
-                  return matchesSearch && matchesBranch && matchesBatch;
-                })
-                .map(member => (
-                  <MemberCard key={member.id} member={member} isHead={true} />
-                ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {getFilteredActivities().map(activity => (
+                <ActivityCard key={activity.id} activity={activity} />
+              ))}
               
-              {members.clubHeads.filter(member => {
-                const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                     member.rollNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                     member.branch.toLowerCase().includes(searchTerm.toLowerCase());
-                const matchesBranch = filterBranch === 'all' || member.branch === filterBranch;
-                const matchesBatch = filterBatch === 'all' || member.batch === filterBatch;
-                return matchesSearch && matchesBranch && matchesBatch;
-              }).length === 0 && (
-                <div className="col-span-full text-center py-8">
-                  <Crown className="text-gray-400 mx-auto mb-2" size={32} />
-                  <p className="text-[var(--planetary)]">No club heads found matching your criteria</p>
+              {getFilteredActivities().length === 0 && (
+                <div className="col-span-full text-center py-12">
+                  <Calendar className="text-gray-400 mx-auto mb-4" size={48} />
+                  <p className="text-[var(--planetary)] text-lg font-medium mb-2">No activities found</p>
+                  <p className="text-gray-500 mb-4">
+                    {searchTerm || filterCategory !== 'all' || filterStatus !== 'all' || filterType !== 'all'
+                      ? 'Try adjusting your search criteria or filters'
+                      : 'Create your first activity to get started'
+                    }
+                  </p>
+                  <button
+                    onClick={() => setShowAddActivityModal(true)}
+                    className="px-6 py-3 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl font-medium transition-colors"
+                  >
+                    Add New Activity
+                  </button>
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* Active Members Section */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center gap-2">
-              <Users className="text-[var(--planetary)]" size={20} />
-              <h3 className="text-lg font-semibold text-[var(--galaxy)]">Active Members</h3>
-              <span className="px-2 py-1 bg-[var(--sky)] text-[var(--planetary)] rounded-full text-xs font-medium">
-                {members.activeMembers.filter(member => {
-                  const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                       member.rollNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                       member.branch.toLowerCase().includes(searchTerm.toLowerCase());
-                  const matchesBranch = filterBranch === 'all' || member.branch === filterBranch;
-                  const matchesBatch = filterBatch === 'all' || member.batch === filterBatch;
-                  return matchesSearch && matchesBranch && matchesBatch;
-                }).length}
-              </span>
-            </div>
-          </div>
-          
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {members.activeMembers
-                .filter(member => {
-                  const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                       member.rollNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                       member.branch.toLowerCase().includes(searchTerm.toLowerCase());
-                  const matchesBranch = filterBranch === 'all' || member.branch === filterBranch;
-                  const matchesBatch = filterBatch === 'all' || member.batch === filterBatch;
-                  return matchesSearch && matchesBranch && matchesBatch;
-                })
-                .map(member => (
-                  <MemberCard key={member.id} member={member} />
-                ))}
-              
-              {members.activeMembers.filter(member => {
-                const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                     member.rollNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                     member.branch.toLowerCase().includes(searchTerm.toLowerCase());
-                const matchesBranch = filterBranch === 'all' || member.branch === filterBranch;
-                const matchesBatch = filterBatch === 'all' || member.batch === filterBatch;
-                return matchesSearch && matchesBranch && matchesBatch;
-              }).length === 0 && (
-                <div className="col-span-full text-center py-8">
-                  <Users className="text-gray-400 mx-auto mb-2" size={32} />
-                  <p className="text-[var(--planetary)]">No members found matching your criteria</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Add Member Modal */}
-        {showAddMemberModal && (
+        {/* Add Activity Modal */}
+        {showAddActivityModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto">
+            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6 border-b border-gray-100">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-[var(--galaxy)]">Add New Member</h3>
+                  <h3 className="text-lg font-semibold text-[var(--galaxy)]">Create New Activity</h3>
                   <button
                     onClick={() => {
-                      setShowAddMemberModal(false);
-                      setNewMember({ studentId: '', role: 'member', position: '' });
-                      setSelectedStudent(null);
-                      setStudentSearch('');
-                      setFilteredStudents([]);
+                      setShowAddActivityModal(false);
+                      setNewActivity({
+                        title: '',
+                        type: 'conference',
+                        category: 'Conferences and Workshops',
+                        description: '',
+                        date: '',
+                        endDate: '',
+                        location: '',
+                        organizer: '',
+                        maxParticipants: '',
+                        registrationDeadline: '',
+                        isInternal: true,
+                        certificate: false,
+                        points: 0
+                      });
                     }}
                     className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   >
@@ -666,123 +777,226 @@ export default function MembersPage() {
               </div>
               
               <div className="p-6 space-y-4">
-                {/* Student Search */}
-                <div>
-                  <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
-                    Search Student
-                  </label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                {/* Basic Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                      Activity Title *
+                    </label>
                     <input
                       type="text"
-                      value={studentSearch}
-                      onChange={(e) => handleStudentSearch(e.target.value)}
-                      placeholder="Search by name, roll number, or branch..."
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
+                      value={newActivity.title}
+                      onChange={(e) => setNewActivity(prev => ({ ...prev, title: e.target.value }))}
+                      placeholder="Enter activity title"
+                      className="w-full p-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
                     />
                   </div>
-                  
-                  {/* Student Search Results */}
-                  {filteredStudents.length > 0 && (
-                    <div className="mt-2 border border-gray-200 rounded-lg max-h-40 overflow-y-auto">
-                      {filteredStudents.map(student => (
-                        <button
-                          key={student.id}
-                          onClick={() => {
-                            setSelectedStudent(student);
-                            setStudentSearch(student.name);
-                            setFilteredStudents([]);
-                          }}
-                          className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors text-left"
-                        >
-                          <div className="w-8 h-8 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-full flex items-center justify-center">
-                            <User className="text-white" size={14} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-[var(--galaxy)] truncate">{student.name}</p>
-                            <p className="text-xs text-[var(--planetary)]">{student.rollNumber} • {student.branch}</p>
-                            <p className="text-xs text-gray-500">{student.batch}</p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
 
-                  {/* Selected Student Display */}
-                  {selectedStudent && (
-                    <div className="mt-3 p-3 bg-[var(--sky)] rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-full flex items-center justify-center">
-                          <User className="text-white" size={16} />
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium text-[var(--galaxy)] text-sm">{selectedStudent.name}</p>
-                          <p className="text-xs text-[var(--planetary)]">{selectedStudent.rollNumber}</p>
-                          <p className="text-xs text-[var(--planetary)]">{selectedStudent.branch} • {selectedStudent.batch}</p>
-                        </div>
-                        <button
-                          onClick={() => {
-                            setSelectedStudent(null);
-                            setStudentSearch('');
-                          }}
-                          className="p-1 hover:bg-white/50 rounded-lg transition-colors"
-                        >
-                          <X size={14} className="text-[var(--planetary)]" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                      Activity Type *
+                    </label>
+                    <select
+                      value={newActivity.type}
+                      onChange={(e) => setNewActivity(prev => ({ ...prev, type: e.target.value }))}
+                      className="w-full p-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
+                    >
+                      {activityTypes.map(type => (
+                        <option key={type.value} value={type.value}>{type.label}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
-                {/* Role Selection */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
-                    Role
+                    Category *
                   </label>
                   <select
-                    value={newMember.role}
-                    onChange={(e) => setNewMember(prev => ({ ...prev, role: e.target.value }))}
+                    value={newActivity.category}
+                    onChange={(e) => setNewActivity(prev => ({ ...prev, category: e.target.value }))}
                     className="w-full p-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
                   >
-                    {roles.map(role => (
-                      <option key={role.value} value={role.value}>
-                        {role.label} {role.isHead ? '(Club Head)' : ''}
-                      </option>
+                    {categories.map(category => (
+                      <option key={category} value={category}>{category}</option>
                     ))}
                   </select>
                 </div>
 
-                {/* Custom Position (Optional) */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
-                    Custom Position (Optional)
+                    Description *
                   </label>
-                  <input
-                    type="text"
-                    value={newMember.position}
-                    onChange={(e) => setNewMember(prev => ({ ...prev, position: e.target.value }))}
-                    placeholder="Leave empty to use default role name"
+                  <textarea
+                    value={newActivity.description}
+                    onChange={(e) => setNewActivity(prev => ({ ...prev, description: e.target.value }))}
+                    placeholder="Describe the activity, its objectives, and what participants will learn"
+                    rows={3}
                     className="w-full p-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
                   />
+                </div>
+
+                {/* Date and Location */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                      Start Date *
+                    </label>
+                    <input
+                      type="date"
+                      value={newActivity.date}
+                      onChange={(e) => setNewActivity(prev => ({ ...prev, date: e.target.value }))}
+                      className="w-full p-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                      End Date (Optional)
+                    </label>
+                    <input
+                      type="date"
+                      value={newActivity.endDate}
+                      onChange={(e) => setNewActivity(prev => ({ ...prev, endDate: e.target.value }))}
+                      className="w-full p-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                      Location *
+                    </label>
+                    <input
+                      type="text"
+                      value={newActivity.location}
+                      onChange={(e) => setNewActivity(prev => ({ ...prev, location: e.target.value }))}
+                      placeholder="e.g., College Auditorium, Online, IIT Delhi"
+                      className="w-full p-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                      Organizer *
+                    </label>
+                    <input
+                      type="text"
+                      value={newActivity.organizer}
+                      onChange={(e) => setNewActivity(prev => ({ ...prev, organizer: e.target.value }))}
+                      placeholder="e.g., Computer Science Department, IEEE"
+                      className="w-full p-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Registration Details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                      Max Participants (Optional)
+                    </label>
+                    <input
+                      type="number"
+                      value={newActivity.maxParticipants}
+                      onChange={(e) => setNewActivity(prev => ({ ...prev, maxParticipants: e.target.value }))}
+                      placeholder="Leave empty for unlimited"
+                      className="w-full p-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                      Registration Deadline
+                    </label>
+                    <input
+                      type="date"
+                      value={newActivity.registrationDeadline}
+                      onChange={(e) => setNewActivity(prev => ({ ...prev, registrationDeadline: e.target.value }))}
+                      className="w-full p-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                    Activity Points
+                  </label>
+                  <input
+                    type="number"
+                    value={newActivity.points}
+                    onChange={(e) => setNewActivity(prev => ({ ...prev, points: e.target.value }))}
+                    placeholder="Points awarded for participation"
+                    className="w-full p-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent text-sm"
+                  />
+                </div>
+
+                {/* Settings */}
+                <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
+                  <h4 className="font-medium text-[var(--galaxy)]">Activity Settings</h4>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-[var(--galaxy)]">Internal Activity</p>
+                      <p className="text-xs text-gray-500">Activity organized within the college</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={newActivity.isInternal}
+                        onChange={(e) => setNewActivity(prev => ({ ...prev, isInternal: e.target.checked }))}
+                        className="sr-only peer"
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[var(--planetary)]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--planetary)]"></div>
+                    </label>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-[var(--galaxy)]">Certificate Available</p>
+                      <p className="text-xs text-gray-500">Participants will receive certificates</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={newActivity.certificate}
+                        onChange={(e) => setNewActivity(prev => ({ ...prev, certificate: e.target.checked }))}
+                        className="sr-only peer"
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[var(--planetary)]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--planetary)]"></div>
+                    </label>
+                  </div>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-4 border-t border-gray-100">
                   <button
-                    onClick={handleAddMember}
-                    disabled={!selectedStudent || !newMember.role}
+                    onClick={handleAddActivity}
+                    disabled={!newActivity.title || !newActivity.date || !newActivity.location || !newActivity.organizer}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--planetary)] hover:bg-[var(--sapphire)] disabled:bg-gray-300 text-white rounded-lg font-medium transition-colors"
                   >
-                    <UserPlus size={16} />
-                    Add Member
+                    <Save size={16} />
+                    Create Activity
                   </button>
                   <button
                     onClick={() => {
-                      setShowAddMemberModal(false);
-                      setNewMember({ studentId: '', role: 'member', position: '' });
-                      setSelectedStudent(null);
-                      setStudentSearch('');
-                      setFilteredStudents([]);
+                      setShowAddActivityModal(false);
+                      setNewActivity({
+                        title: '',
+                        type: 'conference',
+                        category: 'Conferences and Workshops',
+                        description: '',
+                        date: '',
+                        endDate: '',
+                        location: '',
+                        organizer: '',
+                        maxParticipants: '',
+                        registrationDeadline: '',
+                        isInternal: true,
+                        certificate: false,
+                        points: 0
+                      });
                     }}
                     className="px-4 py-2.5 border border-gray-200 hover:bg-gray-50 text-[var(--galaxy)] rounded-lg font-medium transition-colors"
                   >
@@ -794,17 +1008,28 @@ export default function MembersPage() {
           </div>
         )}
 
-        {/* Member Details Modal */}
-        {showMemberDetailsModal && selectedMember && (
+        {/* Activity Details Modal */}
+        {showActivityDetailsModal && selectedActivity && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6 border-b border-gray-100">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-[var(--galaxy)]">Member Details</h3>
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 bg-${getTypeConfig(selectedActivity.type).color}-100 rounded-lg flex items-center justify-center`}>
+                      {(() => {
+                        const TypeIcon = getTypeConfig(selectedActivity.type).icon;
+                        return <TypeIcon className={`text-${getTypeConfig(selectedActivity.type).color}-600`} size={20} />;
+                      })()}
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-[var(--galaxy)]">{selectedActivity.title}</h3>
+                      <p className="text-[var(--planetary)] text-sm">{selectedActivity.organizer}</p>
+                    </div>
+                  </div>
                   <button
                     onClick={() => {
-                      setShowMemberDetailsModal(false);
-                      setSelectedMember(null);
+                      setShowActivityDetailsModal(false);
+                      setSelectedActivity(null);
                     }}
                     className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   >
@@ -813,116 +1038,153 @@ export default function MembersPage() {
                 </div>
               </div>
               
-              <div className="p-6">
-                {/* Profile Section */}
-                <div className="text-center mb-6">
-                  <div className="relative inline-block mb-4">
-                    <div className="w-20 h-20 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-full flex items-center justify-center">
-                      {selectedMember.profilePicture ? (
-                        <img 
-                          src={selectedMember.profilePicture} 
-                          alt={selectedMember.name} 
-                          className="w-full h-full rounded-full object-cover"
-                        />
-                      ) : (
-                        <User className="text-white" size={32} />
-                      )}
-                    </div>
-                    {roles.find(r => r.value === selectedMember.role)?.isHead && (
-                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
-                        <Crown size={14} className="text-white" />
-                      </div>
-                    )}
-                    {selectedMember.isAdmin && (
-                      <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-[var(--planetary)] rounded-full flex items-center justify-center">
-                        <Shield size={12} className="text-white" />
-                      </div>
-                    )}
-                  </div>
-                  <h4 className="text-lg font-bold text-[var(--galaxy)] mb-1">{selectedMember.name}</h4>
-                  <p className="text-[var(--planetary)] font-medium">{selectedMember.position}</p>
-                  {selectedMember.isAdmin && (
-                    <span className="inline-flex items-center gap-1 mt-2 px-2 py-1 bg-[var(--planetary)]/10 text-[var(--planetary)] rounded-full text-xs font-medium">
-                      <Shield size={10} />
-                      Admin Access
+              <div className="p-6 space-y-6">
+                {/* Status and Basic Info */}
+                <div className="flex items-center gap-4">
+                  <span className={`px-3 py-1.5 bg-${getStatusColor(selectedActivity.status)}-100 text-${getStatusColor(selectedActivity.status)}-700 rounded-full text-sm font-medium`}>
+                    {statusOptions.find(s => s.value === selectedActivity.status)?.label}
+                  </span>
+                  <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
+                    {getTypeConfig(selectedActivity.type).label}
+                  </span>
+                  {selectedActivity.isInternal && (
+                    <span className="px-3 py-1.5 bg-[var(--sky)] text-[var(--planetary)] rounded-full text-sm font-medium">
+                      Internal
                     </span>
+                  )}
+                  {selectedActivity.certificate && (
+                    <div className="flex items-center gap-1 px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium">
+                      <Award size={14} />
+                      Certificate
+                    </div>
                   )}
                 </div>
 
+                {/* Description */}
+                <div>
+                  <h4 className="font-semibold text-[var(--galaxy)] mb-2">Description</h4>
+                  <p className="text-gray-600 leading-relaxed">{selectedActivity.description}</p>
+                </div>
+
                 {/* Details Grid */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                    <Hash className="text-[var(--planetary)]" size={16} />
-                    <div>
-                      <p className="text-xs font-medium text-[var(--planetary)]">Roll Number</p>
-                      <p className="text-sm font-semibold text-[var(--galaxy)]">{selectedMember.rollNumber}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Calendar className="text-[var(--planetary)]" size={16} />
+                      <div>
+                        <p className="text-xs font-medium text-[var(--planetary)]">Date</p>
+                        <p className="text-sm font-semibold text-[var(--galaxy)]">
+                          {new Date(selectedActivity.date).toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                          {selectedActivity.endDate && (
+                            <>
+                              <br />
+                              <span className="text-xs text-gray-500">
+                                to {new Date(selectedActivity.endDate).toLocaleDateString('en-US', {
+                                  weekday: 'long',
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric'
+                                })}
+                              </span>
+                            </>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <MapPin className="text-[var(--planetary)]" size={16} />
+                      <div>
+                        <p className="text-xs font-medium text-[var(--planetary)]">Location</p>
+                        <p className="text-sm font-semibold text-[var(--galaxy)]">{selectedActivity.location}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Building className="text-[var(--planetary)]" size={16} />
+                      <div>
+                        <p className="text-xs font-medium text-[var(--planetary)]">Organizer</p>
+                        <p className="text-sm font-semibold text-[var(--galaxy)]">{selectedActivity.organizer}</p>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                    <Mail className="text-[var(--planetary)]" size={16} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-[var(--planetary)]">Email</p>
-                      <p className="text-sm font-semibold text-[var(--galaxy)] truncate">{selectedMember.email}</p>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Users className="text-[var(--planetary)]" size={16} />
+                      <div>
+                        <p className="text-xs font-medium text-[var(--planetary)]">Participants</p>
+                        <p className="text-sm font-semibold text-[var(--galaxy)]">
+                          {selectedActivity.participantCount}
+                          {selectedActivity.maxParticipants ? ` / ${selectedActivity.maxParticipants}` : ''}
+                        </p>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                    <BookOpen className="text-[var(--planetary)]" size={16} />
-                    <div>
-                      <p className="text-xs font-medium text-[var(--planetary)]">Branch</p>
-                      <p className="text-sm font-semibold text-[var(--galaxy)]">{selectedMember.branch}</p>
-                    </div>
-                  </div>
+                    {selectedActivity.registrationDeadline && (
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <Clock className="text-[var(--planetary)]" size={16} />
+                        <div>
+                          <p className="text-xs font-medium text-[var(--planetary)]">Registration Deadline</p>
+                          <p className="text-sm font-semibold text-[var(--galaxy)]">
+                            {new Date(selectedActivity.registrationDeadline).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    )}
 
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                    <GraduationCap className="text-[var(--planetary)]" size={16} />
-                    <div>
-                      <p className="text-xs font-medium text-[var(--planetary)]">Batch</p>
-                      <p className="text-sm font-semibold text-[var(--galaxy)]">{selectedMember.batch}</p>
-                    </div>
-                  </div>
+                    {selectedActivity.points > 0 && (
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <Star className="text-[var(--planetary)]" size={16} />
+                        <div>
+                          <p className="text-xs font-medium text-[var(--planetary)]">Activity Points</p>
+                          <p className="text-sm font-semibold text-[var(--galaxy)]">{selectedActivity.points} points</p>
+                        </div>
+                      </div>
+                    )}
 
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                    <Calendar className="text-[var(--planetary)]" size={16} />
-                    <div>
-                      <p className="text-xs font-medium text-[var(--planetary)]">Joined</p>
-                      <p className="text-sm font-semibold text-[var(--galaxy)]">
-                        {new Date(selectedMember.joinedDate).toLocaleDateString('en-US', {
-                          month: 'long',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })}
-                      </p>
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <User className="text-[var(--planetary)]" size={16} />
+                      <div>
+                        <p className="text-xs font-medium text-[var(--planetary)]">Created by</p>
+                        <p className="text-sm font-semibold text-[var(--galaxy)]">
+                          {selectedActivity.createdBy}
+                          <br />
+                          <span className="text-xs text-gray-500">
+                            {new Date(selectedActivity.createdAt).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </span>
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-3 pt-6 border-t border-gray-100 mt-6">
-                  {!selectedMember.isAdmin && (
-                    <button
-                      onClick={() => {
-                        handleMakeAdmin(selectedMember.id);
-                        setShowMemberDetailsModal(false);
-                        setSelectedMember(null);
-                      }}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-lg font-medium transition-colors"
-                    >
-                      <UserCheck size={16} />
-                      Make Admin
-                    </button>
-                  )}
-                  <button
-                    onClick={() => {
-                      handleRemoveMember(selectedMember.id);
-                      setShowMemberDetailsModal(false);
-                      setSelectedMember(null);
-                    }}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors"
-                  >
-                    <UserMinus size={16} />
-                    Remove
+                <div className="flex gap-3 pt-6 border-t border-gray-100">
+                  <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-lg font-medium transition-colors">
+                    <Eye size={16} />
+                    View Participants
+                  </button>
+                  <button className="flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 hover:bg-gray-50 text-[var(--galaxy)] rounded-lg font-medium transition-colors">
+                    <Edit3 size={16} />
+                    Edit
+                  </button>
+                  <button className="flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 hover:bg-gray-50 text-[var(--galaxy)] rounded-lg font-medium transition-colors">
+                    <Download size={16} />
+                    Export
                   </button>
                 </div>
               </div>
