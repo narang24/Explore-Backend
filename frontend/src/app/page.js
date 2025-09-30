@@ -1,6 +1,7 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { Award, BarChart3, FileCheck, Users, CheckCircle2, Sparkles, TrendingUp, Shield } from 'lucide-react';
+import AuthForm from '@/components/AuthForm';
 
 export default function Home() {
   const [openModal, setOpenModal] = useState(false);
@@ -395,18 +396,9 @@ export default function Home() {
       </footer>
 
       {openModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full">
-            <h3 className="text-xl font-bold text-[var(--galaxy)] mb-4">Login to Xplore</h3>
-            <p className="text-sm text-[var(--planetary)] mb-6">Access your dashboard to manage your campus activities</p>
-            <button 
-              onClick={() => setOpenModal(false)}
-              className="w-full bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white py-3 rounded-md text-sm transition-colors"
-            >
-              Close
-            </button>
-          </div>
-        </div>
+        <AuthForm
+          onClose={() => setOpenModal(false)}
+        />
       )}
     </div>
   );
