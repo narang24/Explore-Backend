@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   Users, 
   UserCheck, 
@@ -129,6 +130,15 @@ const recentActivities = [
 ];
 
 export default function DashboardContent() {
+  const router = useRouter();
+  const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
+  const [announcementData, setAnnouncementData] = useState({
+    title: '',
+    message: '',
+    priority: 'normal',
+    targetAudience: 'all'
+  });
+
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'high': return 'text-red-500 bg-red-50';
@@ -143,6 +153,38 @@ export default function DashboardContent() {
       case 'warning': return 'text-orange-500 bg-orange-50 border-orange-200';
       default: return 'text-blue-500 bg-blue-50 border-blue-200';
     }
+  };
+
+  const handleGenerateReport = () => {
+    // Navigate to reports page
+    router.push('/dashboard/club-admin/reports');
+  };
+
+  const handleReviewApprovals = () => {
+    // Navigate to approval page
+    router.push('/dashboard/club-admin/approval');
+  };
+
+  const handleMakeAnnouncement = () => {
+    setShowAnnouncementModal(true);
+  };
+
+  const handleSendAnnouncement = () => {
+    // Here you would typically send the announcement via API
+    console.log('Sending announcement:', announcementData);
+    alert(`Announcement sent to ${announcementData.targetAudience} students!`);
+    setShowAnnouncementModal(false);
+    setAnnouncementData({
+      title: '',
+      message: '',
+      priority: 'normal',
+      targetAudience: 'all'
+    });
+  };
+
+  const handleNotifyAll = () => {
+    // Send notifications to all students about pending activities
+    alert('Notifications sent to all students about recent activities!');
   };
 
   return (
@@ -251,7 +293,10 @@ export default function DashboardContent() {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {/* Generate Report */}
-          <button className="w-full flex items-center gap-3 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all cursor-pointer group">
+          <button 
+            onClick={handleGenerateReport}
+            className="w-full flex items-center gap-3 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all cursor-pointer group"
+          >
             <div className="w-8 h-8 bg-white/20 group-hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors">
               <FileText size={16} />
             </div>
@@ -262,7 +307,10 @@ export default function DashboardContent() {
           </button>
 
           {/* Review Approvals */}
-          <button className="w-full flex items-center gap-3 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all cursor-pointer group">
+          <button 
+            onClick={handleReviewApprovals}
+            className="w-full flex items-center gap-3 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all cursor-pointer group"
+          >
             <div className="w-8 h-8 bg-white/20 group-hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors">
               <UserCheck size={16} />
             </div>
@@ -273,7 +321,10 @@ export default function DashboardContent() {
           </button>
 
           {/* Make Announcement */}
-          <button className="w-full flex items-center gap-3 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all cursor-pointer group">
+          <button 
+            onClick={handleMakeAnnouncement}
+            className="w-full flex items-center gap-3 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all cursor-pointer group"
+          >
             <div className="w-8 h-8 bg-white/20 group-hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors">
               <Megaphone size={16} />
             </div>
@@ -296,7 +347,10 @@ export default function DashboardContent() {
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                   <span className="text-sm text-green-500 font-medium tracking-wide">Live</span>
                 </div>
-                <button className="flex items-center gap-2 px-4 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl text-sm font-medium tracking-wide transition-colors cursor-pointer">
+                <button 
+                  onClick={handleNotifyAll}
+                  className="flex items-center gap-2 px-4 py-2 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl text-sm font-medium tracking-wide transition-colors cursor-pointer"
+                >
                   <Bell size={16} />
                   Notify
                 </button>
@@ -394,6 +448,113 @@ export default function DashboardContent() {
           </div>
         </div>
       </div>
+
+      {/* Announcement Modal */}
+      {showAnnouncementModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-gray-100">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-r from-[var(--planetary)] to-[var(--sapphire)] rounded-xl flex items-center justify-center">
+                    <Megaphone className="text-white" size={20} />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-[var(--galaxy)]">Make Announcement</h2>
+                    <p className="text-sm text-[var(--planetary)]">Send notification to students</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setShowAnnouncementModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                  Announcement Title
+                </label>
+                <input
+                  type="text"
+                  value={announcementData.title}
+                  onChange={(e) => setAnnouncementData({...announcementData, title: e.target.value})}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent outline-none"
+                  placeholder="Enter announcement title"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                  Message
+                </label>
+                <textarea
+                  value={announcementData.message}
+                  onChange={(e) => setAnnouncementData({...announcementData, message: e.target.value})}
+                  rows={5}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent outline-none resize-none"
+                  placeholder="Enter your message here..."
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                    Priority
+                  </label>
+                  <select
+                    value={announcementData.priority}
+                    onChange={(e) => setAnnouncementData({...announcementData, priority: e.target.value})}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent outline-none"
+                  >
+                    <option value="normal">Normal</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                    Target Audience
+                  </label>
+                  <select
+                    value={announcementData.targetAudience}
+                    onChange={(e) => setAnnouncementData({...announcementData, targetAudience: e.target.value})}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent outline-none"
+                  >
+                    <option value="all">All Students</option>
+                    <option value="club_members">Club Members Only</option>
+                    <option value="specific">Specific Group</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-gray-100 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setShowAnnouncementModal(false)}
+                className="px-6 py-3 border border-gray-300 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSendAnnouncement}
+                disabled={!announcementData.title || !announcementData.message}
+                className="flex items-center gap-2 px-6 py-3 bg-[var(--planetary)] hover:bg-[var(--sapphire)] disabled:bg-gray-300 text-white rounded-xl font-medium transition-colors"
+              >
+                <Send size={18} />
+                Send Announcement
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
