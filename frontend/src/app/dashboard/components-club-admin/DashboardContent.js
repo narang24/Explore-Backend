@@ -183,8 +183,8 @@ export default function DashboardContent() {
   };
 
   const handleNotifyAll = () => {
-    // Send notifications to all students about pending activities
-    alert('Notifications sent to all students about recent activities!');
+    // Open the same announcement modal
+    setShowAnnouncementModal(true);
   };
 
   return (
@@ -477,40 +477,40 @@ export default function DashboardContent() {
             {/* Modal Content */}
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Announcement Title
                 </label>
                 <input
                   type="text"
                   value={announcementData.title}
                   onChange={(e) => setAnnouncementData({...announcementData, title: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent outline-none text-gray-900 bg-white"
                   placeholder="Enter announcement title"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Message
                 </label>
                 <textarea
                   value={announcementData.message}
                   onChange={(e) => setAnnouncementData({...announcementData, message: e.target.value})}
                   rows={5}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent outline-none resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent outline-none resize-none text-gray-900 bg-white"
                   placeholder="Enter your message here..."
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Priority
                   </label>
                   <select
                     value={announcementData.priority}
                     onChange={(e) => setAnnouncementData({...announcementData, priority: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent outline-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent outline-none text-gray-900 bg-white"
                   >
                     <option value="normal">Normal</option>
                     <option value="high">High</option>
@@ -519,13 +519,13 @@ export default function DashboardContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--galaxy)] mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Target Audience
                   </label>
                   <select
                     value={announcementData.targetAudience}
                     onChange={(e) => setAnnouncementData({...announcementData, targetAudience: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent outline-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent outline-none text-gray-900 bg-white"
                   >
                     <option value="all">All Students</option>
                     <option value="club_members">Club Members Only</option>
@@ -539,14 +539,14 @@ export default function DashboardContent() {
             <div className="p-6 border-t border-gray-100 flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowAnnouncementModal(false)}
-                className="px-6 py-3 border border-gray-300 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+                className="px-6 py-3 border border-gray-300 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSendAnnouncement}
                 disabled={!announcementData.title || !announcementData.message}
-                className="flex items-center gap-2 px-6 py-3 bg-[var(--planetary)] hover:bg-[var(--sapphire)] disabled:bg-gray-300 text-white rounded-xl font-medium transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-[var(--planetary)] hover:bg-[var(--sapphire)] disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-colors"
               >
                 <Send size={18} />
                 Send Announcement
