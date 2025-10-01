@@ -24,6 +24,7 @@ import {
   X,
   File
 } from 'lucide-react';
+import { Toast } from '@/components/ui/ToastModal';
 
 // Mock data for achievements
 const achievementsData = {
@@ -135,7 +136,7 @@ const extraCurricularAchievements = [
 ];
 
 // Upload Modal Component
-function UploadModal({ isOpen, onClose, achievement }) {
+function UploadModal({ isOpen, onClose, achievement, onSubmitSuccess }) {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [description, setDescription] = useState('');
 
@@ -153,6 +154,15 @@ function UploadModal({ isOpen, onClose, achievement }) {
     console.log('Submitting approval request for:', achievement);
     console.log('Files:', uploadedFiles);
     console.log('Description:', description);
+    
+    // Call the success callback
+    onSubmitSuccess(achievement);
+    
+    // Reset form
+    setUploadedFiles([]);
+    setDescription('');
+    
+    // Close modal
     onClose();
   };
 
@@ -283,18 +293,26 @@ export default function AchievementsPage() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedAchievement, setSelectedAchievement] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('status'); // default sort by status
+  const [sortBy, setSortBy] = useState('status');
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   const handleRequestApproval = (achievement) => {
     setSelectedAchievement(achievement);
     setShowUploadModal(true);
   };
 
+  const handleSubmitSuccess = (achievement) => {
+    setToastMessage(`Approval request submitted successfully for "${achievement.activityName}"! Your submission is now pending review by faculty.`);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 5000);
+  };
+
   // Function to get status priority for sorting
   const getStatusPriority = (achievement) => {
-    if (!achievement.isApproved && !achievement.isPending) return 1; // Request Approval
-    if (achievement.isPending) return 2; // Pending
-    if (achievement.isApproved) return 3; // Approved
+    if (!achievement.isApproved && !achievement.isPending) return 1;
+    if (achievement.isPending) return 2;
+    if (achievement.isApproved) return 3;
     return 4;
   };
 
@@ -305,11 +323,11 @@ export default function AchievementsPage() {
         case 'status':
           return getStatusPriority(a) - getStatusPriority(b);
         case 'date':
-          return new Date(b.date) - new Date(a.date); // Most recent first
+          return new Date(b.date) - new Date(a.date);
         case 'club':
           return a.organizingClub.localeCompare(b.organizingClub);
         case 'credits':
-          return b.creditsEarned - a.creditsEarned; // Highest first
+          return b.creditsEarned - a.creditsEarned;
         case 'activity':
           return a.activityName.localeCompare(b.activityName);
         case 'category':
@@ -387,40 +405,37 @@ export default function AchievementsPage() {
           </div>
         </div>
 
-        {/* Search and Sort Bar - Improved Version */}
+        {/* Search and Sort Bar */}
         <div className="flex items-center gap-4 mb-6">
-  {/* Search Bar */}
-  <div className="flex-1 relative">
-    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-    <input
-      type="text"
-      placeholder="Search achievements by name, club, or category..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent bg-white text-sm shadow-sm hover:shadow-md transition-all duration-200"
-    />
-  </div>
-  
-  {/* Sort Dropdown */}
-  <div className="relative">
-    <select
-      value={sortBy}
-      onChange={(e) => setSortBy(e.target.value)}
-      className="appearance-none px-4 py-4 pr-10 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent bg-white text-sm font-medium text-[var(--galaxy)] min-w-[140px] shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
-    >
-      {sortOptions.map((option) => (
-        <option key={option.value} value={option.value}>
-          Sort by {option.label}
-        </option>
-      ))}
-    </select>
-    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-  </div>
-  
-  {/* Results Count */}
-  <div className="text-sm text-gray-500 font-medium bg-gray-50 px-4 py-4 rounded-2xl border border-gray-100">
-    {filteredCoCurrenticular.length + filteredExtraCurricular.length} result{filteredCoCurrenticular.length + filteredExtraCurricular.length !== 1 ? 's' : ''}
-  </div>
+          <div className="flex-1 relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              type="text"
+              placeholder="Search achievements by name, club, or category..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent bg-white text-sm shadow-sm hover:shadow-md transition-all duration-200"
+            />
+          </div>
+          
+          <div className="relative">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="appearance-none px-4 py-4 pr-10 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--planetary)] focus:border-transparent bg-white text-sm font-medium text-[var(--galaxy)] min-w-[140px] shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+            >
+              {sortOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  Sort by {option.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+          </div>
+          
+          <div className="text-sm text-gray-500 font-medium bg-gray-50 px-4 py-4 rounded-2xl border border-gray-100">
+            {filteredCoCurrenticular.length + filteredExtraCurricular.length} result{filteredCoCurrenticular.length + filteredExtraCurricular.length !== 1 ? 's' : ''}
+          </div>
         </div>
 
         {/* Achievements Sections */}
@@ -602,6 +617,14 @@ export default function AchievementsPage() {
         isOpen={showUploadModal}
         onClose={() => setShowUploadModal(false)}
         achievement={selectedAchievement}
+        onSubmitSuccess={handleSubmitSuccess}
+      />
+
+      {/* Toast Notification */}
+      <Toast 
+        message={toastMessage}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
       />
     </StudentLayout>
   );

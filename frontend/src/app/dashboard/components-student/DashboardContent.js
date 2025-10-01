@@ -17,9 +17,13 @@ import {
   TrendingUp,
   Zap
 } from 'lucide-react';
+import { Toast } from '@/components/ui/ToastModal';
 
 export default function DashboardContent() {
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
   
   const dashboardData = {
     student: {
@@ -31,6 +35,57 @@ export default function DashboardContent() {
       totalAchievements: 8,
       totalActivities: 15
     }
+  };
+
+  const activities = [
+    {
+      id: 1,
+      title: 'Machine Learning Workshop',
+      venue: 'Tech Lab 1',
+      time: '2:00 pm',
+      date: '2024-03-25',
+      type: 'Workshop',
+      credits: '2',
+      icon: '🤖',
+      category: 'Technical',
+      registrations: '45/60'
+    },
+    {
+      id: 2,
+      title: 'International Conference on AI',
+      venue: 'Main Auditorium',
+      time: '9:00 am',
+      date: '2024-03-28',
+      type: 'Conference',
+      credits: '4',
+      icon: '🌍',
+      category: 'Academic',
+      registrations: '120/150'
+    },
+    {
+      id: 3,
+      title: 'Coding Competition',
+      venue: 'Computer Lab 2',
+      time: '10:00 am',
+      date: '2024-03-30',
+      type: 'Competition',
+      credits: '3',
+      icon: '💻',
+      category: 'Extra-curricular',
+      registrations: '78/100'
+    }
+  ];
+
+  const handleRegisterClick = (activity) => {
+    setSelectedActivity(activity);
+    setShowRegistrationModal(true);
+  };
+
+  const handleConfirmRegistration = () => {
+    setShowRegistrationModal(false);
+    setToastMessage(`Successfully registered for ${selectedActivity?.title}! You'll receive a confirmation email shortly.`);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 4000);
   };
 
   return (
@@ -226,44 +281,7 @@ export default function DashboardContent() {
             
             <div className="p-6">
               <div className="space-y-4">
-                {[
-                  {
-                    id: 1,
-                    title: 'Machine Learning Workshop',
-                    venue: 'Tech Lab 1',
-                    time: '2:00 pm',
-                    date: '2024-03-25',
-                    type: 'Workshop',
-                    credits: '2',
-                    icon: '🤖',
-                    category: 'Technical',
-                    registrations: '45/60'
-                  },
-                  {
-                    id: 2,
-                    title: 'International Conference on AI',
-                    venue: 'Main Auditorium',
-                    time: '9:00 am',
-                    date: '2024-03-28',
-                    type: 'Conference',
-                    credits: '4',
-                    icon: '🌍',
-                    category: 'Academic',
-                    registrations: '120/150'
-                  },
-                  {
-                    id: 3,
-                    title: 'Coding Competition',
-                    venue: 'Computer Lab 2',
-                    time: '10:00 am',
-                    date: '2024-03-30',
-                    type: 'Competition',
-                    credits: '3',
-                    icon: '💻',
-                    category: 'Extra-curricular',
-                    registrations: '78/100'
-                  }
-                ].map((activity) => (
+                {activities.map((activity) => (
                   <div key={activity.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
                     <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-lg shadow-sm border border-gray-100">
                       {activity.icon}
@@ -300,7 +318,7 @@ export default function DashboardContent() {
                             })}
                           </p>
                           <button 
-                            onClick={() => setShowRegistrationModal(true)}
+                            onClick={() => handleRegisterClick(activity)}
                             className="bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
                           >
                             Register
@@ -323,7 +341,7 @@ export default function DashboardContent() {
       </div>
 
       {/* Registration Modal */}
-      {showRegistrationModal && (
+      {showRegistrationModal && selectedActivity && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-3xl p-6 max-w-md w-full mx-4 shadow-2xl">
             <div className="text-center">
@@ -336,11 +354,11 @@ export default function DashboardContent() {
               <div className="bg-gray-50 rounded-2xl p-4 mb-6 text-left">
                 <h4 className="font-semibold text-gray-900 mb-2">Activity Details</h4>
                 <div className="space-y-1 text-sm text-gray-600">
-                  <p><span className="font-medium">Activity:</span> Machine Learning Workshop</p>
-                  <p><span className="font-medium">Date:</span> March 25, 2024</p>
-                  <p><span className="font-medium">Time:</span> 2:00 PM</p>
-                  <p><span className="font-medium">Venue:</span> Tech Lab 1</p>
-                  <p><span className="font-medium">Credits:</span> 2</p>
+                  <p><span className="font-medium">Activity:</span> {selectedActivity.title}</p>
+                  <p><span className="font-medium">Date:</span> {new Date(selectedActivity.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                  <p><span className="font-medium">Time:</span> {selectedActivity.time}</p>
+                  <p><span className="font-medium">Venue:</span> {selectedActivity.venue}</p>
+                  <p><span className="font-medium">Credits:</span> {selectedActivity.credits}</p>
                 </div>
               </div>
               
@@ -352,7 +370,7 @@ export default function DashboardContent() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => setShowRegistrationModal(false)}
+                  onClick={handleConfirmRegistration}
                   className="flex-1 px-4 py-3 bg-[var(--planetary)] hover:bg-[var(--sapphire)] text-white rounded-xl font-medium transition-colors"
                 >
                   Confirm Registration
@@ -362,6 +380,13 @@ export default function DashboardContent() {
           </div>
         </div>
       )}
+
+      {/* Toast Notification */}
+      <Toast 
+        message={toastMessage}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </>
   );
 }
